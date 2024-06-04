@@ -59,19 +59,12 @@ public class HudManager : MonoBehaviour
             }
         }
 
-        if (showBloodImage) {
+        if (showBloodImage && !playerStats.isDead) {
             CheckBloodImage();
         }
     }
 
-    public void DisablePlayerMovement() {
-        player.GetComponent<PlayerInput>().enabled = false;
-    }
-
-    public void EnablePlayerMovement() {
-        player.GetComponent<PlayerInput>().enabled = true;
-    }
-
+    
     private void LockCursor() {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -84,7 +77,7 @@ public class HudManager : MonoBehaviour
 
     public void ShowGameOverImage() {
         GameOverImage.SetActive(true);
-        DisablePlayerMovement();
+        playerStats.DisablePlayerMovementAndCamera();
 
         UnlockCursor();
         reticle.SetActive(false);
@@ -92,7 +85,7 @@ public class HudManager : MonoBehaviour
 
     public void ShowEndGameImage() {
         EndGameImage.SetActive(true);
-        DisablePlayerMovement();
+        playerStats.DisablePlayerMovementAndCamera();
 
         UnlockCursor();
         reticle.SetActive(false);
@@ -108,7 +101,7 @@ public class HudManager : MonoBehaviour
 
     public void ShowOptions() {
         isPaused = true;
-        DisablePlayerMovement();
+        playerStats.DisablePlayerMovementAndCamera();
 
         UnlockCursor();
         reticle.SetActive(false);
@@ -119,7 +112,7 @@ public class HudManager : MonoBehaviour
 
     public void HideOptions() {
         isPaused = false;
-        EnablePlayerMovement();
+        playerStats.EnablePlayerMovementAndCamera();
 
         LockCursor();
         reticle.SetActive(true);
@@ -130,7 +123,7 @@ public class HudManager : MonoBehaviour
 
     public void RestartGame() {
         isPaused = false;
-        EnablePlayerMovement();
+        playerStats.EnablePlayerMovementAndCamera();
 
         LockCursor();
         reticle.SetActive(true);
@@ -141,7 +134,7 @@ public class HudManager : MonoBehaviour
 
     public void GoToMenu() {
         isPaused = false;
-        EnablePlayerMovement();
+        playerStats.EnablePlayerMovementAndCamera();
 
         UnlockCursor();
         reticle.SetActive(false);
@@ -152,7 +145,7 @@ public class HudManager : MonoBehaviour
 
     public void Quit() {
         isPaused = false;
-        EnablePlayerMovement();
+        playerStats.EnablePlayerMovementAndCamera();
 
         UnlockCursor();
         reticle.SetActive(false);

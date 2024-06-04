@@ -4458,7 +4458,7 @@ MonoBehaviour:
   - {fileID: 1136163403}
   enemyPrefab: {fileID: 3375046419239285577, guid: ef2478b5143b1174a88614452ecb2e81,
     type: 3}
-  enemiesToSpawn: 3
+  enemiesToSpawn: 4
 --- !u!1 &810170865
 GameObject:
   m_ObjectHideFlags: 0
@@ -11870,11 +11870,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 5194310736693839657, guid: 79fd79cfec879b344a87bfdff4bffa7b,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5301695969025827071, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -11923,11 +11918,6 @@ PrefabInstance:
     - target: {fileID: 5301695969025827071, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8394273468758272954, guid: 79fd79cfec879b344a87bfdff4bffa7b,
-        type: 3}
-      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

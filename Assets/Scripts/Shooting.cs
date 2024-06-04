@@ -53,7 +53,8 @@ public class Shooting : MonoBehaviour
             if (Physics.Raycast(
                 Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit bulletHit)
             ) {
-                gunAnimator.Play("GunShoot");
+                gunAnimator.Play("Shoot");
+                // gunAnimator.SetTrigger("Shoot");
 
                 GameObject particleInstance = Instantiate(
                     particleShotEffect,

@@ -19,6 +19,7 @@ public class Monster : MonoBehaviour
     private float timerToTaunt;
     private bool canWalk = true;
     private bool isRunning = false;
+    private bool isAttacking = false;
 
     void Start() {
         agent = GetComponent<NavMeshAgent>();
@@ -34,19 +35,19 @@ public class Monster : MonoBehaviour
     void FixedUpdate() {
         if (playerStats.isDead) {
             StopWalking();
-            return;
         }
-        if (HudManager.Instance.IsPaused()) {
+        if (HudManager.Instance.IsPaused() || playerStats.isDead) {
             return;
         }
 
         if (canWalk) {
             agent.SetDestination(player.transform.position);
 
-            if (!isRunning) {
+            if (!isRunning && !isAttacking) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= UnityEngine.Random.Range(15, 45)) {
                     StopWalking();
+
                     StartCoroutine(WalkAfterSeconds(1));
 
                     animator.SetTrigger("Taunt");
@@ -59,11 +60,14 @@ public class Monster : MonoBehaviour
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.CompareTag("Player")) {
+        if (collision.gameObject.CompareTag("Player") && !playerStats.isDead && !isAttacking) {
             StopWalking();
 
-            int hitTime = 2;
-            StartCoroutine(WalkAfterSeconds(hitTime));
+            isAttacking = true;
+
+            float attackTime = 1.5f;
+            StartCoroutine(WalkAfterSeconds(attackTime));
+            StartCoroutine(StopAttackAfterSeconds(attackTime));
 
             animator.SetTrigger("Attack");
 
@@ -77,9 +81,9 @@ public class Monster : MonoBehaviour
 
         StopWalking();
 
-        animator.SetTrigger("Hit");
+        animator.SetTrigger("Damage");
 
-        int damageTime = 1;
+        float damageTime = 1f;
 
         // 50% chance of running or walking
         if (UnityEngine.Random.Range(0, 2) == 0) {
@@ -98,42 +102,47 @@ public class Monster : MonoBehaviour
         }
     }
 
+    private void SetCanWalk(bool canWalk) {
+        this.canWalk = canWalk;
+        agent.isStopped = !canWalk;
+    }
+
     public void StopWalking() {
         agent.speed = 0;
-
-        canWalk = false;
-        agent.isStopped = !canWalk;
+        SetCanWalk(false);
         isRunning = false;
 
         animator.SetBool("Walking", false);
         animator.SetBool("Running", false);
     }
 
-    public IEnumerator WalkAfterSeconds(int seconds) {
+    public IEnumerator WalkAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         // set can walk
         agent.speed = defaultSpeed;
-
-        canWalk = true;
-        agent.isStopped = !canWalk;
+        SetCanWalk(true);
         isRunning = false;
 
         animator.SetBool("Running", false);
         animator.SetBool("Walking", true);
     }
 
-    public IEnumerator RunAfterSeconds(int seconds) {
+    public IEnumerator RunAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         // set can walk
         agent.speed = defaultSpeed * 2f;
-
-        canWalk = true;
-        agent.isStopped = !canWalk;
+        SetCanWalk(true);
         isRunning = true;
 
         animator.SetBool("Walking", false);
         animator.SetBool("Running", true);        
+    }
+
+    public IEnumerator StopAttackAfterSeconds(float seconds) {
+        // wait
+        yield return new WaitForSeconds(seconds);
+        isAttacking = false;
     }
 }

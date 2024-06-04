@@ -27,6 +27,9 @@ namespace StarterAssets
 		[Tooltip("Spend speed of stamina")]
         public float SpendStaminaSpeed = 20f;
         private bool _lowOnStamina = false;
+		public bool CanMovePlayer = true;
+        public bool CanMoveCamera = true;
+        public bool CanJump = false;
 
         [Space(10)]
 		[Tooltip("The height the player can jump")]
@@ -119,8 +122,8 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			JumpAndGravity();
 			GroundedCheck();
+            JumpAndGravity();
             Move();
         }
 
@@ -150,12 +153,14 @@ namespace StarterAssets
 				// clamp our pitch rotation
 				_cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
-				// Update Cinemachine camera target pitch
-				CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+                if (CanMoveCamera) {
+                    // Update Cinemachine camera target pitch
+                    CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
 
-				// rotate the player left and right
-				transform.Rotate(Vector3.up * _rotationVelocity);
-			}
+                    // rotate the player left and right
+                    transform.Rotate(Vector3.up * _rotationVelocity);
+                }
+            }
 		}
 
 		private void Move()
@@ -163,31 +168,35 @@ namespace StarterAssets
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			bool canSprint = CurrentStamina > 0 && !_lowOnStamina;
 
-            float targetSpeed = canSprint && _input.sprint ? SprintSpeed : MoveSpeed;
+			float targetSpeed = canSprint && _input.sprint ? SprintSpeed : MoveSpeed;
 
-			if (canSprint && _input.sprint && _input.move != Vector2.zero) {
-                CurrentStamina -= Time.deltaTime * SpendStaminaSpeed;
-            } else if (CurrentStamina < MaxStamina) {
-                CurrentStamina += Time.deltaTime * (SpendStaminaSpeed / 2);
-            }
-            CurrentStamina = Mathf.Clamp(CurrentStamina, 0, MaxStamina);
+			if (canSprint && _input.sprint && _input.move != Vector2.zero)
+			{
+				CurrentStamina -= Time.deltaTime * SpendStaminaSpeed;
+			} else if (CurrentStamina < MaxStamina)
+			{
+				CurrentStamina += Time.deltaTime * (SpendStaminaSpeed / 2);
+			}
+			CurrentStamina = Mathf.Clamp(CurrentStamina, 0, MaxStamina);
 
 			// out of stamina, the player needs to recover stamina to sprint again
-            if (CurrentStamina <= 1f) {
-                _lowOnStamina = true;
-            }
+			if (CurrentStamina <= 1f)
+			{
+				_lowOnStamina = true;
+			}
 			// after recovering at least 25% of stamina, the player can sprint again
-			if (_lowOnStamina && CurrentStamina >= 25f) {
-                _lowOnStamina = false;
-            }
+			if (_lowOnStamina && CurrentStamina >= 25f)
+			{
+				_lowOnStamina = false;
+			}
 
 			HudManager.Instance.AdjustStaminaBar(CurrentStamina, MaxStamina, _lowOnStamina);
 
-            // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
+			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
-            // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-            // if there is no input, set the target speed to 0
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+			// if there is no input, set the target speed to 0
+			if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
 			// a reference to the players current horizontal velocity
 			float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
@@ -204,8 +213,7 @@ namespace StarterAssets
 
 				// round speed to 3 decimal places
 				_speed = Mathf.Round(_speed * 1000f) / 1000f;
-			}
-			else
+			} else
 			{
 				_speed = targetSpeed;
 			}
@@ -221,13 +229,15 @@ namespace StarterAssets
 				inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
 			}
 
-			// move the player
-			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-		}
+			if (!CanMovePlayer) {
+                _speed = 0f;
+            }
+            _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+        }
 
-		private void JumpAndGravity()
+        private void JumpAndGravity()
 		{
-			if (Grounded)
+			if (Grounded && CanJump)
 			{
 				// reset the fall timeout timer
 				_fallTimeoutDelta = FallTimeout;

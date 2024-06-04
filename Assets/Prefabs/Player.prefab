@@ -446,6 +446,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1706639933342160750}
+  - component: {fileID: 1543314407654569280}
   m_Layer: 0
   m_Name: PlayerCameraRoot
   m_TagString: CinemachineTarget
@@ -471,6 +472,27 @@ Transform:
   - {fileID: 3663439149534671329}
   m_Father: {fileID: 7077347266568082527}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1543314407654569280
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303965149962074389}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 48f07d6744f77e2408910dee19c54579, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1590166019288516218
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,7 +561,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5301695969025827071}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.224}
 --- !u!20 &3829259306668829213
 Camera:
   m_ObjectHideFlags: 0
@@ -685,7 +707,7 @@ Skybox:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1944615982203736598}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CustomSkybox: {fileID: 2100000, guid: d3823126980dd98479f7761e6d47338a, type: 2}
 --- !u!1 &2247975542744136680
 GameObject:
@@ -1494,6 +1516,7 @@ MonoBehaviour:
   currentBullets: 060000001e000000
   maxBullets: 060000001e000000
   availableBullets: 0c0000003c000000
+  cameraAnimator: {fileID: 1543314407654569280}
 --- !u!114 &8730273328953731657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1537,6 +1560,9 @@ MonoBehaviour:
   MaxStamina: 100
   CurrentStamina: 100
   SpendStaminaSpeed: 20
+  CanMovePlayer: 1
+  CanMoveCamera: 1
+  CanJump: 0
   JumpHeight: 1.2
   Gravity: -15
   JumpTimeout: 0.1
