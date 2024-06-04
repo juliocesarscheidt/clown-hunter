@@ -4456,8 +4456,9 @@ MonoBehaviour:
   - {fileID: 370927729}
   - {fileID: 399448671}
   - {fileID: 1136163403}
-  enemyPrefab: {fileID: 3375046419239285577, guid: ef2478b5143b1174a88614452ecb2e81,
-    type: 3}
+  enemiesPrefabs:
+  - {fileID: 8153896276418500810, guid: 67286f02ee07aa94d8efda870c2961f3, type: 3}
+  - {fileID: 3375046419239285577, guid: ef2478b5143b1174a88614452ecb2e81, type: 3}
   enemiesToSpawn: 4
 --- !u!1 &810170865
 GameObject:
@@ -7859,8 +7860,8 @@ Transform:
   - {fileID: 1021265025}
   - {fileID: 734387214}
   - {fileID: 1272633800}
-  - {fileID: 785856101}
   - {fileID: 682027097}
+  - {fileID: 785856101}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1438732114

@@ -9,7 +9,7 @@ public class MonsterManager : MonoBehaviour
     private PlayerStats playerStats;
 
     public List<GameObject> spawnPoints;
-    public GameObject enemyPrefab;
+    public List<GameObject> enemiesPrefabs;
 
     public int enemiesToSpawn = 3;
     private int enemiesAlive = 0;
@@ -36,9 +36,20 @@ public class MonsterManager : MonoBehaviour
 
     public void SpawnEnemies() {
         enemiesAlive = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        Debug.Log("enemiesAlive " + enemiesAlive);
+
+        int enemiesQuantity = enemiesPrefabs.Count;
+
+        int enemiesToSpawnRatio = Mathf.CeilToInt(
+           float.Parse(enemiesToSpawn.ToString()) / float.Parse(enemiesQuantity.ToString()));
+        Debug.Log("enemiesToSpawnRatio " + enemiesToSpawnRatio);
+        int[] enemiesSpawnedCounter = new int[enemiesQuantity];
 
         int spawnPointsQuantity = spawnPoints.Count;
+        Debug.Log("spawnPointsQuantity " + spawnPointsQuantity);
+
         int diffEnemiesToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
+        Debug.Log("diffEnemiesToSpawn " + diffEnemiesToSpawn);
 
         List<int> spawnPointsCounter = new();
 
@@ -53,12 +64,24 @@ public class MonsterManager : MonoBehaviour
         }
 
         for (int i = 0; i < diffEnemiesToSpawn; i++) {
+            // get a random enemy
+            int randomEnemyIndex = Random.Range(0, enemiesQuantity);
+            if (enemiesSpawnedCounter[randomEnemyIndex] >= enemiesToSpawnRatio) {
+                i--;
+                continue;
+            }
+            enemiesSpawnedCounter[randomEnemyIndex] += 1;
+            Debug.Log("randomEnemyIndex " + randomEnemyIndex);
+
             GameObject spawnPoint = spawnPoints[spawnPointsCounter[i]];
+
+            // spawn the enemy
             Instantiate(
-                enemyPrefab,
+                enemiesPrefabs[randomEnemyIndex],
                 spawnPoint.transform.position,
                 spawnPoint.transform.rotation
             );
+
             enemiesAlive++;
         }
     }
