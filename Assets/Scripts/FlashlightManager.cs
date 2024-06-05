@@ -5,6 +5,7 @@ public class FlashlightManager : MonoBehaviour
     private GameObject player;
     private PlayerStats playerStats;
 
+    public AudioSource flashlightAudioSource;
     public Light flashlight;
 
     void Start() {
@@ -21,6 +22,7 @@ public class FlashlightManager : MonoBehaviour
             return;
         }
         if (Input.GetKeyDown(KeyCode.F)) {
+            flashlightAudioSource.Play();
             flashlight.enabled = !flashlight.enabled;
         }
     }

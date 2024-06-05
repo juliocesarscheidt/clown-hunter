@@ -17,10 +17,44 @@ public class PlayerStats : MonoBehaviour
 
     private FirstPersonController playerController;
 
+    public AudioSource stepsAudioSource;
+    public AudioClip stepsWalkingAudioClip;
+    public AudioClip stepsRunningAudioClip;
+
     public Animator cameraAnimator;
 
     void Start() {
         playerController = GetComponent<FirstPersonController>();
+    }
+
+    public void PlayerWalk(bool isWalking) {
+        if (HudManager.Instance.IsPaused() || isDead) {
+            return;
+        }
+        if (isWalking) {
+            if (!stepsAudioSource.isPlaying
+                || stepsAudioSource.isPlaying && stepsAudioSource.clip != stepsWalkingAudioClip) {
+                stepsAudioSource.clip = stepsWalkingAudioClip;
+                stepsAudioSource.Play();
+            }
+        } else {
+            stepsAudioSource.Stop();
+        }
+    }
+
+    public void PlayerRun(bool isRunning) {
+        if (HudManager.Instance.IsPaused() || isDead) {
+            return;
+        }
+        if (isRunning) {
+            if (!stepsAudioSource.isPlaying
+                || stepsAudioSource.isPlaying && stepsAudioSource.clip != stepsRunningAudioClip) {
+                stepsAudioSource.clip = stepsRunningAudioClip;
+                stepsAudioSource.Play();
+            }
+        } else {
+            stepsAudioSource.Stop();
+        }
     }
 
     public void ApplyDamage(int damage) {
@@ -29,7 +63,7 @@ public class PlayerStats : MonoBehaviour
         playerController.CanMovePlayer = false;
         StartCoroutine(EnablePlayerMovementAfterSeconds(1.5f));
 
-        cameraAnimator.Play("DamageAnimation");
+        cameraAnimator.SetTrigger("Damage");
 
         HudManager.Instance.AdjustHealthBar(health, 100);
         HudManager.Instance.ShowBloodImage();

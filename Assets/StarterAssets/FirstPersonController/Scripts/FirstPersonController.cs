@@ -170,23 +170,19 @@ namespace StarterAssets
 
 			float targetSpeed = canSprint && _input.sprint ? SprintSpeed : MoveSpeed;
 
-			if (canSprint && _input.sprint && _input.move != Vector2.zero)
-			{
+			if (canSprint && _input.sprint && _input.move != Vector2.zero) {
 				CurrentStamina -= Time.deltaTime * SpendStaminaSpeed;
-			} else if (CurrentStamina < MaxStamina)
-			{
+			} else if (CurrentStamina < MaxStamina) {
 				CurrentStamina += Time.deltaTime * (SpendStaminaSpeed / 2);
 			}
 			CurrentStamina = Mathf.Clamp(CurrentStamina, 0, MaxStamina);
 
 			// out of stamina, the player needs to recover stamina to sprint again
-			if (CurrentStamina <= 1f)
-			{
+			if (CurrentStamina <= 1f) {
 				_lowOnStamina = true;
 			}
 			// after recovering at least 25% of stamina, the player can sprint again
-			if (_lowOnStamina && CurrentStamina >= 25f)
-			{
+			if (_lowOnStamina && CurrentStamina >= 25f) {
 				_lowOnStamina = false;
 			}
 
@@ -223,15 +219,24 @@ namespace StarterAssets
 
 			// note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
 			// if there is a move input rotate player when the player is moving
-			if (_input.move != Vector2.zero)
-			{
+			if (_input.move != Vector2.zero) {
 				// move
 				inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
-			}
+
+				if (targetSpeed == MoveSpeed) {
+                    gameObject.SendMessage("PlayerWalk", true);
+                } else if (targetSpeed == SprintSpeed) {
+                    gameObject.SendMessage("PlayerRun", true);
+                }
+            } else {
+                gameObject.SendMessage("PlayerWalk", false);
+                gameObject.SendMessage("PlayerRun", false);
+            }
 
 			if (!CanMovePlayer) {
                 _speed = 0f;
             }
+
             _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
 

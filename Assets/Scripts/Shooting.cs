@@ -7,8 +7,12 @@ public class Shooting : MonoBehaviour
     public GameObject particleShotEffect;
     public GameObject[] shotEffectPos;
 
+    private AudioSource gunAudioSource;
     private Animator gunAnimator;
     private PlayerStats playerStats;
+
+    public AudioClip[] gunShotSound;
+    public AudioClip[] gunReloadSound;
 
     private int selectedGun = 0;
 
@@ -24,6 +28,7 @@ public class Shooting : MonoBehaviour
 
     void Start() {
         playerStats = GetComponent<PlayerStats>();
+
         SetCurrentGun();
     }
 
@@ -37,6 +42,9 @@ public class Shooting : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) &&
             playerStats.currentBullets[selectedGun] != playerStats.maxBullets[selectedGun] &&
             playerStats.availableBullets[selectedGun] > 0) {
+
+            gunAudioSource.PlayOneShot(gunReloadSound[selectedGun]);
+
             reloadTimer = 0;
             isReloading = true;
         }
@@ -53,6 +61,8 @@ public class Shooting : MonoBehaviour
             if (Physics.Raycast(
                 Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit bulletHit)
             ) {
+                gunAudioSource.PlayOneShot(gunShotSound[selectedGun]);
+
                 gunAnimator.Play("Shoot");
                 // gunAnimator.SetTrigger("Shoot");
 
@@ -155,6 +165,7 @@ public class Shooting : MonoBehaviour
         }
         gunObject[selectedGun].SetActive(true);
         gunAnimator = gunObject[selectedGun].GetComponent<Animator>();
+        gunAudioSource = gunObject[selectedGun].GetComponent<AudioSource>();
 
         if (selectedGun == 0) {
             isAutomaticGun = false;

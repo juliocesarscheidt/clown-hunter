@@ -20,7 +20,7 @@ public class HudManager : MonoBehaviour
 
     public Image bloodImage;
     private bool showBloodImage = false;
-    public float timeToShowBloodImage = 2f;
+    public float timeToShowBloodImage = 4f;
     private float showBloodImageTimer = 0f;
     public Color bloodImageColorDefault;
 
@@ -64,7 +64,6 @@ public class HudManager : MonoBehaviour
         }
     }
 
-    
     private void LockCursor() {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -191,7 +190,7 @@ public class HudManager : MonoBehaviour
 
     public void CheckBloodImage() {
         showBloodImageTimer += Time.deltaTime;
-        bloodImage.color -= new Color(0f, 0f, 0f, 1f) * (Time.deltaTime / 2);
+        bloodImage.color -= new Color(0f, 0f, 0f, 1f) * (Time.deltaTime / timeToShowBloodImage);
 
         if (showBloodImageTimer >= timeToShowBloodImage) {
             showBloodImage = false;

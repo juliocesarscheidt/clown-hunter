@@ -36,20 +36,20 @@ public class MonsterManager : MonoBehaviour
 
     public void SpawnEnemies() {
         enemiesAlive = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        Debug.Log("enemiesAlive " + enemiesAlive);
+        // Debug.Log("enemiesAlive " + enemiesAlive);
 
         int enemiesQuantity = enemiesPrefabs.Count;
 
         int enemiesToSpawnRatio = Mathf.CeilToInt(
            float.Parse(enemiesToSpawn.ToString()) / float.Parse(enemiesQuantity.ToString()));
-        Debug.Log("enemiesToSpawnRatio " + enemiesToSpawnRatio);
+        // Debug.Log("enemiesToSpawnRatio " + enemiesToSpawnRatio);
         int[] enemiesSpawnedCounter = new int[enemiesQuantity];
 
         int spawnPointsQuantity = spawnPoints.Count;
-        Debug.Log("spawnPointsQuantity " + spawnPointsQuantity);
+        // Debug.Log("spawnPointsQuantity " + spawnPointsQuantity);
 
         int diffEnemiesToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
-        Debug.Log("diffEnemiesToSpawn " + diffEnemiesToSpawn);
+        // Debug.Log("diffEnemiesToSpawn " + diffEnemiesToSpawn);
 
         List<int> spawnPointsCounter = new();
 
@@ -71,7 +71,7 @@ public class MonsterManager : MonoBehaviour
                 continue;
             }
             enemiesSpawnedCounter[randomEnemyIndex] += 1;
-            Debug.Log("randomEnemyIndex " + randomEnemyIndex);
+            // Debug.Log("randomEnemyIndex " + randomEnemyIndex);
 
             GameObject spawnPoint = spawnPoints[spawnPointsCounter[i]];
 
