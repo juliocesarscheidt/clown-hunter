@@ -1645,6 +1645,9 @@ MonoBehaviour:
   gunReloadSound:
   - {fileID: 8300000, guid: 5282f3be90851e54f8ae737aba4d08e3, type: 3}
   - {fileID: 8300000, guid: 9ca81837384828f48833d2ec6096629d, type: 3}
+  gunEmptySound:
+  - {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}
+  - {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}
   timeToShootInterval:
   - 0.3
   - 0.05

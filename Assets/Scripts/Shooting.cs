@@ -13,6 +13,7 @@ public class Shooting : MonoBehaviour
 
     public AudioClip[] gunShotSound;
     public AudioClip[] gunReloadSound;
+    public AudioClip[] gunEmptySound;
 
     private int selectedGun = 0;
 
@@ -39,7 +40,7 @@ public class Shooting : MonoBehaviour
 
         Aim();
 
-        if (Input.GetKeyDown(KeyCode.R) &&
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading &&
             playerStats.currentBullets[selectedGun] != playerStats.maxBullets[selectedGun] &&
             playerStats.availableBullets[selectedGun] > 0) {
 
@@ -54,43 +55,49 @@ public class Shooting : MonoBehaviour
     }
 
     void Shoot() {
-        if (!isReloading && playerStats.currentBullets[selectedGun] > 0 &&
+        if (!isReloading &&
             ((!isAutomaticGun && Input.GetMouseButtonDown(0)) ||
             (isAutomaticGun && Input.GetMouseButton(0)))
         ) {
-            if (Physics.Raycast(
-                Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit bulletHit)
-            ) {
-                gunAudioSource.PlayOneShot(gunShotSound[selectedGun]);
+            if (playerStats.currentBullets[selectedGun] > 0) {
+                if (Physics.Raycast(
+                    Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit bulletHit)
+                ) {
+                    gunAudioSource.PlayOneShot(gunShotSound[selectedGun]);
 
-                gunAnimator.Play("Shoot");
-                // gunAnimator.SetTrigger("Shoot");
+                    gunAnimator.Play("Shoot");
+                    // gunAnimator.SetTrigger("Shoot");
 
-                GameObject particleInstance = Instantiate(
-                    particleShotEffect,
-                    shotEffectPos[selectedGun].transform.position,
-                    shotEffectPos[selectedGun].transform.rotation
-                );
-                particleInstance.transform.parent = gunObject[selectedGun].transform;
-                Destroy(particleInstance, 0.1f);
+                    GameObject particleInstance = Instantiate(
+                        particleShotEffect,
+                        shotEffectPos[selectedGun].transform.position,
+                        shotEffectPos[selectedGun].transform.rotation
+                    );
+                    particleInstance.transform.parent = gunObject[selectedGun].transform;
+                    Destroy(particleInstance, 0.1f);
 
-                // damage
-                if (bulletHit.transform.CompareTag("EnemyHead")) {
-                    Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
-                    monster.ApplyDamage(playerStats.criticalHitDamage);
+                    // damage
+                    if (bulletHit.transform.CompareTag("EnemyHead")) {
+                        Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
+                        monster.ApplyDamage(playerStats.criticalHitDamage);
+                    }
+
+                    if (bulletHit.transform.CompareTag("Enemy")) {
+                        Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
+                        monster.ApplyDamage(playerStats.regularHitDamage);
+                    }
+
+                    // shoot control
+                    canShoot = false;
+                    shootTimer = 0f;
+
+                    playerStats.currentBullets[selectedGun]--;
+                    HudManager.Instance.AdjustBulletsCount();
                 }
 
-                if (bulletHit.transform.CompareTag("Enemy")) {
-                    Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
-                    monster.ApplyDamage(playerStats.regularHitDamage);
-                }
-
-                // shoot control
-                canShoot = false;
-                shootTimer = 0f;
-
-                playerStats.currentBullets[selectedGun]--;
-                HudManager.Instance.AdjustBulletsCount();
+            // no bullets
+            } else {
+                gunAudioSource.PlayOneShot(gunEmptySound[selectedGun]);
             }
         }
     }
@@ -102,8 +109,7 @@ public class Shooting : MonoBehaviour
             gunAnimator.SetBool("isReloading", false);
             gunAnimator.SetBool("isAiming", true);
 
-            if (shootTimer > timeToShootInterval[selectedGun] &&
-                playerStats.currentBullets[selectedGun] > 0) {
+            if (shootTimer > timeToShootInterval[selectedGun]) {
                 canShoot = true;
             }
 
