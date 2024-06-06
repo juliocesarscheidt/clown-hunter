@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd941709babebb4f895da0b934f83a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletsAmount: 50
 --- !u!65 &3224205850390393158
 BoxCollider:
   m_ObjectHideFlags: 0

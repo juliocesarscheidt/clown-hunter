@@ -3,25 +3,26 @@ using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
 {
-    private GameObject player;
     private PlayerStats playerStats;
-    public List<string> tagsToInteract = new List<string> { "Paper", "GunAmmo" };
+    public List<string> tagsToInteract = new() { "Paper", "GunAmmo" };
+    private AudioSource interactionAudioSource;
 
     void Start() {
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerStats = player.GetComponent<PlayerStats>();
+        playerStats = FindObjectOfType<PlayerStats>();
+
+        interactionAudioSource = GetComponent<AudioSource>();
     }
 
     private void LateUpdate() {
-        if (HudManager.Instance.IsPaused() || playerStats.isDead) {
+        if (HudManager.Instance.IsPaused() || playerStats.isDead || playerStats.isReloading) {
             return;
         }
 
-        Vector3 middle = new Vector3(0.5F, 0.5F, 0);
+        Vector3 middle = new(0.5F, 0.5F, 0);
 
         Ray ray = Camera.main.ViewportPointToRay(middle);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
-            float distanceToPlayer = Vector3.Distance(hit.transform.position, player.transform.position);
+            float distanceToPlayer = Vector3.Distance(hit.transform.position, playerStats.transform.position);
             if (distanceToPlayer > 5f) {
                 HudManager.Instance.HidePressEObject();
                 return;
@@ -34,6 +35,7 @@ public class InteractionManager : MonoBehaviour
                         if (Input.GetKeyDown(KeyCode.E)) {
                             if (hit.transform.gameObject.TryGetComponent(out Interactable obj)) {
                                 obj.Collect();
+                                interactionAudioSource.Play();
                                 Destroy(hit.transform.gameObject);
                             }
                         }

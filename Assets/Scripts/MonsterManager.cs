@@ -5,7 +5,6 @@ public class MonsterManager : MonoBehaviour
 {
     public static MonsterManager Instance { get; private set; }
 
-    private GameObject player;
     private PlayerStats playerStats;
 
     public List<GameObject> spawnPoints;
@@ -23,14 +22,7 @@ public class MonsterManager : MonoBehaviour
     }
 
     void Start() {
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerStats = player.GetComponent<PlayerStats>();
-    }
-
-    void FixedUpdate() {
-        if (HudManager.Instance.IsPaused() || playerStats.isDead) {
-            return;
-        }
+        playerStats = FindObjectOfType<PlayerStats>();
         SpawnEnemies();
     }
 
@@ -53,13 +45,30 @@ public class MonsterManager : MonoBehaviour
 
         List<int> spawnPointsCounter = new();
 
+        int currentRetriesToFindSpawnPoints = 0;
         for (int i = 0; i < diffEnemiesToSpawn; i++) {
-            // get a random spawn point
+            // get a random spawn point, try to not get a repeated one
             int randomSpawnPointIndex = Random.Range(0, spawnPointsQuantity);
-            if (spawnPointsCounter.Contains(randomSpawnPointIndex)) {
+
+            currentRetriesToFindSpawnPoints++;
+            //Debug.Log("currentRetriesToFindSpawnPoints " + currentRetriesToFindSpawnPoints);
+
+            float distanceToPlayer = Vector3.Distance(spawnPoints[randomSpawnPointIndex].transform.position,
+                playerStats.transform.position);
+            //Debug.Log("distanceToPlayer " + distanceToPlayer);
+
+            if (distanceToPlayer <= 20f) {
+                i--;
+                continue;
+            } else if (spawnPointsCounter.Contains(randomSpawnPointIndex) && currentRetriesToFindSpawnPoints < 10) {
                 i--;
                 continue;
             }
+
+            // if (spawnPointsCounter.Contains(randomSpawnPointIndex)) {
+            //     Debug.Log("spawn repeated");
+            // }
+
             spawnPointsCounter.Add(randomSpawnPointIndex);
         }
 

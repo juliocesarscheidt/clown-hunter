@@ -1,5 +1,7 @@
 using StarterAssets;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(FirstPersonController))]
@@ -11,20 +13,84 @@ public class PlayerStats : MonoBehaviour
     public int criticalHitDamage = 100;
     public int regularHitDamage = 50;
 
-    public int[] currentBullets; // new int[] { 6, 30 }
-    public int[] maxBullets; // new int[] { 6, 30 }
-    public int[] availableBullets; // new int[] { 12, 60 }
-
     private FirstPersonController playerController;
 
     public AudioSource stepsAudioSource;
     public AudioClip stepsWalkingAudioClip;
     public AudioClip stepsRunningAudioClip;
-
     public Animator cameraAnimator;
+
+    public bool canShoot = false;
+    public bool isReloading = false;
+    public bool isAiming = false;
+
+    public GameObject[] shotParticleEffectPos;
+
+    private Animator gunAnimator;
+    private AudioSource gunAudioSource;
+
+    public GameObject gunsGameObjectParent;
+    public List<Weapon> guns;
+    [SerializeField]
+    private Weapon selectedGun;
+    [SerializeField]
+    private int selectedGunIndex = 0;
+    [SerializeField]
+    private GameObject selectedGunObject;
+
+    [SerializeField]
+    private List<int> currentBullets = new();
+    [SerializeField]
+    private List<int> maxBullets = new();
+    [SerializeField]
+    private List<int> availableBullets = new();
+
+    void Awake() {
+        for (int i = 0; i < guns.Count; i++) {
+            currentBullets.Add(guns[i].currentBullets);
+            maxBullets.Add(guns[i].maxBullets);
+            availableBullets.Add(guns[i].availableBullets);
+        }
+    }
 
     void Start() {
         playerController = GetComponent<FirstPersonController>();
+        SelectGun(0);
+    }
+
+    void Update() {
+        if (HudManager.Instance.IsPaused() || isDead) {
+            return;
+        }
+
+        if (!isReloading) {
+            Enumerable.Range(1, guns.Count).ToList().ForEach(idx => {
+                if (Input.GetKeyDown(idx.ToString())) {
+                    SelectGunByHotkey(idx);
+                }
+            });
+        }
+    }
+
+    void SelectGun(int index) {
+        // hide other guns
+        for (int i = 0; i < gunsGameObjectParent.transform.childCount; i++) {
+            gunsGameObjectParent.transform.GetChild(i).gameObject.SetActive(false);
+        }
+        selectedGunIndex = index;
+        selectedGun = guns[selectedGunIndex];
+
+        selectedGunObject = gunsGameObjectParent.transform.GetChild(selectedGunIndex).gameObject;
+        selectedGunObject.SetActive(true);
+
+        gunAnimator = selectedGunObject.GetComponent<Animator>();
+        gunAudioSource = selectedGunObject.GetComponent<AudioSource>();
+
+        HudManager.Instance.AdjustBulletsCount();
+    }
+
+    void SelectGunByHotkey(int hotkey) {
+        SelectGun(hotkey - 1);
     }
 
     public void PlayerWalk(bool isWalking) {
@@ -75,10 +141,10 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    public void CollectAmmo() {
-        for (int i = 0; i < availableBullets.Length; i++) {
-            availableBullets[i] += maxBullets[i];
-        }
+    public void CollectAmmo(int bulletsAmount) {
+        // add bullets to the current gun
+        availableBullets[selectedGunIndex] += bulletsAmount;
+        HudManager.Instance.AdjustBulletsCount();
     }
 
     private IEnumerator EnablePlayerMovementAfterSeconds(float seconds) {
@@ -99,4 +165,44 @@ public class PlayerStats : MonoBehaviour
         playerController.CanMoveCamera = true;
     }
 
+    public Animator GunAnimator {
+        get { return gunAnimator; }
+    }
+
+    public AudioSource GunAudioSource {
+        get { return gunAudioSource; }
+    }
+
+    public int SelectedGunIndex {
+        get { return selectedGunIndex; }
+    }
+
+    public GameObject SelectedGunObject {
+        get { return selectedGunObject; }
+    }
+
+    public Weapon SelectedGun {
+        get { return selectedGun; }
+    }
+
+    public int CurrentBullets {
+        get { return currentBullets[selectedGunIndex]; }
+        set {
+            currentBullets[selectedGunIndex] = value;
+        }
+    }
+
+    public int MaxBullets {
+        get { return maxBullets[selectedGunIndex]; }
+        set {
+            maxBullets[selectedGunIndex] = value;
+        }
+    }
+
+    public int AvailableBullets {
+        get { return availableBullets[selectedGunIndex]; }
+        set {
+            availableBullets[selectedGunIndex] = value;
+        }
+    }
 }

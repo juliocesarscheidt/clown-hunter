@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11e3236c57dedb447989f6113a0d869f, type: 3}
+  m_Name: Revolver
+  m_EditorClassIdentifier: 
+  gunName: Revolver
+  gunPrefabObject: {fileID: 1551343012250796918, guid: b255adaa36dd10246b776549c1b4c206,
+    type: 3}
+  particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
+    type: 3}
+  gunShotSound: {fileID: 8300000, guid: 2cdbef1639fff6c439e9d7b8e6c51919, type: 3}
+  gunReloadSound: {fileID: 8300000, guid: 5282f3be90851e54f8ae737aba4d08e3, type: 3}
+  gunEmptySound: {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}
+  timeToShootInterval: 0.3
+  timeToReloadInterval: 3
+  isAutomaticGun: 0
+  currentBullets: 6
+  maxBullets: 6
+  availableBullets: 18

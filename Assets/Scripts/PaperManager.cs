@@ -5,12 +5,13 @@ public class PaperManager : MonoBehaviour
 {
     public static PaperManager Instance { get; private set; }
 
-    private GameObject player;
     private PlayerStats playerStats;
 
     public int paperTotalToCollect = 5;
     private int paperCollected = 0;
     public TextMeshProUGUI paperCounterText;
+
+    public int enemiesToIncrease = 1;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -21,8 +22,7 @@ public class PaperManager : MonoBehaviour
     }
 
     void Start() {
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerStats = player.GetComponent<PlayerStats>();
+        playerStats = FindObjectOfType<PlayerStats>();
 
         AdjustPaperCounterText();
     }
@@ -30,6 +30,9 @@ public class PaperManager : MonoBehaviour
     public void CollectPaper() {
         paperCollected++;
         AdjustPaperCounterText();
+
+        MonsterManager.Instance.enemiesToSpawn += enemiesToIncrease;
+        MonsterManager.Instance.SpawnEnemies();
 
         if (paperCollected >= paperTotalToCollect) {
             HudManager.Instance.ShowEndGameImage();

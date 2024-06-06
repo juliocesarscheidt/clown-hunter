@@ -3,34 +3,13 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerStats))]
 public class Shooting : MonoBehaviour
 {
-    public GameObject[] gunObject;
     public GameObject particleShotEffect;
-    public GameObject[] shotEffectPos;
-
-    private AudioSource gunAudioSource;
-    private Animator gunAnimator;
     private PlayerStats playerStats;
-
-    public AudioClip[] gunShotSound;
-    public AudioClip[] gunReloadSound;
-    public AudioClip[] gunEmptySound;
-
-    private int selectedGun = 0;
-
-    public float[] timeToShootInterval; // new float[] { 0.3f, 0.05f }
     private float shootTimer = 0f;
-    private bool canShoot = false;
-
-    public float timeToReloadInterval = 3f;
     private float reloadTimer = 0f;
-    private bool isReloading = false;
-
-    private bool isAutomaticGun = false;
 
     void Start() {
         playerStats = GetComponent<PlayerStats>();
-
-        SetCurrentGun();
     }
 
     void Update() {
@@ -39,41 +18,40 @@ public class Shooting : MonoBehaviour
         }
 
         Aim();
+        
+        if (Input.GetKeyDown(KeyCode.R) && !playerStats.isReloading &&
+            playerStats.CurrentBullets != playerStats.MaxBullets &&
+            playerStats.AvailableBullets > 0) {
 
-        if (Input.GetKeyDown(KeyCode.R) && !isReloading &&
-            playerStats.currentBullets[selectedGun] != playerStats.maxBullets[selectedGun] &&
-            playerStats.availableBullets[selectedGun] > 0) {
-
-            gunAudioSource.PlayOneShot(gunReloadSound[selectedGun]);
+            playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunReloadSound);
 
             reloadTimer = 0;
-            isReloading = true;
+            playerStats.isReloading = true;
         }
 
         ReloadGun();
-        ChangeGun();
     }
 
     void Shoot() {
-        if (!isReloading &&
-            ((!isAutomaticGun && Input.GetMouseButtonDown(0)) ||
-            (isAutomaticGun && Input.GetMouseButton(0)))
+        if (!playerStats.isReloading &&
+            ((!playerStats.SelectedGun.isAutomaticGun && Input.GetMouseButtonDown(0)) ||
+            (playerStats.SelectedGun.isAutomaticGun && Input.GetMouseButton(0)))
         ) {
-            if (playerStats.currentBullets[selectedGun] > 0) {
+            if (playerStats.CurrentBullets > 0) {
                 if (Physics.Raycast(
                     Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit bulletHit)
                 ) {
-                    gunAudioSource.PlayOneShot(gunShotSound[selectedGun]);
+                    playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunShotSound);
 
-                    gunAnimator.Play("Shoot");
+                    playerStats.GunAnimator.Play("Shoot");
                     // gunAnimator.SetTrigger("Shoot");
 
                     GameObject particleInstance = Instantiate(
                         particleShotEffect,
-                        shotEffectPos[selectedGun].transform.position,
-                        shotEffectPos[selectedGun].transform.rotation
+                        playerStats.shotParticleEffectPos[playerStats.SelectedGunIndex].transform.position,
+                        playerStats.shotParticleEffectPos[playerStats.SelectedGunIndex].transform.rotation
                     );
-                    particleInstance.transform.parent = gunObject[selectedGun].transform;
+                    particleInstance.transform.parent = playerStats.SelectedGunObject.transform;
                     Destroy(particleInstance, 0.1f);
 
                     // damage
@@ -84,103 +62,74 @@ public class Shooting : MonoBehaviour
 
                     if (bulletHit.transform.CompareTag("Enemy")) {
                         Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
-                        monster.ApplyDamage(playerStats.regularHitDamage);
+                        int damage = Random.Range(playerStats.regularHitDamage - 10, playerStats.regularHitDamage + 10);
+                        monster.ApplyDamage(damage);
                     }
 
                     // shoot control
-                    canShoot = false;
+                    playerStats.canShoot = false;
                     shootTimer = 0f;
 
-                    playerStats.currentBullets[selectedGun]--;
+                    playerStats.CurrentBullets--;
                     HudManager.Instance.AdjustBulletsCount();
                 }
 
-            // no bullets
+                // no bullets
             } else {
-                gunAudioSource.PlayOneShot(gunEmptySound[selectedGun]);
+                // make sure it's triggered by the click each time
+                if (Input.GetMouseButtonDown(0)) {
+                    playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunEmptySound);
+                }
             }
         }
     }
 
     void Aim() {
-        if (!isReloading && Input.GetMouseButton(1)) {
+        if (!playerStats.isReloading && Input.GetMouseButton(1)) {
             shootTimer += Time.deltaTime;
+            playerStats.isAiming = true;
 
-            gunAnimator.SetBool("isReloading", false);
-            gunAnimator.SetBool("isAiming", true);
+            playerStats.GunAnimator.SetBool("isReloading", false);
+            playerStats.GunAnimator.SetBool("isAiming", true);
 
-            if (shootTimer > timeToShootInterval[selectedGun]) {
-                canShoot = true;
+            if (shootTimer > playerStats.SelectedGun.timeToShootInterval) {
+                playerStats.canShoot = true;
             }
 
-            if (canShoot) {
+            if (playerStats.canShoot) {
                 Shoot();
             }
 
         } else {
-            canShoot = false;
             shootTimer = 0f;
+            playerStats.isAiming = false;
+            playerStats.canShoot = false;
 
-            gunAnimator.SetBool("isAiming", false);
+            playerStats.GunAnimator.SetBool("isAiming", false);
         }
     }
 
     void ReloadGun() {
-        if (isReloading) {
-            gunAnimator.SetBool("isAiming", false);
-            gunAnimator.SetBool("isReloading", true);
+        if (playerStats.isReloading) {
+            playerStats.GunAnimator.SetBool("isAiming", false);
+            playerStats.GunAnimator.SetBool("isReloading", true);
 
             reloadTimer += Time.deltaTime;
 
-            if (reloadTimer > timeToReloadInterval) {
+            if (reloadTimer > playerStats.SelectedGun.timeToReloadInterval) {
                 int diffBullets = Mathf.Min(
-                    playerStats.maxBullets[selectedGun] - playerStats.currentBullets[selectedGun],
-                    playerStats.availableBullets[selectedGun]
-                 );
-                playerStats.availableBullets[selectedGun] -= diffBullets;
-                playerStats.currentBullets[selectedGun] += diffBullets;
+                    playerStats.MaxBullets - playerStats.CurrentBullets,
+                    playerStats.AvailableBullets
+                );
+                playerStats.AvailableBullets -= diffBullets;
+                playerStats.CurrentBullets += diffBullets;
 
                 HudManager.Instance.AdjustBulletsCount();
 
                 reloadTimer = 0;
-                isReloading = false;
-                gunAnimator.SetBool("isReloading", false);
+                playerStats.isReloading = false;
+                playerStats.GunAnimator.SetBool("isReloading", false);
             }
         }
-    }
-
-    void ChangeGun() {
-        if (isReloading) {
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            selectedGun = 0;
-            SetCurrentGun();
-
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            selectedGun = 1;
-            SetCurrentGun();
-        }
-
-        HudManager.Instance.AdjustBulletsCount();
-    }
-
-    void SetCurrentGun() {
-        foreach (var gun in gunObject) {
-            gun.SetActive(false);
-        }
-        gunObject[selectedGun].SetActive(true);
-        gunAnimator = gunObject[selectedGun].GetComponent<Animator>();
-        gunAudioSource = gunObject[selectedGun].GetComponent<AudioSource>();
-
-        if (selectedGun == 0) {
-            isAutomaticGun = false;
-        } else if (selectedGun == 1) {
-            isAutomaticGun = true;
-        }
-    }
-
-    public int SelectedGun() {
-        return selectedGun;
     }
 }

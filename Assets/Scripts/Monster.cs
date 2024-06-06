@@ -1,12 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-using System;
 
 public class Monster : MonoBehaviour
 {
     private NavMeshAgent agent;
-    private GameObject player;
     private PlayerStats playerStats;
     private Animator animator;
 
@@ -25,8 +23,7 @@ public class Monster : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
 
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerStats = player.GetComponent<PlayerStats>();
+        playerStats = FindObjectOfType<PlayerStats>();
 
         animator.SetBool("Running", false);
         animator.SetBool("Walking", true);
@@ -41,11 +38,11 @@ public class Monster : MonoBehaviour
         }
 
         if (canWalk) {
-            agent.SetDestination(player.transform.position);
+            agent.SetDestination(playerStats.transform.position);
 
             if (!isRunning && !isAttacking) {
                 timerToTaunt += Time.deltaTime;
-                if (timerToTaunt >= UnityEngine.Random.Range(15, 45)) {
+                if (timerToTaunt >= Random.Range(15, 55)) {
                     StopWalking();
 
                     StartCoroutine(WalkAfterSeconds(1));
@@ -71,7 +68,8 @@ public class Monster : MonoBehaviour
 
             animator.SetTrigger("Attack");
 
-            playerStats.ApplyDamage(regularHitDamage);
+            int damage = Random.Range(regularHitDamage - 10, regularHitDamage + 10);
+            playerStats.ApplyDamage(damage);
             // Destroy(gameObject);
         }
     }
@@ -86,18 +84,19 @@ public class Monster : MonoBehaviour
         float damageTime = 1f;
 
         // 50% chance of running or walking
-        if (UnityEngine.Random.Range(0, 2) == 0) {
+        if (Random.Range(0, 2) == 0) {
             StartCoroutine(WalkAfterSeconds(damageTime));
         } else {
             StartCoroutine(RunAfterSeconds(damageTime));
-            // after N seconds, start walking again
-            int randSeconds = UnityEngine.Random.Range(4, 9);
+            // after N seconds (from 4 to 10), start walking again
+            int randSeconds = Random.Range(4, 11);
             StartCoroutine(WalkAfterSeconds(randSeconds));
         }
 
         if (health <= 0) {
             health = 0;
             isDead = true;
+            MonsterManager.Instance.SpawnEnemies();
             Destroy(gameObject);
         }
     }

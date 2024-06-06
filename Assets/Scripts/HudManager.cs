@@ -24,7 +24,6 @@ public class HudManager : MonoBehaviour
     private float showBloodImageTimer = 0f;
     public Color bloodImageColorDefault;
 
-    private GameObject player;
     private PlayerStats playerStats;
     private bool isPaused = false;
 
@@ -41,8 +40,7 @@ public class HudManager : MonoBehaviour
     }
 
     void Start() {
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerStats = player.GetComponent<PlayerStats>();
+        playerStats = FindObjectOfType<PlayerStats>();
 
         LockCursor();
         reticle.SetActive(true);
@@ -158,9 +156,9 @@ public class HudManager : MonoBehaviour
     }
 
     public void AdjustBulletsCount() {
-        if (player.TryGetComponent<Shooting>(out var playerShooting)) {
+        if (playerStats != null) {
             bulletsCounterText.text =
-                $"{playerStats.currentBullets[playerShooting.SelectedGun()]}/{playerStats.availableBullets[playerShooting.SelectedGun()]}";
+                $"{playerStats.CurrentBullets}/{playerStats.AvailableBullets}";
         }
     }
 
