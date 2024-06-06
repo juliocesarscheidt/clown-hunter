@@ -1,12 +1,18 @@
+using Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerStats))]
 public class Shooting : MonoBehaviour
 {
     public GameObject particleShotEffect;
+
     private PlayerStats playerStats;
     private float shootTimer = 0f;
     private float reloadTimer = 0f;
+
+    public CinemachineVirtualCamera virtualCamera;
+    public Camera gunsCamera;
+    public int defaultFOV = 50;
 
     void Start() {
         playerStats = GetComponent<PlayerStats>();
@@ -18,8 +24,8 @@ public class Shooting : MonoBehaviour
         }
 
         Aim();
-        
-        if (Input.GetKeyDown(KeyCode.R) && !playerStats.isReloading &&
+
+        if (CanManageGun() && Input.GetKeyDown(KeyCode.R) &&
             playerStats.CurrentBullets != playerStats.MaxBullets &&
             playerStats.AvailableBullets > 0) {
 
@@ -32,10 +38,14 @@ public class Shooting : MonoBehaviour
         ReloadGun();
     }
 
+    private bool CanManageGun() {
+        return !playerStats.isReloading && !playerStats.isBeingDamaged;
+    }
+
     void Shoot() {
-        if (!playerStats.isReloading &&
-            ((!playerStats.SelectedGun.isAutomaticGun && Input.GetMouseButtonDown(0)) ||
-            (playerStats.SelectedGun.isAutomaticGun && Input.GetMouseButton(0)))
+        if (CanManageGun() &&
+            ((!playerStats.SelectedGun.isAutomaticGun && Input.GetButtonDown("Fire1")) ||
+            (playerStats.SelectedGun.isAutomaticGun && Input.GetButton("Fire1")))
         ) {
             if (playerStats.CurrentBullets > 0) {
                 if (Physics.Raycast(
@@ -77,7 +87,7 @@ public class Shooting : MonoBehaviour
                 // no bullets
             } else {
                 // make sure it's triggered by the click each time
-                if (Input.GetMouseButtonDown(0)) {
+                if (Input.GetButtonDown("Fire1")) {
                     playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunEmptySound);
                 }
             }
@@ -85,12 +95,15 @@ public class Shooting : MonoBehaviour
     }
 
     void Aim() {
-        if (!playerStats.isReloading && Input.GetMouseButton(1)) {
+        if (CanManageGun() && Input.GetButton("Fire2")) {
             shootTimer += Time.deltaTime;
             playerStats.isAiming = true;
 
             playerStats.GunAnimator.SetBool("isReloading", false);
             playerStats.GunAnimator.SetBool("isAiming", true);
+
+            virtualCamera.m_Lens.FieldOfView = 35;
+            gunsCamera.fieldOfView = 35;
 
             if (shootTimer > playerStats.SelectedGun.timeToShootInterval) {
                 playerStats.canShoot = true;
@@ -101,6 +114,9 @@ public class Shooting : MonoBehaviour
             }
 
         } else {
+            virtualCamera.m_Lens.FieldOfView = defaultFOV;
+            gunsCamera.fieldOfView = defaultFOV;
+
             shootTimer = 0f;
             playerStats.isAiming = false;
             playerStats.canShoot = false;

@@ -901,6 +901,7 @@ MonoBehaviour:
   canShoot: 0
   isReloading: 0
   isAiming: 0
+  isBeingDamaged: 0
   shotParticleEffectPos:
   - {fileID: 30103883157732002}
   - {fileID: 6127752408422742704}
@@ -911,6 +912,9 @@ MonoBehaviour:
   selectedGun: {fileID: 11400000, guid: 0805304669691d44fb82de214c953a16, type: 2}
   selectedGunIndex: 0
   selectedGunObject: {fileID: 208045414655017588}
+  currentBullets: 
+  maxBullets: 
+  availableBullets: 
 --- !u!114 &8730273328953731657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -925,6 +929,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
     type: 3}
+  virtualCamera: {fileID: 7480250034106582349}
+  gunsCamera: {fileID: 5671610046709554143}
+  defaultFOV: 50
 --- !u!114 &3615006368777618069
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,11 +20,7 @@ public class LevelLoaderManager : MonoBehaviour
     void Start() {
         animator = GetComponentInChildren<Animator>();
     }
-
-    public void LoadNextLevel() {
-        StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex + 1));
-    }
-
+   
     public IEnumerator LoadLevel(int levelIndex) {
         // play animation
         animator.SetTrigger("Start");
@@ -36,6 +32,10 @@ public class LevelLoaderManager : MonoBehaviour
 
     public void LoadMenu() {
         StartCoroutine(LoadLevel(0));
+    }
+
+    public void LoadNextLevel() {
+        StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex + 1));
     }
 
     public void Quit() {

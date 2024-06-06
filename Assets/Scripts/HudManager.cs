@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class HudManager : MonoBehaviour
 {
@@ -15,8 +16,11 @@ public class HudManager : MonoBehaviour
 
     public GameObject GameOverImage;
     public GameObject EndGameImage;
-    public GameObject pressEGameObject;
-    public GameObject optionsPanel;
+    public GameObject PressEGameObject;
+    public GameObject PauseGamePanel;
+
+    public GameObject OptionsGamePanelBg;
+    public List<GameObject> OptionsGamePanelLayers;
 
     public Image bloodImage;
     private bool showBloodImage = false;
@@ -51,9 +55,9 @@ public class HudManager : MonoBehaviour
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape) && !playerStats.isDead) {
             if (!isPaused) {
-                ShowOptions();
+                ShowPauseGamePanel();
             } else {
-                HideOptions();
+                HidePauseGamePanel();
             }
         }
 
@@ -89,14 +93,14 @@ public class HudManager : MonoBehaviour
     }
 
     public void ShowPressEObject() {
-        pressEGameObject.SetActive(true);
+        PressEGameObject.SetActive(true);
     }
 
     public void HidePressEObject() {
-        pressEGameObject.SetActive(false);
+        PressEGameObject.SetActive(false);
     }
 
-    public void ShowOptions() {
+    public void ShowPauseGamePanel() {
         isPaused = true;
         playerStats.DisablePlayerMovementAndCamera();
 
@@ -104,10 +108,12 @@ public class HudManager : MonoBehaviour
         reticle.SetActive(false);
 
         Time.timeScale = 0;
-        optionsPanel.SetActive(true);
+
+        HideOptionsPanels();
+        PauseGamePanel.SetActive(true);
     }
 
-    public void HideOptions() {
+    public void HidePauseGamePanel() {
         isPaused = false;
         playerStats.EnablePlayerMovementAndCamera();
 
@@ -115,7 +121,44 @@ public class HudManager : MonoBehaviour
         reticle.SetActive(true);
 
         Time.timeScale = 1;
-        optionsPanel.SetActive(false);
+
+        HideOptionsPanels();
+        PauseGamePanel.SetActive(false);
+    }
+
+    private void HideOptionsPanels() {
+        for (int i = 0; i < OptionsGamePanelLayers.Count; i++) {
+            OptionsGamePanelLayers[i].SetActive(false);
+        }
+        OptionsGamePanelBg.SetActive(false);
+    }
+
+    public void EnterOptionsPanel(PanelObject panel) {
+        if (!isPaused) { return; }
+        PauseGamePanel.SetActive(false);
+
+        OptionsGamePanelBg.SetActive(true);
+        for (int i = 0; i < panel.level; i++) {
+            OptionsGamePanelLayers[i].SetActive(false);
+        }
+        OptionsGamePanelLayers[panel.level].SetActive(true);
+    }
+
+    public void ExitOptionsPanel(PanelObject panel) {
+        if (!isPaused) { return; }
+        OptionsGamePanelLayers[panel.level].SetActive(false);
+
+        // return to parent panel or close and return to pause panel
+        if (panel.level > 0 && panel.parent != null) {
+            EnterOptionsPanel(panel.parent);
+        } else if (panel.level == 0) {
+            OptionsGamePanelBg.SetActive(false);
+            PauseGamePanel.SetActive(true);
+        }
+    }
+
+    public void ApplyOptions() {
+        VolumeManager.Instance.ApplySoundSettings();
     }
 
     public void RestartGame() {

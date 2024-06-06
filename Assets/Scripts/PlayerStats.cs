@@ -23,6 +23,7 @@ public class PlayerStats : MonoBehaviour
     public bool canShoot = false;
     public bool isReloading = false;
     public bool isAiming = false;
+    public bool isBeingDamaged = false;
 
     public GameObject[] shotParticleEffectPos;
 
@@ -126,8 +127,9 @@ public class PlayerStats : MonoBehaviour
     public void ApplyDamage(int damage) {
         health = Mathf.Max(health - damage, 0);
 
+        isBeingDamaged = true;
         playerController.CanMovePlayer = false;
-        StartCoroutine(EnablePlayerMovementAfterSeconds(1.5f));
+        StartCoroutine(EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(1.5f));
 
         cameraAnimator.SetTrigger("Damage");
 
@@ -147,9 +149,10 @@ public class PlayerStats : MonoBehaviour
         HudManager.Instance.AdjustBulletsCount();
     }
 
-    private IEnumerator EnablePlayerMovementAfterSeconds(float seconds) {
+    private IEnumerator EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
+        isBeingDamaged = false;
         playerController.CanMovePlayer = true;
     }
 
