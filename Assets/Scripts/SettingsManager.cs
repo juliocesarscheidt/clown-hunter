@@ -2,17 +2,21 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VolumeManager : MonoBehaviour
+public class SettingsManager : MonoBehaviour
 {
-    public static VolumeManager Instance { get; private set; }
+    public static SettingsManager Instance { get; private set; }
 
     [SerializeField]
     private AudioSource[] audioSources;
     private float[] audioSourcesOriginalVolumes;
 
-    public float defaultSoundVolume = 1f;
     public Slider audioSlider;
+    public float defaultSoundVolume = 1f;
     public TextMeshProUGUI volumeInfoText;
+
+    public TMP_Dropdown difficultyDropdown;
+    public int defaultDifficulty = 0;
+    public int enemyMultiplierByDifficulty = 2;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -33,6 +37,28 @@ public class VolumeManager : MonoBehaviour
         float soundVolume = PlayerPrefs.GetFloat("sound_volume", defaultSoundVolume);
         audioSlider.value = soundVolume;
         SetSoundSettings(soundVolume);
+
+        int difficulty = PlayerPrefs.GetInt("difficulty", defaultDifficulty);
+        difficultyDropdown.value = difficulty;
+        SetDifficultySettings(difficulty);
+    }
+
+    private void SetDifficultySettings(int difficulty) {
+        // difficulty 0 = 2 enemies
+        // difficulty 1 = 4 enemies
+        // difficulty 2 = 6 enemies
+        if (PaperManager.Instance != null) {
+            PaperManager.Instance.enemiesToIncreaseOnPaperCollected = (difficulty + 1) * enemyMultiplierByDifficulty;
+        }
+    }
+
+    public void ApplyDifficultySettings() {
+        int difficulty = difficultyDropdown.value;
+        PlayerPrefs.SetInt("difficulty", difficulty);
+        SetDifficultySettings(difficulty);
+        if (MonsterManager.Instance != null) {
+            MonsterManager.Instance.SpawnEnemiesDelayed();
+        }
     }
 
     private void SetSoundSettings(float soundVolume) {

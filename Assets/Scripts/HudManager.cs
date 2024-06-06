@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class HudManager : MonoBehaviour
 {
@@ -51,11 +49,8 @@ public class HudManager : MonoBehaviour
 
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
-
         isRunningGame = true;
-
         HidePauseGamePanel();
-
         AdjustBulletsCount();
     }
 
@@ -75,9 +70,7 @@ public class HudManager : MonoBehaviour
         if (showTempInfoText) {
             showTempInfoTextTimer += Time.unscaledDeltaTime;
             if (showTempInfoTextTimer >= 1.5f) {
-                tempInfoText.text = "";
-                tempInfoText.gameObject.SetActive(false);
-                showTempInfoText = false;
+                SetAndActivateTempInfoText("");
                 showTempInfoTextTimer = 0f;
             }
         }
@@ -181,16 +174,21 @@ public class HudManager : MonoBehaviour
     }
 
     public void ApplyOptions() {
-        VolumeManager.Instance.ApplySoundSettings();
-        tempInfoText.gameObject.SetActive(true);
-        tempInfoText.text = "Options saved";
-        showTempInfoText = true;
+        SettingsManager.Instance.ApplySoundSettings();
+        SettingsManager.Instance.ApplyDifficultySettings();
+        SetAndActivateTempInfoText("Options saved");
+    }
+
+    private void SetAndActivateTempInfoText(string text) {
+        showTempInfoText = text.Length > 0;
+        tempInfoText.gameObject.SetActive(showTempInfoText);
+        tempInfoText.text = text;
     }
 
     public void RestartGame() {
         isRunningGame = false;
         isPaused = false;
-        HidePauseGamePanel();
+        Time.timeScale = 1;
         StartCoroutine(LevelLoaderManager.Instance.LoadLevel(1));
     }
 

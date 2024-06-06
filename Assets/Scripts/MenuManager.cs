@@ -15,9 +15,7 @@ public class MenuManager : MonoBehaviour
         if (showTempInfoText) {
             showTempInfoTextTimer += Time.unscaledDeltaTime;
             if (showTempInfoTextTimer >= 1.5f) {
-                tempInfoText.text = "";
-                tempInfoText.gameObject.SetActive(false);
-                showTempInfoText = false;
+                SetAndActivateTempInfoText("");
                 showTempInfoTextTimer = 0f;
             }
         }
@@ -54,9 +52,14 @@ public class MenuManager : MonoBehaviour
     }
 
     public void ApplyOptions() {
-        VolumeManager.Instance.ApplySoundSettings();
-        tempInfoText.gameObject.SetActive(true);
-        tempInfoText.text = "Options saved";
-        showTempInfoText = true;
+        SettingsManager.Instance.ApplySoundSettings();
+        SettingsManager.Instance.ApplyDifficultySettings();
+        SetAndActivateTempInfoText("Options saved");
+    }
+
+    private void SetAndActivateTempInfoText(string text) {
+        showTempInfoText = text.Length > 0;
+        tempInfoText.gameObject.SetActive(showTempInfoText);
+        tempInfoText.text = text;
     }
 }

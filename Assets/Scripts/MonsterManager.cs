@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MonsterManager : MonoBehaviour
@@ -40,6 +39,10 @@ public class MonsterManager : MonoBehaviour
     }
 
     public void SpawnEnemies() {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+            return;
+        }
+
         enemiesAlive = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
         int enemiesPrefabsQuantity = enemiesPrefabs.Count;

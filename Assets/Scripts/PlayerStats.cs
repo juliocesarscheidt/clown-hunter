@@ -60,12 +60,14 @@ public class PlayerStats : MonoBehaviour
     }
 
     void Update() {
-        if (HudManager.Instance.IsPaused) {
-            GunAudioSource.Pause();
-            stepsAudioSource.Pause();
-        } else {
-            GunAudioSource.UnPause();
-            stepsAudioSource.UnPause();
+        if (HudManager.Instance.IsRunningGame) {
+            if (HudManager.Instance.IsPaused) {
+                GunAudioSource.Pause();
+                stepsAudioSource.Pause();
+            } else {
+                GunAudioSource.UnPause();
+                stepsAudioSource.UnPause();
+            }
         }
 
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {

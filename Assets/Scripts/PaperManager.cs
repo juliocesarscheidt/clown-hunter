@@ -9,7 +9,7 @@ public class PaperManager : MonoBehaviour
     private int paperCollected = 0;
     public TextMeshProUGUI paperCounterText;
 
-    public int enemiesToIncrease = 1;
+    public int enemiesToIncreaseOnPaperCollected = 2;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -27,7 +27,7 @@ public class PaperManager : MonoBehaviour
         paperCollected++;
         AdjustPaperCounterText();
 
-        MonsterManager.Instance.enemiesToSpawn += enemiesToIncrease;
+        MonsterManager.Instance.enemiesToSpawn += enemiesToIncreaseOnPaperCollected;
         MonsterManager.Instance.SpawnEnemiesDelayed();
 
         if (paperCollected >= paperTotalToCollect) {
