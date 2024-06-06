@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MonsterManager : MonoBehaviour
@@ -12,6 +14,7 @@ public class MonsterManager : MonoBehaviour
 
     public int enemiesToSpawn = 3;
     private int enemiesAlive = 0;
+    private int lastEnemySpawnedIndex = 0;
 
     void Awake() {
         if (Instance != null && Instance != this) {
@@ -26,70 +29,73 @@ public class MonsterManager : MonoBehaviour
         SpawnEnemies();
     }
 
+    public IEnumerator SpawnEnemiesAfterSeconds(float seconds) {
+        // wait
+        yield return new WaitForSeconds(seconds);
+        SpawnEnemies();
+    }
+
+    public void SpawnEnemiesDelayed() {
+        StartCoroutine(SpawnEnemiesAfterSeconds(2f));
+    }
+
     public void SpawnEnemies() {
         enemiesAlive = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        // Debug.Log("enemiesAlive " + enemiesAlive);
 
-        int enemiesQuantity = enemiesPrefabs.Count;
-
-        int enemiesToSpawnRatio = Mathf.CeilToInt(
-           float.Parse(enemiesToSpawn.ToString()) / float.Parse(enemiesQuantity.ToString()));
-        // Debug.Log("enemiesToSpawnRatio " + enemiesToSpawnRatio);
-        int[] enemiesSpawnedCounter = new int[enemiesQuantity];
-
+        int enemiesPrefabsQuantity = enemiesPrefabs.Count;
         int spawnPointsQuantity = spawnPoints.Count;
-        // Debug.Log("spawnPointsQuantity " + spawnPointsQuantity);
-
         int diffEnemiesToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
+
+        // Debug.Log("enemiesAlive " + enemiesAlive);
+        // Debug.Log("spawnPointsQuantity " + spawnPointsQuantity);
         // Debug.Log("diffEnemiesToSpawn " + diffEnemiesToSpawn);
 
         List<int> spawnPointsCounter = new();
 
         int currentRetriesToFindSpawnPoints = 0;
+
         for (int i = 0; i < diffEnemiesToSpawn; i++) {
             // get a random spawn point, try to not get a repeated one
             int randomSpawnPointIndex = Random.Range(0, spawnPointsQuantity);
 
             currentRetriesToFindSpawnPoints++;
-            //Debug.Log("currentRetriesToFindSpawnPoints " + currentRetriesToFindSpawnPoints);
 
-            float distanceToPlayer = Vector3.Distance(spawnPoints[randomSpawnPointIndex].transform.position,
+            float distanceToPlayer = Vector3.Distance(
+                spawnPoints[randomSpawnPointIndex].transform.position,
                 playerStats.transform.position);
-            //Debug.Log("distanceToPlayer " + distanceToPlayer);
 
             if (distanceToPlayer <= 20f) {
                 i--;
                 continue;
-            } else if (spawnPointsCounter.Contains(randomSpawnPointIndex) && currentRetriesToFindSpawnPoints < 10) {
+            } else if (spawnPointsCounter.Contains(randomSpawnPointIndex)
+                && currentRetriesToFindSpawnPoints < 10) {
                 i--;
                 continue;
             }
-
-            // if (spawnPointsCounter.Contains(randomSpawnPointIndex)) {
-            //     Debug.Log("spawn repeated");
-            // }
 
             spawnPointsCounter.Add(randomSpawnPointIndex);
         }
 
-        for (int i = 0; i < diffEnemiesToSpawn; i++) {
-            // get a random enemy
-            int randomEnemyIndex = Random.Range(0, enemiesQuantity);
-            if (enemiesSpawnedCounter[randomEnemyIndex] >= enemiesToSpawnRatio) {
-                i--;
-                continue;
-            }
-            enemiesSpawnedCounter[randomEnemyIndex] += 1;
-            // Debug.Log("randomEnemyIndex " + randomEnemyIndex);
+        // round robin index
+        int currentEnemySpawnedIndex = lastEnemySpawnedIndex;
+        // Debug.Log("currentEnemySpawnedIndex " + currentEnemySpawnedIndex);
 
+        for (int i = 0; i < diffEnemiesToSpawn; i++) {
             GameObject spawnPoint = spawnPoints[spawnPointsCounter[i]];
 
             // spawn the enemy
             Instantiate(
-                enemiesPrefabs[randomEnemyIndex],
+                enemiesPrefabs[currentEnemySpawnedIndex],
                 spawnPoint.transform.position,
                 spawnPoint.transform.rotation
             );
+
+            currentEnemySpawnedIndex++;
+            if (currentEnemySpawnedIndex >= enemiesPrefabsQuantity) {
+                currentEnemySpawnedIndex = 0;
+            }
+
+            lastEnemySpawnedIndex = currentEnemySpawnedIndex;
 
             enemiesAlive++;
         }

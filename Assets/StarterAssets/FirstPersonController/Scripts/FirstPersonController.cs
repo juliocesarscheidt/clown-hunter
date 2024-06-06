@@ -223,7 +223,8 @@ namespace StarterAssets
 				// move
 				inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
 
-				if (targetSpeed == MoveSpeed) {
+                // send message, this will call these methods in every script attached to this, if it contains the method
+                if (targetSpeed == MoveSpeed) {
                     gameObject.SendMessage("PlayerWalk", true);
                 } else if (targetSpeed == SprintSpeed) {
                     gameObject.SendMessage("PlayerRun", true);

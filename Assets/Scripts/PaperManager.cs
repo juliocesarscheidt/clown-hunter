@@ -32,7 +32,7 @@ public class PaperManager : MonoBehaviour
         AdjustPaperCounterText();
 
         MonsterManager.Instance.enemiesToSpawn += enemiesToIncrease;
-        MonsterManager.Instance.SpawnEnemies();
+        MonsterManager.Instance.SpawnEnemiesDelayed();
 
         if (paperCollected >= paperTotalToCollect) {
             HudManager.Instance.ShowEndGameImage();

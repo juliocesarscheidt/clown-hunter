@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +12,7 @@ public class VolumeManager : MonoBehaviour
 
     public float defaultSoundVolume = 1f;
     public Slider audioSlider;
+    public TextMeshProUGUI volumeInfoText;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -46,5 +46,9 @@ public class VolumeManager : MonoBehaviour
         float soundVolume = audioSlider.value;
         PlayerPrefs.SetFloat("sound_volume", soundVolume);
         SetSoundSettings(soundVolume);
+    }
+
+    public void SetVolumeInfoText() {
+        volumeInfoText.text = $"{Mathf.Round(audioSlider.value * 100)}";
     }
 }

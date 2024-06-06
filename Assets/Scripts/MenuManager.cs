@@ -1,12 +1,27 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
     public GameObject newGamePanel;
     public GameObject optionsGamePanelBg;
     public List<GameObject> optionsGamePanelLayers;
+    public TextMeshProUGUI tempInfoText;
+    private bool showTempInfoText = false;
+    private float showTempInfoTextTimer = 0f;
+
+    void Update() {
+        if (showTempInfoText) {
+            showTempInfoTextTimer += Time.unscaledDeltaTime;
+            if (showTempInfoTextTimer >= 1.5f) {
+                tempInfoText.text = "";
+                tempInfoText.gameObject.SetActive(false);
+                showTempInfoText = false;
+                showTempInfoTextTimer = 0f;
+            }
+        }
+    }
 
     public void LoadNextLevel() {
         LevelLoaderManager.Instance.LoadNextLevel();
@@ -20,8 +35,7 @@ public class MenuManager : MonoBehaviour
         newGamePanel.SetActive(false);
 
         optionsGamePanelBg.SetActive(true);
-        for (int i = 0; i < panel.level; i++)
-        {
+        for (int i = 0; i < panel.level; i++) {
             optionsGamePanelLayers[i].SetActive(false);
         }
         optionsGamePanelLayers[panel.level].SetActive(true);
@@ -31,11 +45,9 @@ public class MenuManager : MonoBehaviour
         optionsGamePanelLayers[panel.level].SetActive(false);
 
         // return to parent panel or close and return to pause panel
-        if (panel.level > 0 && panel.parent != null)
-        {
+        if (panel.level > 0 && panel.parent != null) {
             EnterOptionsPanel(panel.parent);
-        } else if (panel.level == 0)
-        {
+        } else if (panel.level == 0) {
             optionsGamePanelBg.SetActive(false);
             newGamePanel.SetActive(true);
         }
@@ -43,5 +55,8 @@ public class MenuManager : MonoBehaviour
 
     public void ApplyOptions() {
         VolumeManager.Instance.ApplySoundSettings();
+        tempInfoText.gameObject.SetActive(true);
+        tempInfoText.text = "Options saved";
+        showTempInfoText = true;
     }
 }

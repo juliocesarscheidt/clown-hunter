@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -32,8 +33,10 @@ public class HudManager : MonoBehaviour
     private bool isPaused = false;
 
     public GameObject reticle;
-
     public TextMeshProUGUI bulletsCounterText;
+    public TextMeshProUGUI tempInfoText;
+    private bool showTempInfoText = false;
+    private float showTempInfoTextTimer = 0f;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -63,6 +66,16 @@ public class HudManager : MonoBehaviour
 
         if (showBloodImage && !playerStats.isDead) {
             CheckBloodImage();
+        }
+
+        if (showTempInfoText) {
+            showTempInfoTextTimer += Time.unscaledDeltaTime;
+            if (showTempInfoTextTimer >= 1.5f) {
+                tempInfoText.text = "";
+                tempInfoText.gameObject.SetActive(false);
+                showTempInfoText = false;
+                showTempInfoTextTimer = 0f;
+            }
         }
     }
 
@@ -159,6 +172,9 @@ public class HudManager : MonoBehaviour
 
     public void ApplyOptions() {
         VolumeManager.Instance.ApplySoundSettings();
+        tempInfoText.gameObject.SetActive(true);
+        tempInfoText.text = "Options saved";
+        showTempInfoText = true;
     }
 
     public void RestartGame() {

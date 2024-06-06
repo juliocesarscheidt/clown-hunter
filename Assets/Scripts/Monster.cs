@@ -96,7 +96,7 @@ public class Monster : MonoBehaviour
         if (health <= 0) {
             health = 0;
             isDead = true;
-            MonsterManager.Instance.SpawnEnemies();
+            MonsterManager.Instance.SpawnEnemiesDelayed();
             Destroy(gameObject);
         }
     }
