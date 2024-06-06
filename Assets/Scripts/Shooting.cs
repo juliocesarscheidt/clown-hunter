@@ -12,14 +12,14 @@ public class Shooting : MonoBehaviour
 
     public CinemachineVirtualCamera virtualCamera;
     public Camera gunsCamera;
-    public int defaultFOV = 50;
+    public int defaultFieldOfView = 50;
 
-    void Start() {
+    void Awake() {
         playerStats = GetComponent<PlayerStats>();
     }
 
     void Update() {
-        if (HudManager.Instance.IsPaused() || playerStats.isDead) {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
         }
 
@@ -28,8 +28,6 @@ public class Shooting : MonoBehaviour
         if (CanManageGun() && Input.GetKeyDown(KeyCode.R) &&
             playerStats.CurrentBullets != playerStats.MaxBullets &&
             playerStats.AvailableBullets > 0) {
-
-            playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunReloadSound);
 
             reloadTimer = 0;
             playerStats.isReloading = true;
@@ -114,8 +112,8 @@ public class Shooting : MonoBehaviour
             }
 
         } else {
-            virtualCamera.m_Lens.FieldOfView = defaultFOV;
-            gunsCamera.fieldOfView = defaultFOV;
+            virtualCamera.m_Lens.FieldOfView = defaultFieldOfView;
+            gunsCamera.fieldOfView = defaultFieldOfView;
 
             shootTimer = 0f;
             playerStats.isAiming = false;
@@ -127,6 +125,12 @@ public class Shooting : MonoBehaviour
 
     void ReloadGun() {
         if (playerStats.isReloading) {
+            if (!playerStats.GunAudioSource.isPlaying
+                || playerStats.GunAudioSource.clip != playerStats.SelectedGun.gunReloadSound) {
+                playerStats.GunAudioSource.clip = playerStats.SelectedGun.gunReloadSound;
+                playerStats.GunAudioSource.Play();
+            }
+
             playerStats.GunAnimator.SetBool("isAiming", false);
             playerStats.GunAnimator.SetBool("isReloading", true);
 
@@ -145,6 +149,8 @@ public class Shooting : MonoBehaviour
                 reloadTimer = 0;
                 playerStats.isReloading = false;
                 playerStats.GunAnimator.SetBool("isReloading", false);
+
+                playerStats.GunAudioSource.clip = null;
             }
         }
     }

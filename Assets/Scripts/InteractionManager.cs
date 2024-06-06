@@ -14,7 +14,7 @@ public class InteractionManager : MonoBehaviour
     }
 
     private void LateUpdate() {
-        if (HudManager.Instance.IsPaused() || playerStats.isDead || playerStats.isReloading) {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
             return;
         }
 

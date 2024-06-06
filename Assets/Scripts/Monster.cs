@@ -33,7 +33,7 @@ public class Monster : MonoBehaviour
         if (playerStats.isDead) {
             StopWalking();
         }
-        if (HudManager.Instance.IsPaused() || playerStats.isDead) {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
         }
 

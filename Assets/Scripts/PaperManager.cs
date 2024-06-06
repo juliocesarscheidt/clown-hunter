@@ -5,8 +5,6 @@ public class PaperManager : MonoBehaviour
 {
     public static PaperManager Instance { get; private set; }
 
-    private PlayerStats playerStats;
-
     public int paperTotalToCollect = 5;
     private int paperCollected = 0;
     public TextMeshProUGUI paperCounterText;
@@ -22,8 +20,6 @@ public class PaperManager : MonoBehaviour
     }
 
     void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
-
         AdjustPaperCounterText();
     }
 

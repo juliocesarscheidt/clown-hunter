@@ -52,15 +52,23 @@ public class PlayerStats : MonoBehaviour
             maxBullets.Add(guns[i].maxBullets);
             availableBullets.Add(guns[i].availableBullets);
         }
+        playerController = GetComponent<FirstPersonController>();
     }
 
     void Start() {
-        playerController = GetComponent<FirstPersonController>();
         SelectGun(0);
     }
 
     void Update() {
-        if (HudManager.Instance.IsPaused() || isDead) {
+        if (HudManager.Instance.IsPaused) {
+            GunAudioSource.Pause();
+            stepsAudioSource.Pause();
+        } else {
+            GunAudioSource.UnPause();
+            stepsAudioSource.UnPause();
+        }
+
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
 
@@ -95,7 +103,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerWalk(bool isWalking) {
-        if (HudManager.Instance.IsPaused() || isDead) {
+        if (HudManager.Instance.IsPaused || isDead) {
             return;
         }
         if (isWalking) {
@@ -110,7 +118,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerRun(bool isRunning) {
-        if (HudManager.Instance.IsPaused() || isDead) {
+        if (HudManager.Instance.IsPaused || isDead) {
             return;
         }
         if (isRunning) {

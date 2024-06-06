@@ -30,9 +30,12 @@ public class HudManager : MonoBehaviour
     public Color bloodImageColorDefault;
 
     private PlayerStats playerStats;
+    [SerializeField]
     private bool isPaused = false;
+    [SerializeField]
+    private bool isRunningGame = false;
 
-    public GameObject reticle;
+    public GameObject uiInfoWraperObject;
     public TextMeshProUGUI bulletsCounterText;
     public TextMeshProUGUI tempInfoText;
     private bool showTempInfoText = false;
@@ -49,14 +52,15 @@ public class HudManager : MonoBehaviour
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
 
-        LockCursor();
-        reticle.SetActive(true);
+        isRunningGame = true;
+
+        HidePauseGamePanel();
 
         AdjustBulletsCount();
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape) && !playerStats.isDead) {
+        if (Input.GetKeyDown(KeyCode.Escape) && !playerStats.isDead && isRunningGame) {
             if (!isPaused) {
                 ShowPauseGamePanel();
             } else {
@@ -64,7 +68,7 @@ public class HudManager : MonoBehaviour
             }
         }
 
-        if (showBloodImage && !playerStats.isDead) {
+        if (showBloodImage && !playerStats.isDead && isRunningGame) {
             CheckBloodImage();
         }
 
@@ -89,20 +93,26 @@ public class HudManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void ShowGameOverImage() {
-        GameOverImage.SetActive(true);
+    private void FinishGameUi() {
+        isRunningGame = false;
+
+        // HideBloodImage();
+        HidePressEObject();
+        uiInfoWraperObject.SetActive(false);
+
         playerStats.DisablePlayerMovementAndCamera();
 
         UnlockCursor();
-        reticle.SetActive(false);
+    }
+
+    public void ShowGameOverImage() {
+        FinishGameUi();
+        GameOverImage.SetActive(true);
     }
 
     public void ShowEndGameImage() {
+        FinishGameUi();
         EndGameImage.SetActive(true);
-        playerStats.DisablePlayerMovementAndCamera();
-
-        UnlockCursor();
-        reticle.SetActive(false);
     }
 
     public void ShowPressEObject() {
@@ -118,7 +128,7 @@ public class HudManager : MonoBehaviour
         playerStats.DisablePlayerMovementAndCamera();
 
         UnlockCursor();
-        reticle.SetActive(false);
+        uiInfoWraperObject.SetActive(false);
 
         Time.timeScale = 0;
 
@@ -131,7 +141,7 @@ public class HudManager : MonoBehaviour
         playerStats.EnablePlayerMovementAndCamera();
 
         LockCursor();
-        reticle.SetActive(true);
+        uiInfoWraperObject.SetActive(true);
 
         Time.timeScale = 1;
 
@@ -178,40 +188,32 @@ public class HudManager : MonoBehaviour
     }
 
     public void RestartGame() {
+        isRunningGame = false;
         isPaused = false;
-        playerStats.EnablePlayerMovementAndCamera();
-
-        LockCursor();
-        reticle.SetActive(true);
-
-        Time.timeScale = 1;
+        HidePauseGamePanel();
         StartCoroutine(LevelLoaderManager.Instance.LoadLevel(1));
     }
 
     public void GoToMenu() {
-        isPaused = false;
-        playerStats.EnablePlayerMovementAndCamera();
-
         UnlockCursor();
-        reticle.SetActive(false);
-
+        uiInfoWraperObject.SetActive(false);
         Time.timeScale = 1;
         StartCoroutine(LevelLoaderManager.Instance.LoadLevel(0));
     }
 
     public void Quit() {
-        isPaused = false;
-        playerStats.EnablePlayerMovementAndCamera();
-
         UnlockCursor();
-        reticle.SetActive(false);
-
+        uiInfoWraperObject.SetActive(false);
         Time.timeScale = 1;
         LevelLoaderManager.Instance.Quit();
     }
 
-    public bool IsPaused() {
-        return isPaused;
+    public bool IsRunningGame {
+        get { return isRunningGame; }
+    }
+
+    public bool IsPaused {
+        get { return isPaused; }
     }
 
     public void AdjustBulletsCount() {
@@ -237,12 +239,16 @@ public class HudManager : MonoBehaviour
     }
 
     public void ShowBloodImage() {
-        showBloodImageTimer = 0;
-
+        showBloodImageTimer = 0f;
         showBloodImage = true;
-
         bloodImage.enabled = true;
         bloodImage.color = bloodImageColorDefault;
+    }
+
+    private void HideBloodImage() {
+        showBloodImageTimer = 0f;
+        showBloodImage = false;
+        bloodImage.enabled = false;
     }
 
     public void CheckBloodImage() {
@@ -250,9 +256,7 @@ public class HudManager : MonoBehaviour
         bloodImage.color -= new Color(0f, 0f, 0f, 1f) * (Time.deltaTime / timeToShowBloodImage);
 
         if (showBloodImageTimer >= timeToShowBloodImage) {
-            showBloodImage = false;
-            bloodImage.enabled = false;
-            showBloodImageTimer = 0;
+            HideBloodImage();
         }
     }
 }
