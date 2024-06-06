@@ -36,13 +36,7 @@ public class Monster : MonoBehaviour
         if (playerStats.isDead) {
             StopWalking();
         }
-        if (HudManager.Instance.IsRunningGame) {
-            if (HudManager.Instance.IsPaused) {
-                enemyAudioSource.Pause();
-            } else {
-                enemyAudioSource.UnPause();
-            }
-        }
+
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
         }
@@ -60,8 +54,11 @@ public class Monster : MonoBehaviour
                     StopWalking();
 
                     animator.SetTrigger("Taunt");
-                    enemyAudioSource.clip = tauntSound;
-                    enemyAudioSource.Play();
+                    
+                    if (!enemyAudioSource.isPlaying || enemyAudioSource.clip != tauntSound) {
+                        enemyAudioSource.clip = tauntSound;
+                        enemyAudioSource.Play();
+                    }
 
                     StartCoroutine(WalkAfterSeconds(1));
 
