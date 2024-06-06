@@ -11,7 +11,8 @@ public class PlayerStats : MonoBehaviour
     public bool isDead = false;
 
     public int criticalHitDamage = 100;
-    public int regularHitDamage = 50;
+    public int defaultRegularHitDamage = 35;
+    public int regularHitDamage = 35;
 
     private FirstPersonController playerController;
 

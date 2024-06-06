@@ -1922,6 +1922,7 @@ MonoBehaviour:
   volumeInfoText: {fileID: 3814311019406255824}
   difficultyDropdown: {fileID: 2054633779}
   defaultDifficulty: 0
+  enemyMultiplierByDifficulty: 2
 --- !u!1 &485676313
 GameObject:
   m_ObjectHideFlags: 0
@@ -3482,7 +3483,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 10
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -6560,8 +6561,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ea0d224975896d498f1c45543108b5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paperTotalToCollect: 5
   paperCounterText: {fileID: 8117115}
+  paperTotalToCollect: 5
   enemiesToIncreaseOnPaperCollected: 2
 --- !u!1 &1286327561
 GameObject:
@@ -11143,6 +11144,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2027977921379446807, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+        type: 3}
+      propertyPath: MaxDistance
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2275175915623414349, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
       propertyPath: m_IsActive
@@ -11152,11 +11158,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 3829259306668829213, guid: 79fd79cfec879b344a87bfdff4bffa7b,
-        type: 3}
-      propertyPath: field of view
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5301695969025827071, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
@@ -11208,10 +11209,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7480250034106582349, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+    - target: {fileID: 7557657351844583075, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
-      propertyPath: m_Lens.FieldOfView
-      value: 50
+      propertyPath: MaxDistance
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

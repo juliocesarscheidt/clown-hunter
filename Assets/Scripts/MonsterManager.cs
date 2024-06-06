@@ -49,10 +49,6 @@ public class MonsterManager : MonoBehaviour
         int spawnPointsQuantity = spawnPoints.Count;
         int diffEnemiesToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
 
-        // Debug.Log("enemiesAlive " + enemiesAlive);
-        // Debug.Log("spawnPointsQuantity " + spawnPointsQuantity);
-        // Debug.Log("diffEnemiesToSpawn " + diffEnemiesToSpawn);
-
         List<int> spawnPointsCounter = new();
 
         int currentRetriesToFindSpawnPoints = 0;
@@ -67,7 +63,7 @@ public class MonsterManager : MonoBehaviour
                 spawnPoints[randomSpawnPointIndex].transform.position,
                 playerStats.transform.position);
 
-            if (distanceToPlayer <= 20f) {
+            if (distanceToPlayer <= 25f) {
                 i--;
                 continue;
             } else if (spawnPointsCounter.Contains(randomSpawnPointIndex)

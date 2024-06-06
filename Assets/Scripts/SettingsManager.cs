@@ -44,11 +44,20 @@ public class SettingsManager : MonoBehaviour
     }
 
     private void SetDifficultySettings(int difficulty) {
+        // increases the amount of spawned enemies
         // difficulty 0 = 2 enemies
         // difficulty 1 = 4 enemies
         // difficulty 2 = 6 enemies
         if (PaperManager.Instance != null) {
             PaperManager.Instance.enemiesToIncreaseOnPaperCollected = (difficulty + 1) * enemyMultiplierByDifficulty;
+        }
+
+        // difficulty 0 = regularHitDamage
+        // difficulty 1 = regularHitDamage - 5
+        // difficulty 2 = regularHitDamage - 10
+        PlayerStats playerStats = FindObjectOfType<PlayerStats>();
+        if (playerStats != null) {
+            playerStats.regularHitDamage = (difficulty * -5) + playerStats.defaultRegularHitDamage;
         }
     }
 

@@ -7,12 +7,14 @@ public class Monster : MonoBehaviour
     private NavMeshAgent agent;
     private PlayerStats playerStats;
     private Animator animator;
+    private AudioSource enemyAudioSource;
 
     public int health = 100;
     public bool isDead = false;
     public int criticalHitDamage = 100;
     public int regularHitDamage = 25;
     public float defaultSpeed = 3.0f;
+    public AudioClip tauntSound;
 
     private float timerToTaunt;
     private bool canWalk = true;
@@ -22,6 +24,7 @@ public class Monster : MonoBehaviour
     void Start() {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
+        enemyAudioSource = GetComponent<AudioSource>();
 
         playerStats = FindObjectOfType<PlayerStats>();
 
@@ -33,6 +36,13 @@ public class Monster : MonoBehaviour
         if (playerStats.isDead) {
             StopWalking();
         }
+        if (HudManager.Instance.IsRunningGame) {
+            if (HudManager.Instance.IsPaused) {
+                enemyAudioSource.Pause();
+            } else {
+                enemyAudioSource.UnPause();
+            }
+        }
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
         }
@@ -40,18 +50,23 @@ public class Monster : MonoBehaviour
         if (canWalk) {
             agent.SetDestination(playerStats.transform.position);
 
-            if (!isRunning && !isAttacking) {
+            float distanceToPlayer = Vector3.Distance(
+                transform.position,
+                playerStats.transform.position);
+
+            if (!isRunning && !isAttacking && distanceToPlayer <= 25f) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= Random.Range(15, 55)) {
                     StopWalking();
 
+                    animator.SetTrigger("Taunt");
+                    enemyAudioSource.clip = tauntSound;
+                    enemyAudioSource.Play();
+
                     StartCoroutine(WalkAfterSeconds(1));
 
-                    animator.SetTrigger("Taunt");
                     timerToTaunt = 0;
                 }
-            } else {
-                timerToTaunt = 0;
             }
         }
     }

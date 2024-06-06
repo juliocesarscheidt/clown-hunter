@@ -5,10 +5,9 @@ public class PaperManager : MonoBehaviour
 {
     public static PaperManager Instance { get; private set; }
 
-    public int paperTotalToCollect = 5;
     private int paperCollected = 0;
     public TextMeshProUGUI paperCounterText;
-
+    public int paperTotalToCollect = 5;
     public int enemiesToIncreaseOnPaperCollected = 2;
 
     private void Awake() {
