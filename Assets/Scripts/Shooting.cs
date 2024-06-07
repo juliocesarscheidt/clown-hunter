@@ -5,6 +5,7 @@ using UnityEngine;
 public class Shooting : MonoBehaviour
 {
     public GameObject particleShotEffect;
+    public GameObject particleBloodEffect;
 
     private PlayerStats playerStats;
     private float shootTimer = 0f;
@@ -46,21 +47,49 @@ public class Shooting : MonoBehaviour
             (playerStats.SelectedGun.isAutomaticGun && Input.GetButton("Fire1")))
         ) {
             if (playerStats.CurrentBullets > 0) {
-                if (Physics.Raycast(
-                    Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit bulletHit)
-                ) {
+                Vector3 center = new(0.5F, 0.5F, 0);
+                Ray ray = Camera.main.ViewportPointToRay(center);
+                if (Physics.Raycast(ray, out RaycastHit bulletHit)) {
                     playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunShotSound);
 
                     playerStats.GunAnimator.Play("Shoot");
-                    // gunAnimator.SetTrigger("Shoot");
 
-                    GameObject particleInstance = Instantiate(
+                    Transform gunBarrelShotTransform = playerStats.shotParticleEffectPos[playerStats.SelectedGunIndex].transform;
+
+                    // shot fire effect particle
+                    GameObject particleEffectInstance = Instantiate(
                         particleShotEffect,
-                        playerStats.shotParticleEffectPos[playerStats.SelectedGunIndex].transform.position,
-                        playerStats.shotParticleEffectPos[playerStats.SelectedGunIndex].transform.rotation
+                        gunBarrelShotTransform.position,
+                        gunBarrelShotTransform.rotation
                     );
-                    particleInstance.transform.parent = playerStats.SelectedGunObject.transform;
-                    Destroy(particleInstance, 0.1f);
+                    particleEffectInstance.transform.parent = playerStats.SelectedGunObject.transform;
+                    Destroy(particleEffectInstance, 0.1f);
+
+                    /*
+                    // bullet object
+                    GameObject bulletInstance = Instantiate(
+                        playerStats.SelectedGun.gunPrefabBullet,
+                        gunBarrelShotTransform.position,
+                        gunBarrelShotTransform.rotation
+                    );
+                    Physics.IgnoreCollision(bulletInstance.GetComponent<Collider>(), playerStats.GetComponentInChildren<CapsuleCollider>());
+                    Physics.IgnoreCollision(bulletInstance.GetComponent<Collider>(), playerStats.GetComponentInChildren<SphereCollider>());
+                    bulletInstance.GetComponent<Rigidbody>().AddForce(
+                        gunBarrelShotTransform.forward * 20f,
+                        ForceMode.Impulse
+                    );
+                    Destroy(bulletInstance, 5f);
+                    */
+
+                    // blood particle
+                    if (bulletHit.transform.CompareTag("EnemyHead") || bulletHit.transform.CompareTag("Enemy")) {
+                        GameObject bloodInstance = Instantiate(
+                            particleBloodEffect,
+                            bulletHit.point,
+                            bulletHit.transform.rotation
+                        );
+                        Destroy(bloodInstance, 1f);
+                    }
 
                     // damage
                     if (bulletHit.transform.CompareTag("EnemyHead")) {

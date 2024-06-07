@@ -17,6 +17,8 @@ MonoBehaviour:
     type: 3}
   particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
     type: 3}
+  gunPrefabBullet: {fileID: 7451251649253747066, guid: aa57ff4f47b54f842a3786286717c1ae,
+    type: 3}
   gunShotSound: {fileID: 8300000, guid: 8eef2a5afec358f439860ade8b9e7516, type: 3}
   gunReloadSound: {fileID: 8300000, guid: 9ca81837384828f48833d2ec6096629d, type: 3}
   gunEmptySound: {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}

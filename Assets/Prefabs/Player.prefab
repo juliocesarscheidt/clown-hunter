@@ -428,7 +428,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 439
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -930,6 +930,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
     type: 3}
+  particleBloodEffect: {fileID: 457326801339650508, guid: 743e074ffbdd3cc45b4eaed26e9af225,
+    type: 3}
   virtualCamera: {fileID: 7480250034106582349}
   gunsCamera: {fileID: 5671610046709554143}
   defaultFieldOfView: 50
@@ -1319,7 +1321,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 119
+    m_Bits: 375
   m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
@@ -6370,7 +6372,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 311
   m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0

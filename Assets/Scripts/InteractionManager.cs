@@ -18,9 +18,8 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
-        Vector3 middle = new(0.5F, 0.5F, 0);
-
-        Ray ray = Camera.main.ViewportPointToRay(middle);
+        Vector3 center = new(0.5F, 0.5F, 0);
+        Ray ray = Camera.main.ViewportPointToRay(center);
         if (Physics.Raycast(ray, out RaycastHit hit)) {
             float distanceToPlayer = Vector3.Distance(hit.transform.position, playerStats.transform.position);
             if (distanceToPlayer > 5f) {

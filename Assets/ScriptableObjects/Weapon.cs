@@ -5,6 +5,7 @@ public class Weapon : ScriptableObject {
     public string gunName;
     public GameObject gunPrefabObject;
     public GameObject particleShotEffect;
+    public GameObject gunPrefabBullet;
 
     public AudioClip gunShotSound;
     public AudioClip gunReloadSound;

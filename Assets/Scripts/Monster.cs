@@ -48,24 +48,24 @@ public class Monster : MonoBehaviour
                 transform.position,
                 playerStats.transform.position);
 
-            if (!isRunning && !isAttacking && distanceToPlayer <= 25f) {
+            if (!isRunning && !isAttacking && distanceToPlayer <= 15f) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= Random.Range(15, 55)) {
-                    StopWalking();
-
-                    animator.SetTrigger("Taunt");
-                    
-                    if (!enemyAudioSource.isPlaying || enemyAudioSource.clip != tauntSound) {
-                        enemyAudioSource.clip = tauntSound;
-                        enemyAudioSource.Play();
-                    }
-
-                    StartCoroutine(WalkAfterSeconds(1));
-
+                    Taunt();
                     timerToTaunt = 0;
                 }
             }
         }
+    }
+
+    private void Taunt() {
+        StopWalking();
+        animator.SetTrigger("Taunt");
+        if (!enemyAudioSource.isPlaying || enemyAudioSource.clip != tauntSound) {
+            enemyAudioSource.clip = tauntSound;
+            enemyAudioSource.Play();
+        }
+        StartCoroutine(WalkAfterSeconds(1));
     }
 
     private void OnCollisionEnter(Collision collision) {
@@ -82,34 +82,32 @@ public class Monster : MonoBehaviour
 
             int damage = Random.Range(regularHitDamage - 10, regularHitDamage + 10);
             playerStats.ApplyDamage(damage);
-            // Destroy(gameObject);
         }
     }
 
     public void ApplyDamage(int damage) {
         health = Mathf.Max(health - damage, 0);
 
+        // stop walking and play damage animation
         StopWalking();
-
         animator.SetTrigger("Damage");
-
-        float damageTime = 1f;
-
-        // 50% chance of running or walking
-        if (Random.Range(0, 2) == 0) {
-            StartCoroutine(WalkAfterSeconds(damageTime));
-        } else {
-            StartCoroutine(RunAfterSeconds(damageTime));
-            // after N seconds (from 4 to 10), start walking again
-            int randSeconds = Random.Range(4, 11);
-            StartCoroutine(WalkAfterSeconds(randSeconds));
-        }
 
         if (health <= 0) {
             health = 0;
             isDead = true;
             MonsterManager.Instance.SpawnEnemiesDelayed();
             Destroy(gameObject);
+        }
+
+        float recoveryTime = 1f;
+        // 50% chance of running or walking
+        if (Random.Range(0, 2) == 0) {
+            StartCoroutine(WalkAfterSeconds(recoveryTime));
+        } else {
+            StartCoroutine(RunAfterSeconds(recoveryTime));
+            // run, and then after N seconds (from 4 to 10), start walking again
+            int randSeconds = Random.Range(4, 11);
+            StartCoroutine(WalkAfterSeconds(randSeconds));
         }
     }
 
