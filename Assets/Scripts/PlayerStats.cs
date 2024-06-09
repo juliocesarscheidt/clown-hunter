@@ -160,6 +160,11 @@ public class PlayerStats : MonoBehaviour
         HudManager.Instance.AdjustBulletsCount();
     }
 
+    public void CollectFirstAid(int healthAmount) {
+        health = Mathf.Min(health + healthAmount, 100);
+        HudManager.Instance.AdjustHealthBar(health, 100);
+    }
+
     private IEnumerator EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);

@@ -9,6 +9,7 @@ TagManager:
   - Paper
   - EnemyHead
   - GunAmmo
+  - FirstAid
   layers:
   - Default
   - TransparentFX

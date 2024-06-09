@@ -4,7 +4,7 @@ using UnityEngine;
 public class InteractionManager : MonoBehaviour
 {
     private PlayerStats playerStats;
-    public List<string> tagsToInteract = new() { "Paper", "GunAmmo" };
+    public List<string> tagsToInteract = new() { "Paper", "GunAmmo", "FirstAid" };
     private AudioSource interactionAudioSource;
 
     void Start() {
