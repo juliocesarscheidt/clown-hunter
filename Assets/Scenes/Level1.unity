@@ -21,8 +21,8 @@ RenderSettings:
   m_FogDensity: 0.15
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.764151, g: 0.49311972, b: 0.4793966, a: 1}
-  m_AmbientEquatorColor: {r: 0.5566038, g: 0.30491278, b: 0.29142934, a: 1}
+  m_AmbientSkyColor: {r: 0.8584906, g: 0.6632833, b: 0.6519669, a: 1}
+  m_AmbientEquatorColor: {r: 0.5660378, g: 0.41777483, b: 0.4085084, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
@@ -3517,7 +3517,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 27597b377b9dab44ca6bf28fe957e31f, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3756,7 +3756,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.047058824, g: 0.5058824, b: 0.74509805, a: 1}
+  m_Color: {r: 0.8584906, g: 0.81382924, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3827,7 +3827,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StaminaSlider: {fileID: 964106642}
   HealthSlider: {fileID: 2066994530}
-  StaminaColorDefault: {r: 0.045701336, g: 0.50516206, b: 0.745283, a: 1}
+  StaminaColorDefault: {r: 0.85882354, g: 0.8156863, b: 0, a: 1}
   StaminaColorLow: {r: 0.94117653, g: 0.2392157, b: 0, a: 1}
   GameOverImage: {fileID: 1842989319}
   EndGameImage: {fileID: 1641789710}
