@@ -18,7 +18,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
   m_FogMode: 2
-  m_FogDensity: 0.15
+  m_FogDensity: 0.2
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.8584906, g: 0.6632833, b: 0.6519669, a: 1}
@@ -11960,8 +11960,8 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 832575519}
   - {fileID: 410087041}
+  - {fileID: 832575519}
   - {fileID: 1401492158}
   - {fileID: 1969438874}
   - {fileID: 738147828}
