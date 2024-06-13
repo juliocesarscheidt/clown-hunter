@@ -99,7 +99,8 @@ public class Shooting : MonoBehaviour
 
                     if (bulletHit.transform.CompareTag("Enemy")) {
                         Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
-                        int damage = Random.Range(playerStats.regularHitDamage - 10, playerStats.regularHitDamage + 10);
+                        int damage = Random.Range(playerStats.regularHitDamage - playerStats.damageVariation,
+                            playerStats.regularHitDamage + playerStats.damageVariation);
                         monster.ApplyDamage(damage);
                     }
 

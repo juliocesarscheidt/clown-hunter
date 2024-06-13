@@ -10,8 +10,9 @@ public class PaperManager : MonoBehaviour
 
     public TextMeshProUGUI paperCounterText;
     public GameObject paperPrefab;
-    [SerializeField]
-    private List<GameObject> spawnPoints;
+
+    // spawnPoints will be splited by areas
+    public Dictionary<int, List<GameObject>> spawnPoints = new();
     public List<GameObject> spawnPointsAreas;
 
     public int papersToSpawn = 5;
@@ -31,11 +32,15 @@ public class PaperManager : MonoBehaviour
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
 
-        foreach (GameObject spawnArea in spawnPointsAreas) {
-            for (int i = 0; i < spawnArea.transform.childCount; i++){
-                spawnPoints.Add(spawnArea.transform.GetChild(i).gameObject);
+        for (int i = 0; i < spawnPointsAreas.Count; i++) {
+            GameObject spawnArea = spawnPointsAreas[i];
+            List<GameObject> areaSpawnPoints = new();
+            for (int j = 0; j < spawnArea.transform.childCount; j++){
+                areaSpawnPoints.Add(spawnArea.transform.GetChild(j).gameObject);
             }
+            spawnPoints.Add(i, areaSpawnPoints);
         }
+
         SpawnPapers();
         AdjustPaperCounterText();
     }
@@ -45,39 +50,29 @@ public class PaperManager : MonoBehaviour
             return;
         }
 
-        int spawnPointsQuantity = spawnPoints.Count;
+        int spawnAreasQuantity = spawnPointsAreas.Count;
         int diffToSpawn = papersToSpawn;
 
-        List<int> randomSpawnPoints = new();
-        List<int> spawnedAreas = new();
-
-        int currentRetriesToFindSpawnPoints = 0;
+        List<int> randomSpawnAreas = new();
 
         for (int i = 0; i < diffToSpawn; i++) {
-            // get a random spawn point, try to not get a repeated one
-            int randomSpawnPointIndex = Random.Range(0, spawnPointsQuantity);
-
-            // split by areas
-            GameObject spawnPoint = spawnPoints[randomSpawnPointIndex];
-            int area = int.Parse(spawnPoint.transform.parent.name);
-
-            currentRetriesToFindSpawnPoints++;
-            if ((
-                randomSpawnPoints.Contains(randomSpawnPointIndex) ||
-                spawnedAreas.Contains(area)
-            ) && currentRetriesToFindSpawnPoints < 20) {
+            // get a random spawn are, try to not get a repeated one
+            int randomSpawnAreaIndex = Random.Range(0, spawnAreasQuantity);
+            if (randomSpawnAreas.Contains(randomSpawnAreaIndex)) {
                 i--;
                 continue;
             }
-
-            randomSpawnPoints.Add(randomSpawnPointIndex);
-            spawnedAreas.Add(area);
+            randomSpawnAreas.Add(randomSpawnAreaIndex);
         }
 
         for (int i = 0; i < diffToSpawn; i++) {
-            GameObject spawnPoint = spawnPoints[randomSpawnPoints[i]];
-
-            // spawn the enemy
+            int area = randomSpawnAreas[i];
+            // get the count of spawn areas inside the current area
+            int spawnPointsCountInsideArea = spawnPoints.GetValueOrDefault(area).Count;
+            // get a random spawn point within a given area
+            int randomSpawnPointIndex = Random.Range(0, spawnPointsCountInsideArea);
+            GameObject spawnPoint = spawnPoints.GetValueOrDefault(area)[randomSpawnPointIndex];
+            // spawn the paper
             GameObject paper = Instantiate(
                 paperPrefab,
                 spawnPoint.transform.position,

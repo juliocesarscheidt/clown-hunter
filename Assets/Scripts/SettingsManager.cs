@@ -44,7 +44,7 @@ public class SettingsManager : MonoBehaviour
     }
 
     private void SetDifficultySettings(int difficulty) {
-        // increases the amount of spawned enemies
+        // increases the amount of spawned enemies on each collected paper
         // difficulty 0 = 2 enemies
         // difficulty 1 = 4 enemies
         // difficulty 2 = 6 enemies

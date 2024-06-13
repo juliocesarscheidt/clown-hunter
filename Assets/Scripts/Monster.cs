@@ -9,17 +9,27 @@ public class Monster : MonoBehaviour
     private Animator animator;
     private AudioSource enemyAudioSource;
 
+    public AudioClip tauntSound;
     public int health = 100;
+    public float defaultSpeed = 3.0f;
     public bool isDead = false;
     public int criticalHitDamage = 100;
     public int regularHitDamage = 25;
-    public float defaultSpeed = 3.0f;
-    public AudioClip tauntSound;
+    public int damageVariation = 10;
+    public float distanceToAttack = 1.25f;
+    public float attackDurationTime = 1.5f;
 
     private float timerToTaunt;
+    [SerializeField]
+    public bool isBeingDamaged = false;
+    [SerializeField]
     private bool canWalk = true;
+    [SerializeField]
     private bool isRunning = false;
+    [SerializeField]
     private bool isAttacking = false;
+    [SerializeField]
+    private float distanceToPlayer;
 
     void Start() {
         agent = GetComponent<NavMeshAgent>();
@@ -28,8 +38,7 @@ public class Monster : MonoBehaviour
 
         playerStats = FindObjectOfType<PlayerStats>();
 
-        animator.SetBool("Running", false);
-        animator.SetBool("Walking", true);
+        StartCoroutine(WalkAfterSeconds(0));
     }
 
     void FixedUpdate() {
@@ -41,16 +50,33 @@ public class Monster : MonoBehaviour
             return;
         }
 
+        agent.SetDestination(playerStats.transform.position);
+
+        distanceToPlayer = Vector3.Distance(
+            transform.position,
+            playerStats.transform.position);
+       
+        if (distanceToPlayer <= distanceToAttack) {
+            // the angle closer to 0 means it's looking at the player
+            // float angleRotationDiff = Vector3.Angle(transform.forward, playerStats.transform.position - transform.position);
+
+            // from -1 to 1 => -1 is looking at the opposite, 1 means it's looking at the player
+            float dotRotationDiff = Vector3.Dot(transform.forward,
+                (playerStats.transform.position - transform.position).normalized);
+
+            if (dotRotationDiff > 0.8f && !playerStats.isDead && !isBeingDamaged && !isAttacking) {
+                Attack();
+            }
+        } else {
+            if (!playerStats.isDead && !isBeingDamaged && !isAttacking) {
+                SetCanWalk(true);
+            }
+        }
+
         if (canWalk) {
-            agent.SetDestination(playerStats.transform.position);
-
-            float distanceToPlayer = Vector3.Distance(
-                transform.position,
-                playerStats.transform.position);
-
-            if (!isRunning && !isAttacking && distanceToPlayer <= 15f) {
+            if (distanceToPlayer <= 10f && !isRunning && !isAttacking) {
                 timerToTaunt += Time.deltaTime;
-                if (timerToTaunt >= Random.Range(15, 55)) {
+                if (timerToTaunt >= Random.Range(10, 30)) {
                     Taunt();
                     timerToTaunt = 0;
                 }
@@ -68,21 +94,17 @@ public class Monster : MonoBehaviour
         StartCoroutine(WalkAfterSeconds(1));
     }
 
-    private void OnCollisionEnter(Collision collision) {
-        if (collision.gameObject.CompareTag("Player") && !playerStats.isDead && !isAttacking) {
-            StopWalking();
+    private void Attack() {
+        StopWalking();
 
-            isAttacking = true;
+        isAttacking = true;
+        animator.SetTrigger("Attack");
 
-            float attackTime = 1.5f;
-            StartCoroutine(WalkAfterSeconds(attackTime));
-            StartCoroutine(StopAttackAfterSeconds(attackTime));
+        StartCoroutine(WalkAfterSeconds(attackDurationTime * 1.5f));
+        StartCoroutine(StopAttackAfterSeconds(attackDurationTime * 1.5f));
 
-            animator.SetTrigger("Attack");
-
-            int damage = Random.Range(regularHitDamage - 10, regularHitDamage + 10);
-            playerStats.ApplyDamage(damage);
-        }
+        int damage = Random.Range(regularHitDamage - damageVariation, regularHitDamage + damageVariation);
+        playerStats.ApplyDamage(damage);
     }
 
     public void ApplyDamage(int damage) {
@@ -91,6 +113,7 @@ public class Monster : MonoBehaviour
         // stop walking and play damage animation
         StopWalking();
         animator.SetTrigger("Damage");
+        isBeingDamaged = true;
 
         if (health <= 0) {
             health = 0;
@@ -100,6 +123,7 @@ public class Monster : MonoBehaviour
         }
 
         float recoveryTime = 1f;
+        StartCoroutine(TurnBeingDamagedToFalseAfterSeconds(recoveryTime));
         // 50% chance of running or walking
         if (Random.Range(0, 2) == 0) {
             StartCoroutine(WalkAfterSeconds(recoveryTime));
@@ -153,5 +177,12 @@ public class Monster : MonoBehaviour
         // wait
         yield return new WaitForSeconds(seconds);
         isAttacking = false;
+        SetCanWalk(true);
+    }
+
+    public IEnumerator TurnBeingDamagedToFalseAfterSeconds(float seconds) {
+        // wait
+        yield return new WaitForSeconds(seconds);
+        isBeingDamaged = false;
     }
 }

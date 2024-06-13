@@ -2103,12 +2103,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a91eede941fe33047b7648561db7ca59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tauntSound: {fileID: 8300000, guid: 16c1d95d9f1718849810d504adc64147, type: 3}
   health: 100
+  defaultSpeed: 3
   isDead: 0
   criticalHitDamage: 100
   regularHitDamage: 25
-  defaultSpeed: 3
-  tauntSound: {fileID: 8300000, guid: 16c1d95d9f1718849810d504adc64147, type: 3}
+  damageVariation: 10
+  distanceToAttack: 1.25
+  timerToAttack: 0
+  canWalk: 1
+  isRunning: 0
+  isAttacking: 0
+  distanceToPlayer: 0
 --- !u!114 &1049673865534877313
 MonoBehaviour:
   m_ObjectHideFlags: 0

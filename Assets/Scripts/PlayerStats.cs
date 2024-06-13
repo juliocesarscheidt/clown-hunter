@@ -25,6 +25,7 @@ public class PlayerStats : MonoBehaviour
     public bool isReloading = false;
     public bool isAiming = false;
     public bool isBeingDamaged = false;
+    public int damageVariation = 10;
 
     public GameObject[] shotParticleEffectPos;
 
@@ -140,7 +141,6 @@ public class PlayerStats : MonoBehaviour
 
         isBeingDamaged = true;
         playerController.CanMovePlayer = false;
-        StartCoroutine(EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(1.5f));
 
         cameraAnimator.SetTrigger("Damage");
 
@@ -151,6 +151,10 @@ public class PlayerStats : MonoBehaviour
             health = 0;
             isDead = true;
             HudManager.Instance.ShowGameOverImage();
+        }
+
+        if (!isDead) {
+            StartCoroutine(EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(1.5f));
         }
     }
 
