@@ -47,13 +47,13 @@ public class MonsterManager : MonoBehaviour
 
         int enemiesPrefabsQuantity = enemiesPrefabs.Count;
         int spawnPointsQuantity = spawnPoints.Count;
-        int diffEnemiesToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
+        int diffToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
 
-        List<int> spawnPointsCounter = new();
+        List<int> randomSpawnPoints = new();
 
         int currentRetriesToFindSpawnPoints = 0;
 
-        for (int i = 0; i < diffEnemiesToSpawn; i++) {
+        for (int i = 0; i < diffToSpawn; i++) {
             // get a random spawn point, try to not get a repeated one
             int randomSpawnPointIndex = Random.Range(0, spawnPointsQuantity);
 
@@ -66,21 +66,21 @@ public class MonsterManager : MonoBehaviour
             if (distanceToPlayer <= 25f) {
                 i--;
                 continue;
-            } else if (spawnPointsCounter.Contains(randomSpawnPointIndex)
-                && currentRetriesToFindSpawnPoints < 10) {
+            } else if (randomSpawnPoints.Contains(randomSpawnPointIndex)
+                && currentRetriesToFindSpawnPoints < 20) {
                 i--;
                 continue;
             }
 
-            spawnPointsCounter.Add(randomSpawnPointIndex);
+            randomSpawnPoints.Add(randomSpawnPointIndex);
         }
 
         // round robin index
         int currentEnemySpawnedIndex = lastEnemySpawnedIndex;
         // Debug.Log("currentEnemySpawnedIndex " + currentEnemySpawnedIndex);
 
-        for (int i = 0; i < diffEnemiesToSpawn; i++) {
-            GameObject spawnPoint = spawnPoints[spawnPointsCounter[i]];
+        for (int i = 0; i < diffToSpawn; i++) {
+            GameObject spawnPoint = spawnPoints[randomSpawnPoints[i]];
 
             // spawn the enemy
             Instantiate(
