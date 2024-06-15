@@ -50,6 +50,7 @@ public class HudManager : MonoBehaviour
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         isRunningGame = true;
+        // Debug.Log($"Game is running {isRunningGame}");
         HidePauseGamePanel();
         AdjustBulletsCount();
     }
@@ -76,20 +77,37 @@ public class HudManager : MonoBehaviour
         }
     }
 
-    private void OnApplicationFocus(bool focus) {
-        if ((isRunningGame && isPaused) || !isRunningGame) {
+    /*
+    private void FixedUpdate() {
+        if ((isRunningGame && IsPaused) || !isRunningGame) {
             UnlockCursor();
         }
     }
 
+    private void OnApplicationFocus(bool hasFocus) {
+        Debug.Log($"OnApplicationFocus :: hasFocus {hasFocus}");
+        if (!hasFocus) {
+            if (isRunningGame && !IsPaused) {
+                Debug.Log($"OnApplicationFocus calling pause :: isRunningGame {isRunningGame} | IsPaused {IsPaused}");
+                ShowPauseGamePanel();
+            }
+        } else {
+            if ((isRunningGame && IsPaused) || !isRunningGame) {
+                Debug.Log($"OnApplicationFocus unlocking cursor :: isRunningGame {isRunningGame} | IsPaused {IsPaused}");
+                UnlockCursor();
+            }
+        }
+    }
+    */
+
     private void LockCursor() {
-        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void UnlockCursor() {
-        Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void FinishGameUi() {

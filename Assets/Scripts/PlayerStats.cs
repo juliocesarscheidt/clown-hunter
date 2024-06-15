@@ -136,7 +136,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerWalk(bool isWalking) {
-        if (HudManager.Instance.IsPaused || isDead) {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
         if (isWalking) {
@@ -151,7 +151,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerRun(bool isRunning) {
-        if (HudManager.Instance.IsPaused || isDead) {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
         if (isRunning) {
