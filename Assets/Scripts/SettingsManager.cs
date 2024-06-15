@@ -16,7 +16,7 @@ public class SettingsManager : MonoBehaviour
 
     public TMP_Dropdown difficultyDropdown;
     public int defaultDifficulty = 0;
-    public int enemyMultiplierByDifficulty = 2;
+    public int enemiesToAddOnPaperCollectedByDifficulty = 2;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -45,11 +45,11 @@ public class SettingsManager : MonoBehaviour
 
     private void SetDifficultySettings(int difficulty) {
         // increases the amount of spawned enemies on each collected paper
-        // difficulty 0 = 2 enemies
-        // difficulty 1 = 4 enemies
-        // difficulty 2 = 6 enemies
+        // difficulty 0 = + 2 enemies
+        // difficulty 1 = + 4 enemies
+        // difficulty 2 = + 6 enemies
         if (PaperManager.Instance != null) {
-            PaperManager.Instance.enemiesToIncreaseOnPaperCollected = (difficulty + 1) * enemyMultiplierByDifficulty;
+            PaperManager.Instance.enemiesToAddOnPaperCollected = (difficulty + 1) * enemiesToAddOnPaperCollectedByDifficulty;
         }
 
         // difficulty 0 = regularHitDamage
@@ -58,6 +58,13 @@ public class SettingsManager : MonoBehaviour
         PlayerStats playerStats = FindObjectOfType<PlayerStats>();
         if (playerStats != null) {
             playerStats.regularHitDamage = (difficulty * -5) + playerStats.defaultRegularHitDamage;
+        }
+
+        // difficulty 0 = regularHitDamage
+        // difficulty 1 = regularHitDamage + 10
+        // difficulty 2 = regularHitDamage + 20
+        if (MonsterManager.Instance != null) {
+            MonsterManager.Instance.regularHitDamage = (difficulty * 10) + MonsterManager.Instance.defaultRegularHitDamage;
         }
     }
 

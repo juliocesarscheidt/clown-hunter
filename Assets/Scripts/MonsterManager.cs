@@ -15,6 +15,9 @@ public class MonsterManager : MonoBehaviour
     private int enemiesAlive = 0;
     private int lastEnemySpawnedIndex = 0;
 
+    public int defaultRegularHitDamage = 25;
+    public int regularHitDamage = 25;
+
     void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
@@ -83,11 +86,14 @@ public class MonsterManager : MonoBehaviour
             GameObject spawnPoint = spawnPoints[randomSpawnPoints[i]];
 
             // spawn the enemy
-            Instantiate(
+            GameObject enemyObject = Instantiate(
                 enemiesPrefabs[currentEnemySpawnedIndex],
                 spawnPoint.transform.position,
                 spawnPoint.transform.rotation
             );
+            if (enemyObject.TryGetComponent(out Monster monster)) {
+                monster.regularHitDamage = regularHitDamage;
+            }
 
             currentEnemySpawnedIndex++;
             if (currentEnemySpawnedIndex >= enemiesPrefabsQuantity) {

@@ -11,10 +11,6 @@ public class Shooting : MonoBehaviour
     private float shootTimer = 0f;
     private float reloadTimer = 0f;
 
-    public CinemachineVirtualCamera virtualCamera;
-    public Camera gunsCamera;
-    public int defaultFieldOfView = 50;
-
     void Awake() {
         playerStats = GetComponent<PlayerStats>();
     }
@@ -125,31 +121,19 @@ public class Shooting : MonoBehaviour
     void Aim() {
         if (CanManageGun() && Input.GetButton("Fire2")) {
             shootTimer += Time.deltaTime;
-            playerStats.isAiming = true;
 
-            playerStats.GunAnimator.SetBool("isReloading", false);
-            playerStats.GunAnimator.SetBool("isAiming", true);
-
-            virtualCamera.m_Lens.FieldOfView = 35;
-            gunsCamera.fieldOfView = 35;
+            playerStats.EnterAimingState();
 
             if (shootTimer > playerStats.SelectedGun.timeToShootInterval) {
                 playerStats.canShoot = true;
             }
-
             if (playerStats.canShoot) {
                 Shoot();
             }
 
         } else {
-            virtualCamera.m_Lens.FieldOfView = defaultFieldOfView;
-            gunsCamera.fieldOfView = defaultFieldOfView;
-
             shootTimer = 0f;
-            playerStats.isAiming = false;
-            playerStats.canShoot = false;
-
-            playerStats.GunAnimator.SetBool("isAiming", false);
+            playerStats.ExitAimingState();
         }
     }
 

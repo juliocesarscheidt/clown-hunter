@@ -1,3 +1,4 @@
+using Cinemachine;
 using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
@@ -48,6 +49,10 @@ public class PlayerStats : MonoBehaviour
     [SerializeField]
     private List<int> availableBullets = new();
 
+    public CinemachineVirtualCamera virtualCamera;
+    public Camera gunsCamera;
+    public int defaultFieldOfView = 50;
+
     void Awake() {
         for (int i = 0; i < guns.Count; i++) {
             currentBullets.Add(guns[i].currentBullets);
@@ -58,7 +63,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     void Start() {
-        SelectGun(0);
+        ChangeGun(0);
     }
 
     void Update() {
@@ -79,13 +84,13 @@ public class PlayerStats : MonoBehaviour
         if (!isReloading) {
             Enumerable.Range(1, guns.Count).ToList().ForEach(idx => {
                 if (Input.GetKeyDown(idx.ToString())) {
-                    SelectGunByHotkey(idx);
+                    ChangeGunByHotkey(idx);
                 }
             });
         }
     }
 
-    void SelectGun(int index) {
+    void ChangeGun(int index) {
         // hide other guns
         for (int i = 0; i < gunsGameObjectParent.transform.childCount; i++) {
             gunsGameObjectParent.transform.GetChild(i).gameObject.SetActive(false);
@@ -102,8 +107,32 @@ public class PlayerStats : MonoBehaviour
         HudManager.Instance.AdjustBulletsCount();
     }
 
-    void SelectGunByHotkey(int hotkey) {
-        SelectGun(hotkey - 1);
+    void ChangeGunByHotkey(int hotkey) {
+        ChangeGun(hotkey - 1);
+    }
+
+    public void EnterAimingState() {
+        isAiming = true;
+
+        if (GunAnimator != null) {
+            GunAnimator.SetBool("isReloading", false);
+            GunAnimator.SetBool("isAiming", true);
+        }
+
+        virtualCamera.m_Lens.FieldOfView = 35;
+        gunsCamera.fieldOfView = 35;
+    }
+
+    public void ExitAimingState() {
+        isAiming = false;
+        canShoot = false;
+
+        if (GunAnimator != null) {
+            GunAnimator.SetBool("isAiming", false);
+        }
+
+        virtualCamera.m_Lens.FieldOfView = defaultFieldOfView;
+        gunsCamera.fieldOfView = defaultFieldOfView;
     }
 
     public void PlayerWalk(bool isWalking) {

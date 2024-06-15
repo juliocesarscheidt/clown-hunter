@@ -76,6 +76,12 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    private void OnApplicationFocus(bool focus) {
+        if ((isRunningGame && isPaused) || !isRunningGame) {
+            UnlockCursor();
+        }
+    }
+
     private void LockCursor() {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -89,7 +95,6 @@ public class HudManager : MonoBehaviour
     private void FinishGameUi() {
         isRunningGame = false;
 
-        // HideBloodImage();
         HidePressEObject();
         uiInfoWraperObject.SetActive(false);
 
