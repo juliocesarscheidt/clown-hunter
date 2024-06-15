@@ -78,12 +78,7 @@ public class HudManager : MonoBehaviour
     }
 
     /*
-    private void FixedUpdate() {
-        if ((isRunningGame && IsPaused) || !isRunningGame) {
-            UnlockCursor();
-        }
-    }
-
+    // adjust cursor when focus out - TODO
     private void OnApplicationFocus(bool hasFocus) {
         Debug.Log($"OnApplicationFocus :: hasFocus {hasFocus}");
         if (!hasFocus) {
@@ -116,8 +111,6 @@ public class HudManager : MonoBehaviour
         HidePressEObject();
         uiInfoWraperObject.SetActive(false);
 
-        playerStats.DisablePlayerMovementAndCamera();
-
         UnlockCursor();
     }
 
@@ -141,7 +134,6 @@ public class HudManager : MonoBehaviour
 
     public void ShowPauseGamePanel() {
         isPaused = true;
-        playerStats.DisablePlayerMovementAndCamera();
 
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
@@ -154,7 +146,6 @@ public class HudManager : MonoBehaviour
 
     public void HidePauseGamePanel() {
         isPaused = false;
-        playerStats.EnablePlayerMovementAndCamera();
 
         LockCursor();
         uiInfoWraperObject.SetActive(true);

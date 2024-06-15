@@ -225,13 +225,13 @@ namespace StarterAssets
 
                 // send message, this will call these methods in every script attached to this, if it contains the method
                 if (targetSpeed == MoveSpeed) {
-                    gameObject.SendMessage("PlayerWalk", true);
+                    gameObject.SendMessage("PlayerControllerWalk", true);
                 } else if (targetSpeed == SprintSpeed) {
-                    gameObject.SendMessage("PlayerRun", true);
+                    gameObject.SendMessage("PlayerControllerRun", true);
                 }
             } else {
-                gameObject.SendMessage("PlayerWalk", false);
-                gameObject.SendMessage("PlayerRun", false);
+                gameObject.SendMessage("PlayerControllerWalk", false);
+                gameObject.SendMessage("PlayerControllerRun", false);
             }
 
 			if (!CanMovePlayer) {

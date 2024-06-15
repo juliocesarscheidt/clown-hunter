@@ -77,16 +77,23 @@ public class PlayerStats : MonoBehaviour
             }
         }
 
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
-            return;
-        }
+        if (!HudManager.Instance.IsPaused && HudManager.Instance.IsRunningGame && !isDead) {
+            if (!isBeingDamaged) {
+                EnablePlayerMovementAndCamera();
+            } else {
+                playerController.CanMovePlayer = false;
+            }
 
-        if (!isReloading) {
-            Enumerable.Range(1, guns.Count).ToList().ForEach(idx => {
-                if (Input.GetKeyDown(idx.ToString())) {
-                    ChangeGunByHotkey(idx);
-                }
-            });
+            if (!isReloading) {
+                Enumerable.Range(1, guns.Count).ToList().ForEach(idx => {
+                    if (Input.GetKeyDown(idx.ToString())) {
+                        ChangeGunByHotkey(idx);
+                    }
+                });
+            }
+
+        } else {
+            DisablePlayerMovementAndCamera();
         }
     }
 
@@ -135,7 +142,7 @@ public class PlayerStats : MonoBehaviour
         gunsCamera.fieldOfView = defaultFieldOfView;
     }
 
-    public void PlayerWalk(bool isWalking) {
+    public void PlayerControllerWalk(bool isWalking) {
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
@@ -150,7 +157,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    public void PlayerRun(bool isRunning) {
+    public void PlayerControllerRun(bool isRunning) {
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
@@ -168,22 +175,19 @@ public class PlayerStats : MonoBehaviour
     public void ApplyDamage(int damage) {
         health = Mathf.Max(health - damage, 0);
 
+        StartCoroutine(SetIsBeingDamagedAfterSeconds(1.5f));
+
         isBeingDamaged = true;
-        playerController.CanMovePlayer = false;
-
-        cameraAnimator.SetTrigger("Damage");
-
-        HudManager.Instance.AdjustHealthBar(health, 100);
-        HudManager.Instance.ShowBloodImage();
+        if (!isDead) {
+            cameraAnimator.SetTrigger("Damage");
+            HudManager.Instance.AdjustHealthBar(health, 100);
+            HudManager.Instance.ShowBloodImage();
+        }
 
         if (health <= 0) {
             health = 0;
             isDead = true;
             HudManager.Instance.ShowGameOverImage();
-        }
-
-        if (!isDead) {
-            StartCoroutine(EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(1.5f));
         }
     }
 
@@ -198,11 +202,10 @@ public class PlayerStats : MonoBehaviour
         HudManager.Instance.AdjustHealthBar(health, 100);
     }
 
-    private IEnumerator EnablePlayerMovementAndSetIsBeingDamagedAfterSeconds(float seconds) {
+    private IEnumerator SetIsBeingDamagedAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         isBeingDamaged = false;
-        playerController.CanMovePlayer = true;
     }
 
     public void DisablePlayerMovementAndCamera() {

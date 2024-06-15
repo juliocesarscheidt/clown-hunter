@@ -62,7 +62,7 @@ public class Shooting : MonoBehaviour
                     Destroy(particleEffectInstance, 0.1f);
 
                     /*
-                    // bullet object
+                    // bullet object - TODO
                     GameObject bulletInstance = Instantiate(
                         playerStats.SelectedGun.gunPrefabBullet,
                         gunBarrelShotTransform.position,
