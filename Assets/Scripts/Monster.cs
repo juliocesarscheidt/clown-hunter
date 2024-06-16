@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System.Globalization;
+using System.Reflection;
 
 public class Monster : MonoBehaviour
 {
@@ -19,15 +21,21 @@ public class Monster : MonoBehaviour
     public float distanceToAttack = 1.25f;
     public float attackDurationTime = 1.5f;
 
-    private float timerToTaunt;
-    [SerializeField]
+    public bool isStopped = false;
+
+    public bool isRunning = false;
+    private float timerToRun;
+
+    public bool isAttacking = false;
+    private Coroutine setIsAttackingCoroutine;
+
     public bool isBeingDamaged = false;
-    [SerializeField]
-    private bool canWalk = true;
-    [SerializeField]
-    private bool isRunning = false;
-    [SerializeField]
-    private bool isAttacking = false;
+    private Coroutine setIsBeingDamagedCoroutine;
+
+    public bool isTauting = false;
+    private Coroutine setIsTautingCoroutine;
+    private float timerToTaunt;
+
     [SerializeField]
     private float distanceToPlayer;
 
@@ -37,44 +45,38 @@ public class Monster : MonoBehaviour
         enemyAudioSource = GetComponent<AudioSource>();
 
         playerStats = FindObjectOfType<PlayerStats>();
-
-        StartCoroutine(WalkAfterSeconds(0));
     }
 
     void FixedUpdate() {
-        if (playerStats.isDead) {
-            StopWalking();
-        }
-
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead || playerStats.isDead) {
+            StopWalk();
             return;
         }
 
-        agent.SetDestination(playerStats.transform.position);
+        if (CanMove()) {
+            agent.SetDestination(playerStats.transform.position);
+            Walk();
+
+        } else {
+            StopWalk();
+        }
 
         distanceToPlayer = Vector3.Distance(
             transform.position,
             playerStats.transform.position);
        
         if (distanceToPlayer <= distanceToAttack) {
-            // the angle closer to 0 means it's looking at the player
-            // float angleRotationDiff = Vector3.Angle(transform.forward, playerStats.transform.position - transform.position);
-
             // from -1 to 1 => -1 is looking at the opposite, 1 means it's looking at the player
             float dotRotationDiff = Vector3.Dot(transform.forward,
                 (playerStats.transform.position - transform.position).normalized);
 
-            if (dotRotationDiff > 0.8f && !playerStats.isDead && !isBeingDamaged && !isAttacking) {
+            if (dotRotationDiff > 0.85f && CanMove()) {
                 Attack();
-            }
-        } else {
-            if (!playerStats.isDead && !isBeingDamaged && !isAttacking) {
-                SetCanWalk(true);
             }
         }
 
-        if (canWalk) {
-            if (distanceToPlayer <= 10f && !isRunning && !isAttacking) {
+        if (!isStopped) {
+            if (distanceToPlayer <= 10f && CanMove()) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= Random.Range(10, 30)) {
                     Taunt();
@@ -84,24 +86,28 @@ public class Monster : MonoBehaviour
         }
     }
 
+    private bool CanMove() {
+        return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isTauting;
+    }
+
     private void Taunt() {
-        StopWalking();
+        isTauting = true;
         animator.SetTrigger("Taunt");
         if (!enemyAudioSource.isPlaying || enemyAudioSource.clip != tauntSound) {
             enemyAudioSource.clip = tauntSound;
             enemyAudioSource.Play();
         }
-        StartCoroutine(WalkAfterSeconds(1));
+
+        if (setIsTautingCoroutine != null) StopCoroutine(setIsTautingCoroutine);
+        setIsTautingCoroutine = StartCoroutine(SetIsTautingFalsyAfterSeconds(2f));
     }
 
     private void Attack() {
-        StopWalking();
-
         isAttacking = true;
         animator.SetTrigger("Attack");
 
-        StartCoroutine(WalkAfterSeconds(attackDurationTime * 1.5f));
-        StartCoroutine(StopAttackAfterSeconds(attackDurationTime * 1.5f));
+        if (setIsAttackingCoroutine != null) StopCoroutine(setIsAttackingCoroutine);
+        setIsAttackingCoroutine = StartCoroutine(SetIsAttackingFalsyAfterSeconds(attackDurationTime * 1.5f));
 
         int damage = Random.Range(regularHitDamage - damageVariation, regularHitDamage + damageVariation);
         playerStats.ApplyDamage(damage);
@@ -110,8 +116,6 @@ public class Monster : MonoBehaviour
     public void ApplyDamage(int damage) {
         health = Mathf.Max(health - damage, 0);
 
-        // stop walking and play damage animation
-        StopWalking();
         animator.SetTrigger("Damage");
         isBeingDamaged = true;
 
@@ -123,26 +127,18 @@ public class Monster : MonoBehaviour
         }
 
         float recoveryTime = 1f;
-        StartCoroutine(TurnBeingDamagedToFalseAfterSeconds(recoveryTime));
-        // 50% chance of running or walking
-        if (Random.Range(0, 2) == 0) {
-            StartCoroutine(WalkAfterSeconds(recoveryTime));
-        } else {
-            StartCoroutine(RunAfterSeconds(recoveryTime));
-            // run, and then after N seconds (from 4 to 10), start walking again
-            int randSeconds = Random.Range(4, 11);
-            StartCoroutine(WalkAfterSeconds(randSeconds));
-        }
+        if (setIsBeingDamagedCoroutine != null) StopCoroutine(setIsBeingDamagedCoroutine);
+        setIsBeingDamagedCoroutine = StartCoroutine(SetIsBeingDamagedFalsyAfterSeconds(recoveryTime));
     }
 
-    private void SetCanWalk(bool canWalk) {
-        this.canWalk = canWalk;
-        agent.isStopped = !canWalk;
+    private void SetIsStopped(bool isStopped) {
+        this.isStopped = isStopped;
+        agent.isStopped = isStopped;
     }
 
-    public void StopWalking() {
+    public void StopWalk() {
         agent.speed = 0;
-        SetCanWalk(false);
+        SetIsStopped(true);
         isRunning = false;
 
         animator.SetBool("Walking", false);
@@ -152,37 +148,50 @@ public class Monster : MonoBehaviour
     public IEnumerator WalkAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
-        // set can walk
+        // set to walking
+        Walk();
+    }
+
+    public IEnumerator RunAfterSeconds(float seconds) {
+        // wait
+        yield return new WaitForSeconds(seconds);
+        // set to running
+        Run();
+    }
+
+    private void Walk() {
         agent.speed = defaultSpeed;
-        SetCanWalk(true);
+        SetIsStopped(false);
         isRunning = false;
 
         animator.SetBool("Running", false);
         animator.SetBool("Walking", true);
     }
 
-    public IEnumerator RunAfterSeconds(float seconds) {
-        // wait
-        yield return new WaitForSeconds(seconds);
-        // set can walk
+    private void Run() {
         agent.speed = defaultSpeed * 2f;
-        SetCanWalk(true);
+        SetIsStopped(false);
         isRunning = true;
 
         animator.SetBool("Walking", false);
-        animator.SetBool("Running", true);        
+        animator.SetBool("Running", true);
     }
 
-    public IEnumerator StopAttackAfterSeconds(float seconds) {
-        // wait
-        yield return new WaitForSeconds(seconds);
-        isAttacking = false;
-        SetCanWalk(true);
-    }
-
-    public IEnumerator TurnBeingDamagedToFalseAfterSeconds(float seconds) {
+    public IEnumerator SetIsBeingDamagedFalsyAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         isBeingDamaged = false;
+    }
+
+    public IEnumerator SetIsAttackingFalsyAfterSeconds(float seconds) {
+        // wait
+        yield return new WaitForSeconds(seconds);
+        isAttacking = false;
+    }
+
+    public IEnumerator SetIsTautingFalsyAfterSeconds(float seconds) {
+        // wait
+        yield return new WaitForSeconds(seconds);
+        isTauting = false;
     }
 }

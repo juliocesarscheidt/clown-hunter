@@ -6,6 +6,7 @@ public class Shooting : MonoBehaviour
 {
     public GameObject particleShotEffect;
     public GameObject particleBloodEffect;
+    public GameObject bulletHolePrefab;
 
     private PlayerStats playerStats;
     private float shootTimer = 0f;
@@ -76,6 +77,16 @@ public class Shooting : MonoBehaviour
                     );
                     Destroy(bulletInstance, 5f);
                     */
+
+                    // bullet hole
+                    if (bulletHit.transform.CompareTag("Ground") || bulletHit.transform.CompareTag("Ceiling") || bulletHit.transform.CompareTag("Wall")) {
+                        GameObject bulletHole = Instantiate(
+                            bulletHolePrefab,
+                            bulletHit.point + bulletHit.normal * 0.001f,
+                            Quaternion.FromToRotation(Vector3.forward, bulletHit.normal)
+                        );
+                        Destroy(bulletHole, 10f);
+                    }
 
                     // blood particle
                     if (bulletHit.transform.CompareTag("EnemyHead") || bulletHit.transform.CompareTag("Enemy")) {

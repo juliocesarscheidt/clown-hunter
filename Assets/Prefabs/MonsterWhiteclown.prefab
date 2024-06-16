@@ -2111,10 +2111,12 @@ MonoBehaviour:
   regularHitDamage: 25
   damageVariation: 10
   distanceToAttack: 1.25
-  timerToAttack: 0
-  canWalk: 1
+  attackDurationTime: 1.5
+  isBeingDamaged: 0
+  isStopped: 0
   isRunning: 0
   isAttacking: 0
+  isTauting: 0
   distanceToPlayer: 0
 --- !u!114 &1049673865534877313
 MonoBehaviour:
