@@ -958,7 +958,7 @@ MonoBehaviour:
   criticalHitDamage: 100
   regularHitDamage: 25
   damageVariation: 10
-  distanceToAttack: 1
+  distanceToAttack: 0.75
   attackDurationTime: 1.5
   isStopped: 0
   isRunning: 0
@@ -966,6 +966,7 @@ MonoBehaviour:
   isBeingDamaged: 0
   isTauting: 0
   distanceToTarget: 0
+  monsterId: 0
 --- !u!114 &4376189758499588234
 MonoBehaviour:
   m_ObjectHideFlags: 0

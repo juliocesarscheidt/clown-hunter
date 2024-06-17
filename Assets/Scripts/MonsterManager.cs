@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class MonsterManager : MonoBehaviour
@@ -19,6 +20,13 @@ public class MonsterManager : MonoBehaviour
     public int regularHitDamage = 25;
 
     private int enemiesSpawnedCounter = 0;
+    private Dictionary<int, Monster> monstersPool = new();
+
+    public int maxSimultaneousAttacks = 2;
+    // private readonly System.Threading.Lock attackLock = new();
+    private readonly Object attackLock = new();
+    [SerializeField]
+    private List<int> releasedAttackToMonsterIds = new();
 
     void Awake() {
         if (Instance != null && Instance != this) {
@@ -31,6 +39,33 @@ public class MonsterManager : MonoBehaviour
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         SpawnEnemies();
+    }
+
+    public bool GetAttackLock(int monstedId) {
+        if (releasedAttackToMonsterIds.Count < maxSimultaneousAttacks) {
+            // only one monster can get this lock t a time, to avoid unexpected situations
+            lock (attackLock) {
+                releasedAttackToMonsterIds.Add(monstedId);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void ReleaseAttackLock(int monstedId) {
+        if (releasedAttackToMonsterIds.Count > 0) {
+            lock (attackLock) {
+                releasedAttackToMonsterIds.Remove(monstedId);
+            }
+        }
+    }
+
+    public void AddMonsterToPool(int id, Monster monster) {
+        monstersPool.Add(id, monster);
+    }
+
+    public void RemoveMonsterFromPool(int id) {
+        monstersPool.Remove(id);
     }
 
     public IEnumerator SpawnEnemiesAfterSeconds(float seconds) {
@@ -48,19 +83,21 @@ public class MonsterManager : MonoBehaviour
             return;
         }
 
-        enemiesAlive = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        enemiesAlive = monstersPool.Keys.Count;
+        Debug.Log($"enemiesAlive {enemiesAlive}");
 
-        int enemiesPrefabsQuantity = enemiesPrefabs.Count;
-        int spawnPointsQuantity = spawnPoints.Count;
         int diffToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
+        Debug.Log($"diffToSpawn {diffToSpawn}");
+        if (diffToSpawn == 0) {
+            return;
+        }
 
         List<int> randomSpawnPoints = new();
 
         int currentRetriesToFindSpawnPoints = 0;
-
         for (int i = 0; i < diffToSpawn; i++) {
             // get a random spawn point, try to not get a repeated one
-            int randomSpawnPointIndex = Random.Range(0, spawnPointsQuantity);
+            int randomSpawnPointIndex = Random.Range(0, spawnPoints.Count);
 
             currentRetriesToFindSpawnPoints++;
 
@@ -82,7 +119,6 @@ public class MonsterManager : MonoBehaviour
 
         // round robin index
         int currentEnemySpawnedIndex = lastEnemySpawnedIndex;
-        // Debug.Log("currentEnemySpawnedIndex " + currentEnemySpawnedIndex);
 
         for (int i = 0; i < diffToSpawn; i++) {
             GameObject spawnPoint = spawnPoints[randomSpawnPoints[i]];
@@ -96,10 +132,12 @@ public class MonsterManager : MonoBehaviour
             enemyObject.name = $"{enemyObject.name}-{enemiesSpawnedCounter}"; 
             if (enemyObject.TryGetComponent(out Monster monster)) {
                 monster.regularHitDamage = regularHitDamage;
+                monster.monsterId = enemiesSpawnedCounter;
+                AddMonsterToPool(enemiesSpawnedCounter, monster);
             }
 
             currentEnemySpawnedIndex++;
-            if (currentEnemySpawnedIndex >= enemiesPrefabsQuantity) {
+            if (currentEnemySpawnedIndex >= enemiesPrefabs.Count) {
                 currentEnemySpawnedIndex = 0;
             }
 

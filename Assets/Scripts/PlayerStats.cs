@@ -222,14 +222,12 @@ public class PlayerStats : MonoBehaviour
         playerController.CanMoveCamera = true;
     }
 
-    public bool IsInPointOfView(GameObject toCheck) {
+    public bool ObjectIsInPointOfView(GameObject toCheck) {
         Bounds bounds = toCheck.GetComponentInChildren<Collider>().bounds;
         Plane[] cameraFrustum = GeometryUtility.CalculateFrustumPlanes(Camera.main);
-
         if (GeometryUtility.TestPlanesAABB(cameraFrustum, bounds)) {
             return true;
         }
-
         return false;
     }
 

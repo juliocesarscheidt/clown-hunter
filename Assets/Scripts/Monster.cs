@@ -40,6 +40,8 @@ public class Monster : MonoBehaviour
     [SerializeField]
     private float distanceToTarget;
 
+    public int monsterId;
+
     void Start() {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
@@ -76,20 +78,20 @@ public class Monster : MonoBehaviour
             float dotRotationMonsterToPlayerDiff = Vector3.Dot(transform.forward,
                 (playerStats.transform.position - transform.position).normalized);
 
-            if (dotRotationMonsterToPlayerDiff > 0.9f) {
+            if (dotRotationMonsterToPlayerDiff > 0.85f) {
                 // calling this inside this block to avoid unneeded calls
-                bool isInPlayerPointOfView = playerStats.IsInPointOfView(gameObject);
-                if (isInPlayerPointOfView) {
+                bool isInPointOfView = playerStats.ObjectIsInPointOfView(gameObject);
+                if (isInPointOfView && GetLock()) {
                     Attack();
                 }
             } else {
                 Quaternion targetRotation = Quaternion.LookRotation(playerStats.transform.position - transform.position);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 6f * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 2f * Time.deltaTime);
             }
         }
 
         if (!isStopped) {
-            if (distanceToTarget <= 7.5f && CanMove()) {
+            if (distanceToTarget <= 10f && CanMove()) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= Random.Range(10, 30)) {
                     Taunt();
@@ -135,6 +137,8 @@ public class Monster : MonoBehaviour
         if (health <= 0) {
             health = 0;
             isDead = true;
+            MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
+            ReleaseLock();
             MonsterManager.Instance.SpawnEnemiesDelayed();
             Destroy(gameObject);
         }
@@ -200,11 +204,21 @@ public class Monster : MonoBehaviour
         // wait
         yield return new WaitForSeconds(seconds);
         isAttacking = false;
+        ReleaseLock();
     }
 
     public IEnumerator SetIsTautingFalsyAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         isTauting = false;
+    }
+
+    private bool GetLock() {
+        return MonsterManager.Instance.GetAttackLock(monsterId);
+    }
+
+    private void ReleaseLock() {
+        // release the attack lock
+        MonsterManager.Instance.ReleaseAttackLock(monsterId);
     }
 }

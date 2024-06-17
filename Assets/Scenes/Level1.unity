@@ -4967,6 +4967,8 @@ MonoBehaviour:
   enemiesToSpawn: 4
   defaultRegularHitDamage: 25
   regularHitDamage: 25
+  maxSimultaneousAttacks: 2
+  releasedAttacks: 0
 --- !u!1 &792626043
 GameObject:
   m_ObjectHideFlags: 0
