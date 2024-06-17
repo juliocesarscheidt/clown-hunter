@@ -24,7 +24,7 @@ public class Monster : MonoBehaviour
     public bool isStopped = false;
 
     public bool isRunning = false;
-    private float timerToRun;
+    // private float timerToRun;
 
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
@@ -36,8 +36,9 @@ public class Monster : MonoBehaviour
     private Coroutine setIsTautingCoroutine;
     private float timerToTaunt;
 
+    private Vector3 targetPosition;
     [SerializeField]
-    private float distanceToPlayer;
+    private float distanceToTarget;
 
     void Start() {
         agent = GetComponent<NavMeshAgent>();
@@ -53,30 +54,42 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        if (CanMove()) {
-            agent.SetDestination(playerStats.transform.position);
-            Walk();
+        targetPosition = playerStats.pointToMonsterAttack.transform.position;
+        distanceToTarget = Vector3.Distance(
+            transform.position,
+            targetPosition
+        );
 
+        if (CanMove()) {
+            agent.SetDestination(targetPosition);
+            if (distanceToTarget > distanceToAttack) {
+                Walk();
+            } else {
+                StopWalk();
+            }
         } else {
             StopWalk();
         }
-
-        distanceToPlayer = Vector3.Distance(
-            transform.position,
-            playerStats.transform.position);
        
-        if (distanceToPlayer <= distanceToAttack) {
+        if (distanceToTarget <= distanceToAttack && CanMove()) {
             // from -1 to 1 => -1 is looking at the opposite, 1 means it's looking at the player
-            float dotRotationDiff = Vector3.Dot(transform.forward,
+            float dotRotationMonsterToPlayerDiff = Vector3.Dot(transform.forward,
                 (playerStats.transform.position - transform.position).normalized);
 
-            if (dotRotationDiff > 0.85f && CanMove()) {
-                Attack();
+            if (dotRotationMonsterToPlayerDiff > 0.9f) {
+                // calling this inside this block to avoid unneeded calls
+                bool isInPlayerPointOfView = playerStats.IsInPointOfView(gameObject);
+                if (isInPlayerPointOfView) {
+                    Attack();
+                }
+            } else {
+                Quaternion targetRotation = Quaternion.LookRotation(playerStats.transform.position - transform.position);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 6f * Time.deltaTime);
             }
         }
 
         if (!isStopped) {
-            if (distanceToPlayer <= 10f && CanMove()) {
+            if (distanceToTarget <= 7.5f && CanMove()) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= Random.Range(10, 30)) {
                     Taunt();

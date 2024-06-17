@@ -53,6 +53,8 @@ public class PlayerStats : MonoBehaviour
     public Camera gunsCamera;
     public int defaultFieldOfView = 50;
 
+    public GameObject pointToMonsterAttack;
+
     void Awake() {
         for (int i = 0; i < guns.Count; i++) {
             currentBullets.Add(guns[i].currentBullets);
@@ -218,6 +220,17 @@ public class PlayerStats : MonoBehaviour
         // playerInput.enabled = true;
         playerController.CanMovePlayer = true;
         playerController.CanMoveCamera = true;
+    }
+
+    public bool IsInPointOfView(GameObject toCheck) {
+        Bounds bounds = toCheck.GetComponentInChildren<Collider>().bounds;
+        Plane[] cameraFrustum = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+
+        if (GeometryUtility.TestPlanesAABB(cameraFrustum, bounds)) {
+            return true;
+        }
+
+        return false;
     }
 
     public Animator GunAnimator {

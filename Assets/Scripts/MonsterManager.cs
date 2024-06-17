@@ -18,6 +18,8 @@ public class MonsterManager : MonoBehaviour
     public int defaultRegularHitDamage = 25;
     public int regularHitDamage = 25;
 
+    private int enemiesSpawnedCounter = 0;
+
     void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
@@ -91,6 +93,7 @@ public class MonsterManager : MonoBehaviour
                 spawnPoint.transform.position,
                 spawnPoint.transform.rotation
             );
+            enemyObject.name = $"{enemyObject.name}-{enemiesSpawnedCounter}"; 
             if (enemyObject.TryGetComponent(out Monster monster)) {
                 monster.regularHitDamage = regularHitDamage;
             }
@@ -103,6 +106,7 @@ public class MonsterManager : MonoBehaviour
             lastEnemySpawnedIndex = currentEnemySpawnedIndex;
 
             enemiesAlive++;
+            enemiesSpawnedCounter++;
         }
     }
 }
