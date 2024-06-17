@@ -79,6 +79,10 @@ public class PaperManager : MonoBehaviour
                 spawnPoint.transform.rotation
             );
             paper.transform.parent = spawnPoint.transform;
+
+            if (paper.TryGetComponent(out Interactable component)) {
+                InteractionManager.Instance.AddInteractable(component);
+            }
         }
     }
 
