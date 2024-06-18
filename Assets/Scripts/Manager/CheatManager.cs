@@ -88,6 +88,7 @@ public class CheatManager : MonoBehaviour
         switch (cheat) {
             case CheatEnum.InfiniteAmmo:
                 playerStats.spendAmmo = false;
+                playerStats.FillAllAmmo();
                 break;
 
             case CheatEnum.InfiniteSprint:
@@ -96,6 +97,7 @@ public class CheatManager : MonoBehaviour
 
             case CheatEnum.Invencible:
                 playerStats.takeDamage = false;
+                playerStats.FillHealth();
             break;
         }
     }

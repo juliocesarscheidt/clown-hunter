@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(FirstPersonController))]
 public class PlayerStats : MonoBehaviour
 {
+    public int maxHealth = 100;
     public int health = 100;
     public bool isDead = false;
 
@@ -185,7 +186,7 @@ public class PlayerStats : MonoBehaviour
 
         if (!isDead) {
             if (!isBeingDamaged) cameraAnimator.SetTrigger("Damage");
-            HudManager.Instance.AdjustHealthBar(health, 100);
+            HudManager.Instance.AdjustHealthBar(health, maxHealth);
             HudManager.Instance.ShowBloodImage();
         }
 
@@ -202,14 +203,35 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void CollectAmmo(int bulletsAmount) {
-        // add bullets to the current gun
-        availableBullets[selectedGunIndex] += bulletsAmount;
-        HudManager.Instance.AdjustBulletsCount();
+        if (spendAmmo) {
+            // add bullets to the current gun
+            availableBullets[selectedGunIndex] += bulletsAmount;
+            HudManager.Instance.AdjustBulletsCount();
+        }
     }
 
     public void CollectFirstAid(int healthAmount) {
-        health = Mathf.Min(health + healthAmount, 100);
-        HudManager.Instance.AdjustHealthBar(health, 100);
+        if (takeDamage) {
+            health = Mathf.Min(health + healthAmount, maxHealth);
+            HudManager.Instance.AdjustHealthBar(health, maxHealth);
+        }
+    }
+
+    public void FillAllAmmo() {
+        for (int i = 0; i < guns.Count; i++) {
+            int diffBullets = Mathf.Min(
+                maxBullets[i] - currentBullets[i],
+                availableBullets[i]
+            );
+            availableBullets[i] -= diffBullets;
+            currentBullets[i] += diffBullets;
+        }
+        HudManager.Instance.AdjustBulletsCount();
+    }
+
+    public void FillHealth() {
+        health = maxHealth;
+        HudManager.Instance.AdjustHealthBar(health, maxHealth);
     }
 
     private IEnumerator SetIsBeingDamagedFalsyAfterSeconds(float seconds) {
@@ -239,6 +261,8 @@ public class PlayerStats : MonoBehaviour
 
     public void SetSpendStamina(bool spend) {
         playerController.SpendStamina = spend;
+        if (!spend)
+            playerController.CurrentStamina = playerController.MaxStamina;
     }
 
     public Animator GunAnimator {
@@ -264,24 +288,21 @@ public class PlayerStats : MonoBehaviour
     public int CurrentBullets {
         get { return currentBullets[selectedGunIndex]; }
         set {
-            if (spendAmmo)
-                currentBullets[selectedGunIndex] = value;
+            if (spendAmmo) currentBullets[selectedGunIndex] = value;
         }
     }
 
     public int MaxBullets {
         get { return maxBullets[selectedGunIndex]; }
         set {
-            if (spendAmmo)
-                maxBullets[selectedGunIndex] = value;
+            if (spendAmmo) maxBullets[selectedGunIndex] = value;
         }
     }
 
     public int AvailableBullets {
         get { return availableBullets[selectedGunIndex]; }
         set {
-            if (spendAmmo)
-                availableBullets[selectedGunIndex] = value;
+            if (spendAmmo) availableBullets[selectedGunIndex] = value;
         }
     }
 }
