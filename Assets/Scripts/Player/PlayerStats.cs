@@ -261,8 +261,7 @@ public class PlayerStats : MonoBehaviour
 
     public void SetSpendStamina(bool spend) {
         playerController.SpendStamina = spend;
-        if (!spend)
-            playerController.CurrentStamina = playerController.MaxStamina;
+        if (!spend) playerController.CurrentStamina = playerController.MaxStamina;
     }
 
     public Animator GunAnimator {

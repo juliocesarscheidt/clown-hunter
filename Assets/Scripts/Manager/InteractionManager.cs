@@ -13,7 +13,6 @@ public class InteractionManager : MonoBehaviour
     
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
-
         interactionAudioSource = GetComponent<AudioSource>();
 
         foreach (var obj in FindObjectsByType(typeof(Interactable), FindObjectsSortMode.None)) {

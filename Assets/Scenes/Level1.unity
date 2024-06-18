@@ -2648,11 +2648,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSources: []
   audioSlider: {fileID: 3814311019406255825}
-  defaultSoundVolume: 1
   volumeInfoText: {fileID: 3814311019406255824}
+  defaultVolume: 1
+  volume: 0
   difficultyDropdown: {fileID: 2054633779}
   defaultDifficulty: 0
+  maxDifficulty: 3
   enemiesToAddOnPaperCollectedByDifficulty: 2
+  difficulty: 0
 --- !u!1 &485676313
 GameObject:
   m_ObjectHideFlags: 0
@@ -4421,8 +4424,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17a615c967fff304b893485fd3a626bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToType: 2
   cheatAudioSource: {fileID: 706041743}
+  timeToType: 2
+  currentTypingIndex: 0
+  typedString: 
 --- !u!82 &706041743
 AudioSource:
   m_ObjectHideFlags: 0
@@ -13558,6 +13563,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 734387215}
+    - target: {fileID: 3041343839622545388, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3609836626126755288, guid: d128b83e50af11640ba950f440e5f49e,
         type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -13572,6 +13582,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OptionsPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4095599030681480257, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4299705371015586277, guid: d128b83e50af11640ba950f440e5f49e,
         type: 3}
@@ -13678,6 +13693,31 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2120703554}
+    - target: {fileID: 4595313621347440256, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4595313621347440256, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4933950678647387646, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4933950678647387646, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4933950678647387646, guid: d128b83e50af11640ba950f440e5f49e,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4951795288300820174, guid: d128b83e50af11640ba950f440e5f49e,
         type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target

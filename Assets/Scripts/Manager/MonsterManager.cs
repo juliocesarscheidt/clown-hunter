@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class MonsterManager : MonoBehaviour
@@ -23,7 +22,6 @@ public class MonsterManager : MonoBehaviour
     private Dictionary<int, Monster> monstersPool = new();
 
     public int maxSimultaneousAttacks = 2;
-    // private readonly System.Threading.Lock attackLock = new();
     private readonly Object attackLock = new();
     [SerializeField]
     private List<int> releasedAttackToMonsterIds = new();

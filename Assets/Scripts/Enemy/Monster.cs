@@ -116,7 +116,7 @@ public class Monster : MonoBehaviour
                     isHittingOtherMonster = false;
                 } else {
                     isHittingOtherMonster = true;
-                    // other.isHittingOtherMonster = false;
+                    other.isHittingOtherMonster = false;
                 }
             }
         }

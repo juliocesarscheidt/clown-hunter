@@ -1019,6 +1019,7 @@ MonoBehaviour:
   isRunning: 0
   isHittingOtherMonster: 0
   isAttacking: 0
+  takeDamage: 1
   isBeingDamaged: 0
   isTauting: 0
   distanceToTarget: 0
@@ -1095,8 +1096,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3375046419239285577}
   serializedVersion: 4
-  m_Mass: 2
-  m_Drag: 0
+  m_Mass: 10
+  m_Drag: 10
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

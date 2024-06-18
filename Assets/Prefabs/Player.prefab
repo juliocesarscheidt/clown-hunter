@@ -2056,6 +2056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 125b031657a71ea43accf45f17bc67e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
   health: 100
   isDead: 0
   criticalHitDamage: 100
@@ -2070,6 +2071,7 @@ MonoBehaviour:
   canShoot: 0
   isReloading: 0
   isAiming: 0
+  takeDamage: 1
   isBeingDamaged: 0
   damageVariation: 10
   shotParticleEffectPos:
@@ -2082,6 +2084,7 @@ MonoBehaviour:
   selectedGun: {fileID: 11400000, guid: 0805304669691d44fb82de214c953a16, type: 2}
   selectedGunIndex: 0
   selectedGunObject: {fileID: 208045414655017588}
+  spendAmmo: 1
   currentBullets: 
   maxBullets: 
   availableBullets: 
@@ -2125,6 +2128,7 @@ MonoBehaviour:
   SpeedChangeRate: 10
   MaxStamina: 100
   CurrentStamina: 100
+  SpendStamina: 1
   SpendStaminaSpeed: 20
   CanMovePlayer: 1
   CanMoveCamera: 1
@@ -2285,8 +2289,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3948760041391685328}
   serializedVersion: 4
-  m_Mass: 2
-  m_Drag: 0
+  m_Mass: 10
+  m_Drag: 10
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

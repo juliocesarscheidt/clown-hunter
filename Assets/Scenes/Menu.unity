@@ -217,9 +217,11 @@ MonoBehaviour:
     m_Options:
     - m_Text: Easy
       m_Image: {fileID: 0}
-    - m_Text: Medium
+    - m_Text: Normal
       m_Image: {fileID: 0}
     - m_Text: Hard
+      m_Image: {fileID: 0}
+    - m_Text: God (no cheats allowed)
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -342,6 +344,7 @@ MonoBehaviour:
   volumeInfoText: {fileID: 1044678757}
   difficultyDropdown: {fileID: 207107}
   defaultDifficulty: 0
+  maxDifficulty: 3
   enemiesToAddOnPaperCollectedByDifficulty: 2
 --- !u!1 &134315459
 GameObject:

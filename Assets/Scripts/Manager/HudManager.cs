@@ -55,7 +55,6 @@ public class HudManager : MonoBehaviour
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         isRunningGame = true;
-        // Debug.Log($"Game is running {isRunningGame}");
         HidePauseGamePanel();
         AdjustBulletsCount();
     }
