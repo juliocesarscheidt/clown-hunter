@@ -178,10 +178,8 @@ public class Outline : MonoBehaviour {
   }
 
   void LoadSmoothNormals() {
-
     // Retrieve or generate smooth normals
     foreach (var meshFilter in GetComponentsInChildren<MeshFilter>()) {
-
       // Skip if smooth normals have already been adopted
       if (!registeredMeshes.Add(meshFilter.sharedMesh)) {
         continue;
@@ -195,9 +193,7 @@ public class Outline : MonoBehaviour {
       meshFilter.sharedMesh.SetUVs(3, smoothNormals);
 
       // Combine submeshes
-      var renderer = meshFilter.GetComponent<Renderer>();
-
-      if (renderer != null) {
+      if (meshFilter.TryGetComponent<Renderer>(out var renderer)) {
         CombineSubmeshes(meshFilter.sharedMesh, renderer.sharedMaterials);
       }
     }

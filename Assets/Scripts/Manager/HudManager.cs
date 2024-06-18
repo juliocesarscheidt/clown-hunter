@@ -35,9 +35,14 @@ public class HudManager : MonoBehaviour
 
     public GameObject uiInfoWraperObject;
     public TextMeshProUGUI bulletsCounterText;
+
     public TextMeshProUGUI tempInfoText;
     private bool showTempInfoText = false;
     private float showTempInfoTextTimer = 0f;
+
+    public TextMeshProUGUI cheatActivatedText;
+    private bool showCheatActivatedText = false;
+    private float showCheatActivatedTextTimer = 0f;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -73,6 +78,14 @@ public class HudManager : MonoBehaviour
             if (showTempInfoTextTimer >= 1.5f) {
                 SetAndActivateTempInfoText("");
                 showTempInfoTextTimer = 0f;
+            }
+        }
+
+        if (showCheatActivatedText) {
+            showCheatActivatedTextTimer += Time.unscaledDeltaTime;
+            if (showCheatActivatedTextTimer >= 1.5f) {
+                SetAndActivateCheatActivatedText("");
+                showCheatActivatedTextTimer = 0f;
             }
         }
     }
@@ -193,10 +206,16 @@ public class HudManager : MonoBehaviour
         SetAndActivateTempInfoText("Options saved");
     }
 
-    private void SetAndActivateTempInfoText(string text) {
+    public void SetAndActivateTempInfoText(string text) {
         showTempInfoText = text.Length > 0;
         tempInfoText.gameObject.SetActive(showTempInfoText);
         tempInfoText.text = text;
+    }
+
+    public void SetAndActivateCheatActivatedText(string text) {
+        showCheatActivatedText = text.Length > 0;
+        cheatActivatedText.gameObject.SetActive(showCheatActivatedText);
+        cheatActivatedText.text = text;
     }
 
     public void RestartGame() {

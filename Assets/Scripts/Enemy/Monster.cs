@@ -29,6 +29,7 @@ public class Monster : MonoBehaviour
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
 
+    public bool takeDamage = true;
     public bool isBeingDamaged = false;
     private Coroutine setIsBeingDamagedCoroutine;
 
@@ -151,7 +152,9 @@ public class Monster : MonoBehaviour
     }
 
     public void ApplyDamage(int damage) {
-        health = Mathf.Max(health - damage, 0);
+        if (takeDamage) {
+            health = Mathf.Max(health - damage, 0);
+        }
 
         animator.SetTrigger("Damage");
         isBeingDamaged = true;

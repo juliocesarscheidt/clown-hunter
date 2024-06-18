@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d272f4b83e1ea0c488b430badb7f7260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isOutlineEnabled: 0
   healthAmount: 100
 --- !u!65 &9139428982902679567
 BoxCollider:
@@ -279,6 +280,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6284418212752949605, guid: babc22bb4c0c24a49ac186abec78bc2e,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5775953214266689368, guid: babc22bb4c0c24a49ac186abec78bc2e,
         type: 3}

@@ -52,18 +52,21 @@ public class InteractionManager : MonoBehaviour
                         // display UIU message
                         HudManager.Instance.ShowPressEObject();
 
-                        // show object outline
-                        hit.transform.gameObject.TryGetComponent(out Interactable obj);
-                        obj?.EnableOutline();
+                        if (hit.transform.gameObject.TryGetComponent(out Interactable obj)) {
+                            // show object outline
+                            if (!obj.isOutlineEnabled) {
+                                obj.EnableOutline();
+                            }
 
-                        if (Input.GetKeyDown(KeyCode.E)) {
-                            obj.Collect();
-                            interactionAudioSource.Play();
+                            if (Input.GetKeyDown(KeyCode.E)) {
+                                obj.Collect();
+                                interactionAudioSource.Play();
 
-                            int index = interactables.FindIndex(interactable => interactable == obj);
-                            if (index >= 0) interactables.RemoveAt(index);
+                                int index = interactables.FindIndex(interactable => interactable == obj);
+                                if (index >= 0) interactables.RemoveAt(index);
 
-                            Destroy(hit.transform.gameObject);
+                                Destroy(hit.transform.gameObject);
+                            }
                         }
                     }
                 }
@@ -77,7 +80,9 @@ public class InteractionManager : MonoBehaviour
 
     private void DisableAllOutlines() {
         foreach (var interactable in interactables) {
-            interactable.DisableOutline();
+            if (interactable.isOutlineEnabled) {
+                interactable.DisableOutline();
+            }
         }
     }
 

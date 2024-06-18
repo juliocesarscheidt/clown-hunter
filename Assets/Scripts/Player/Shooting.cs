@@ -24,6 +24,7 @@ public class Shooting : MonoBehaviour
         Aim();
 
         if (CanManageGun() && Input.GetKeyDown(KeyCode.R) &&
+            playerStats.spendAmmo &&
             playerStats.CurrentBullets != playerStats.MaxBullets &&
             playerStats.AvailableBullets > 0) {
 

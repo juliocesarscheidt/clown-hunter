@@ -24,7 +24,9 @@ namespace StarterAssets
         public float MaxStamina = 100.0f;
         [Tooltip("Current stamina for sprints")]
         public float CurrentStamina = 100.0f;
-		[Tooltip("Spend speed of stamina")]
+        [Tooltip("If it uses the stamina or not")]
+        public bool SpendStamina = true;
+        [Tooltip("Spend speed of stamina")]
         public float SpendStaminaSpeed = 20f;
         private bool _lowOnStamina = false;
 		public bool CanMovePlayer = true;
@@ -171,8 +173,8 @@ namespace StarterAssets
 			float targetSpeed = canSprint && _input.sprint ? SprintSpeed : MoveSpeed;
 
 			if (canSprint && _input.sprint && _input.move != Vector2.zero) {
-				CurrentStamina -= Time.deltaTime * SpendStaminaSpeed;
-			} else if (CurrentStamina < MaxStamina) {
+				if (SpendStamina) CurrentStamina -= Time.deltaTime * SpendStaminaSpeed;
+            } else if (CurrentStamina < MaxStamina) {
 				CurrentStamina += Time.deltaTime * (SpendStaminaSpeed / 2);
 			}
 			CurrentStamina = Mathf.Clamp(CurrentStamina, 0, MaxStamina);

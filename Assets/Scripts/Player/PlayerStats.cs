@@ -25,7 +25,10 @@ public class PlayerStats : MonoBehaviour
     public bool canShoot = false;
     public bool isReloading = false;
     public bool isAiming = false;
+
+    public bool takeDamage = true;
     public bool isBeingDamaged = false;
+    private Coroutine setIsBeingDamagedCoroutine;
     public int damageVariation = 10;
 
     public GameObject[] shotParticleEffectPos;
@@ -42,6 +45,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField]
     private GameObject selectedGunObject;
 
+    public bool spendAmmo = true;
     [SerializeField]
     private List<int> currentBullets = new();
     [SerializeField]
@@ -175,16 +179,20 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void ApplyDamage(int damage) {
-        health = Mathf.Max(health - damage, 0);
+        if (takeDamage) {
+            health = Mathf.Max(health - damage, 0);
+        }
 
-        StartCoroutine(SetIsBeingDamagedAfterSeconds(1.5f));
-
-        isBeingDamaged = true;
         if (!isDead) {
-            cameraAnimator.SetTrigger("Damage");
+            if (!isBeingDamaged) cameraAnimator.SetTrigger("Damage");
             HudManager.Instance.AdjustHealthBar(health, 100);
             HudManager.Instance.ShowBloodImage();
         }
+
+        if (setIsBeingDamagedCoroutine != null) StopCoroutine(setIsBeingDamagedCoroutine);
+        setIsBeingDamagedCoroutine = StartCoroutine(SetIsBeingDamagedFalsyAfterSeconds(1.5f));
+
+        isBeingDamaged = true;
 
         if (health <= 0) {
             health = 0;
@@ -204,7 +212,7 @@ public class PlayerStats : MonoBehaviour
         HudManager.Instance.AdjustHealthBar(health, 100);
     }
 
-    private IEnumerator SetIsBeingDamagedAfterSeconds(float seconds) {
+    private IEnumerator SetIsBeingDamagedFalsyAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         isBeingDamaged = false;
@@ -227,6 +235,10 @@ public class PlayerStats : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public void SetSpendStamina(bool spend) {
+        playerController.SpendStamina = spend;
     }
 
     public Animator GunAnimator {
@@ -252,21 +264,24 @@ public class PlayerStats : MonoBehaviour
     public int CurrentBullets {
         get { return currentBullets[selectedGunIndex]; }
         set {
-            currentBullets[selectedGunIndex] = value;
+            if (spendAmmo)
+                currentBullets[selectedGunIndex] = value;
         }
     }
 
     public int MaxBullets {
         get { return maxBullets[selectedGunIndex]; }
         set {
-            maxBullets[selectedGunIndex] = value;
+            if (spendAmmo)
+                maxBullets[selectedGunIndex] = value;
         }
     }
 
     public int AvailableBullets {
         get { return availableBullets[selectedGunIndex]; }
         set {
-            availableBullets[selectedGunIndex] = value;
+            if (spendAmmo)
+                availableBullets[selectedGunIndex] = value;
         }
     }
 }

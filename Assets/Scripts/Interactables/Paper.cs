@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class Paper : Interactable
 {
     private Outline outlineScript;
@@ -14,10 +15,12 @@ public class Paper : Interactable
     }
 
     public override void EnableOutline() {
-        outlineScript.enabled = true;
+        isOutlineEnabled = true;
+        outlineScript.enabled = isOutlineEnabled;
     }
 
     public override void DisableOutline() {
-        outlineScript.enabled = false;
+        isOutlineEnabled = false;
+        outlineScript.enabled = isOutlineEnabled;
     }
 }
