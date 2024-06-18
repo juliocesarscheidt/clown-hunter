@@ -1,24 +1,30 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CheatManager : MonoBehaviour
 {
     private PlayerStats playerStats;
-    public float timeToType = 2f;
-    private float typingTimer = 0.0f;
-    private int currentTypingIndex = 0;
     public AudioSource cheatAudioSource;
 
-    public enum Cheats {
+    public float timeToType = 2f;
+    private float typingTimer = 0.0f;
+    
+    [SerializeField]
+    private int currentTypingIndex = 0;
+    [SerializeField]
+    private string typedString = string.Empty;
+
+    public enum CheatEnum {
         Invencible,
         InfiniteAmmo,
         InfiniteSprint,
     }
 
-    public Dictionary<Cheats, string> cheatCodes = new() {
-        {Cheats.Invencible, "SUPERHUMAN"},
-        {Cheats.InfiniteAmmo, "AMMOGOD"},
-        {Cheats.InfiniteSprint, "SPRINTGOD"},
+    public Dictionary<string, CheatEnum> cheatCodes = new() {
+        {"AMMOGOD", CheatEnum.InfiniteAmmo},
+        {"SPRINTGOD", CheatEnum.InfiniteSprint},
+        {"SUPERHUMAN", CheatEnum.Invencible},
     };
 
     void Start() {
@@ -35,21 +41,30 @@ public class CheatManager : MonoBehaviour
         ){
             string currentKeyCode = e.keyCode.ToString();
 
-            foreach (Cheats cheat in cheatCodes.Keys) {
-                string cheatKeyCodeSequence = cheatCodes[cheat].ToString();
-                int cheatKeyCodeLen = cheatKeyCodeSequence.Length;
+            List<string> cheatKeysToCheck = cheatCodes.Keys.ToList().FindAll(cheat => cheat.StartsWith(typedString));
+
+            foreach (string cheatSequence in cheatKeysToCheck) {
+                CheatEnum cheat = cheatCodes[cheatSequence];
+                int cheatKeyCodeLen = cheatSequence.Length;
 
                 if (currentTypingIndex > cheatKeyCodeLen) {
                     continue;    
                 }
-                char nextExpectedKeyCode = cheatKeyCodeSequence[currentTypingIndex];
 
-                if (currentKeyCode == nextExpectedKeyCode.ToString()) {
+                char expectedKeyCode = cheatSequence[currentTypingIndex];
+
+                if (currentKeyCode == expectedKeyCode.ToString()) {
                     typingTimer = 0;
                     currentTypingIndex++;
+                    typedString = $"{typedString}{expectedKeyCode}";
+
                     if (currentTypingIndex == cheatKeyCodeLen) {
+                        currentTypingIndex = 0;
+                        typedString = string.Empty;
                         ActivateCheat(cheat);
                     }
+
+                    break;
                 }
             }
         }
@@ -62,24 +77,25 @@ public class CheatManager : MonoBehaviour
         typingTimer += Time.deltaTime;
         if (typingTimer >= timeToType) {
             currentTypingIndex = 0;
+            typedString = string.Empty;
         }
     }
 
-    public void ActivateCheat(Cheats cheat) {
+    public void ActivateCheat(CheatEnum cheat) {
         HudManager.Instance.SetAndActivateCheatActivatedText($"Cheat activated {cheat}");
         cheatAudioSource.Play();
 
         switch (cheat) {
-            case Cheats.Invencible:
-                playerStats.takeDamage = false;
-            break;
-
-            case Cheats.InfiniteAmmo:
+            case CheatEnum.InfiniteAmmo:
                 playerStats.spendAmmo = false;
-            break;
+                break;
 
-            case Cheats.InfiniteSprint:
+            case CheatEnum.InfiniteSprint:
                 playerStats.SetSpendStamina(false);
+                break;
+
+            case CheatEnum.Invencible:
+                playerStats.takeDamage = false;
             break;
         }
     }
