@@ -211,13 +211,11 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void DisablePlayerMovementAndCamera() {
-        // playerInput.enabled = false;
         playerController.CanMovePlayer = false;
         playerController.CanMoveCamera = false;
     }
 
     public void EnablePlayerMovementAndCamera() {
-        // playerInput.enabled = true;
         playerController.CanMovePlayer = true;
         playerController.CanMoveCamera = true;
     }

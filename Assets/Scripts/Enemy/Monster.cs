@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-using System.Globalization;
-using System.Reflection;
 
 public class Monster : MonoBehaviour
 {
@@ -25,6 +23,8 @@ public class Monster : MonoBehaviour
 
     public bool isRunning = false;
     // private float timerToRun;
+
+    public bool isHittingOtherMonster = false;
 
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
@@ -64,7 +64,7 @@ public class Monster : MonoBehaviour
 
         if (CanMove()) {
             agent.SetDestination(targetPosition);
-            if (distanceToTarget > distanceToAttack) {
+            if (distanceToTarget > distanceToAttack && !isHittingOtherMonster) {
                 Walk();
             } else {
                 StopWalk();
@@ -103,6 +103,28 @@ public class Monster : MonoBehaviour
 
     private bool CanMove() {
         return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isTauting;
+    }
+
+    private void OnTriggerEnter(Collider collider) {
+        if (collider.gameObject.CompareTag(TagsController.EnemyArea)) {
+            Monster other = collider.gameObject.GetComponentInParent<Monster>();
+            if (other != null) {
+                // check which monster is closer to player, that one will continue walking, but the other will stop
+                if (other.distanceToTarget > distanceToTarget) {
+                    other.isHittingOtherMonster = true;
+                    isHittingOtherMonster = false;
+                } else {
+                    isHittingOtherMonster = true;
+                    // other.isHittingOtherMonster = false;
+                }
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider collider) {
+        if (collider.gameObject.CompareTag(TagsController.EnemyArea)) {
+            isHittingOtherMonster = false;
+        }
     }
 
     private void Taunt() {

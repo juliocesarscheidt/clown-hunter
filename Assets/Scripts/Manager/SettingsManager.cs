@@ -34,9 +34,9 @@ public class SettingsManager : MonoBehaviour
     }
 
     private void Start() {
-        float soundVolume = PlayerPrefs.GetFloat("sound_volume", defaultSoundVolume);
-        audioSlider.value = soundVolume;
-        SetSoundSettings(soundVolume);
+        float volume = PlayerPrefs.GetFloat("volume", defaultSoundVolume);
+        audioSlider.value = volume;
+        SetSoundSettings(volume);
 
         int difficulty = PlayerPrefs.GetInt("difficulty", defaultDifficulty);
         difficultyDropdown.value = difficulty;
@@ -85,9 +85,9 @@ public class SettingsManager : MonoBehaviour
     }
 
     public void ApplySoundSettings() {
-        float soundVolume = audioSlider.value;
-        PlayerPrefs.SetFloat("sound_volume", soundVolume);
-        SetSoundSettings(soundVolume);
+        float volume = audioSlider.value;
+        PlayerPrefs.SetFloat("volume", volume);
+        SetSoundSettings(volume);
     }
 
     public void SetVolumeInfoText() {

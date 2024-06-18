@@ -4717,12 +4717,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756248352}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &762254552 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2703518868526296583, guid: 79fd79cfec879b344a87bfdff4bffa7b,
-    type: 3}
-  m_PrefabInstance: {fileID: 8999355804718069687}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &765136331
 GameObject:
   m_ObjectHideFlags: 0
@@ -4968,7 +4962,7 @@ MonoBehaviour:
   defaultRegularHitDamage: 25
   regularHitDamage: 25
   maxSimultaneousAttacks: 2
-  releasedAttacks: 0
+  releasedAttackToMonsterIds: 
 --- !u!1 &792626043
 GameObject:
   m_ObjectHideFlags: 0
@@ -13820,11 +13814,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1727288175475919688, guid: 79fd79cfec879b344a87bfdff4bffa7b,
-        type: 3}
-      propertyPath: pointToMonsterAttack
-      value: 
-      objectReference: {fileID: 762254552}
     - target: {fileID: 2703518868526296583, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
       propertyPath: m_Name
@@ -13834,6 +13823,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517603477498767581, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3517603477498767581, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+        type: 3}
+      propertyPath: m_IgnoreFromBuild
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5301695969025827071, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}

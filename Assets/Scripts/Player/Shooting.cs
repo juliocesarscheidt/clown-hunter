@@ -79,7 +79,9 @@ public class Shooting : MonoBehaviour
                     */
 
                     // bullet hole
-                    if (bulletHit.transform.CompareTag("Ground") || bulletHit.transform.CompareTag("Ceiling") || bulletHit.transform.CompareTag("Wall")) {
+                    if (bulletHit.transform.CompareTag(TagsController.Ground) ||
+                        bulletHit.transform.CompareTag(TagsController.Ceiling) ||
+                        bulletHit.transform.CompareTag(TagsController.Wall)) {
                         GameObject bulletHole = Instantiate(
                             bulletHolePrefab,
                             bulletHit.point + bulletHit.normal * 0.001f,
@@ -89,7 +91,8 @@ public class Shooting : MonoBehaviour
                     }
 
                     // blood particle
-                    if (bulletHit.transform.CompareTag("EnemyHead") || bulletHit.transform.CompareTag("Enemy")) {
+                    if (bulletHit.transform.CompareTag(TagsController.EnemyHead) ||
+                        bulletHit.transform.CompareTag(TagsController.Enemy)) {
                         GameObject bloodInstance = Instantiate(
                             particleBloodEffect,
                             bulletHit.point,
@@ -99,13 +102,13 @@ public class Shooting : MonoBehaviour
                     }
 
                     // damage
-                    if (bulletHit.transform.CompareTag("EnemyHead")) {
+                    if (bulletHit.transform.CompareTag(TagsController.EnemyHead)) {
                         Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
                         monster.ApplyDamage(playerStats.criticalHitDamage);
                     }
 
-                    if (bulletHit.transform.CompareTag("Enemy")) {
-                        Monster monster = bulletHit.transform.GetComponentInParent<Monster>();
+                    if (bulletHit.transform.CompareTag(TagsController.Enemy)) {
+                        Monster monster = bulletHit.transform.GetComponent<Monster>();
                         int damage = Random.Range(playerStats.regularHitDamage - playerStats.damageVariation,
                             playerStats.regularHitDamage + playerStats.damageVariation);
                         monster.ApplyDamage(damage);

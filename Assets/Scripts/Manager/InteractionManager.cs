@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
@@ -8,7 +6,7 @@ public class InteractionManager : MonoBehaviour
     public static InteractionManager Instance { get; private set; }
 
     private PlayerStats playerStats;
-    public List<string> tagsToInteract = new() { "Paper", "GunAmmo", "FirstAid" };
+    public List<string> tagsToInteract = new() { TagsController.Paper, TagsController.GunAmmo, TagsController.FirstAid };
     private AudioSource interactionAudioSource;
     [SerializeField]
     private List<Interactable> interactables = new();

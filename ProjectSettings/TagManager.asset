@@ -13,6 +13,7 @@ TagManager:
   - Ground
   - Ceiling
   - Wall
+  - EnemyArea
   layers:
   - Default
   - TransparentFX

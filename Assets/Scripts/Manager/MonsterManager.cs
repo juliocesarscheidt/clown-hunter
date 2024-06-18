@@ -84,18 +84,18 @@ public class MonsterManager : MonoBehaviour
         }
 
         enemiesAlive = monstersPool.Keys.Count;
-        Debug.Log($"enemiesAlive {enemiesAlive}");
+        Debug.Log($"enemies alive {enemiesAlive}");
 
-        int diffToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
-        Debug.Log($"diffToSpawn {diffToSpawn}");
-        if (diffToSpawn == 0) {
+        int enemiesDiffToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
+        Debug.Log($"enemies diff to spawn {enemiesDiffToSpawn}");
+        if (enemiesDiffToSpawn == 0) {
             return;
         }
 
         List<int> randomSpawnPoints = new();
 
         int currentRetriesToFindSpawnPoints = 0;
-        for (int i = 0; i < diffToSpawn; i++) {
+        for (int i = 0; i < enemiesDiffToSpawn; i++) {
             // get a random spawn point, try to not get a repeated one
             int randomSpawnPointIndex = Random.Range(0, spawnPoints.Count);
 
@@ -120,7 +120,7 @@ public class MonsterManager : MonoBehaviour
         // round robin index
         int currentEnemySpawnedIndex = lastEnemySpawnedIndex;
 
-        for (int i = 0; i < diffToSpawn; i++) {
+        for (int i = 0; i < enemiesDiffToSpawn; i++) {
             GameObject spawnPoint = spawnPoints[randomSpawnPoints[i]];
 
             // spawn the enemy
