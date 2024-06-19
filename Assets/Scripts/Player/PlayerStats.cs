@@ -89,6 +89,7 @@ public class PlayerStats : MonoBehaviour
                 EnablePlayerMovementAndCamera();
             } else {
                 playerController.CanMovePlayer = false;
+                playerController.CanMoveCamera = true;
             }
 
             if (!isReloading) {

@@ -1,13 +1,17 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Monster : MonoBehaviour
 {
     private NavMeshAgent agent;
     private PlayerStats playerStats;
     private Animator animator;
-    private AudioSource enemyAudioSource;
+    private AudioSource monsterAudioSource;
+
+    public int monsterId;
 
     public AudioClip tauntSound;
     public int health = 100;
@@ -25,6 +29,7 @@ public class Monster : MonoBehaviour
     // private float timerToRun;
 
     public bool isHittingOtherMonster = false;
+    private Dictionary<int, Monster> hittingMonsterObjs = new();
 
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
@@ -41,12 +46,10 @@ public class Monster : MonoBehaviour
     [SerializeField]
     private float distanceToTarget;
 
-    public int monsterId;
-
     void Start() {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
-        enemyAudioSource = GetComponent<AudioSource>();
+        monsterAudioSource = GetComponent<AudioSource>();
 
         playerStats = FindObjectOfType<PlayerStats>();
     }
@@ -110,10 +113,18 @@ public class Monster : MonoBehaviour
         if (collider.gameObject.CompareTag(TagsController.EnemyArea)) {
             Monster other = collider.gameObject.GetComponentInParent<Monster>();
             if (other != null) {
+                if (!hittingMonsterObjs.ContainsKey(other.monsterId)) {
+                    hittingMonsterObjs.Add(other.monsterId, other);
+                }
+                if (!other.hittingMonsterObjs.ContainsKey(monsterId)) {
+                    other.hittingMonsterObjs.Add(monsterId, this);
+                }
+
                 // check which monster is closer to player, that one will continue walking, but the other will stop
                 if (other.distanceToTarget > distanceToTarget) {
                     other.isHittingOtherMonster = true;
-                    isHittingOtherMonster = false;
+                    // isHittingOtherMonster = false;
+
                 } else {
                     isHittingOtherMonster = true;
                     other.isHittingOtherMonster = false;
@@ -124,16 +135,40 @@ public class Monster : MonoBehaviour
 
     private void OnTriggerExit(Collider collider) {
         if (collider.gameObject.CompareTag(TagsController.EnemyArea)) {
+            Monster other = collider.gameObject.GetComponentInParent<Monster>();
+            if (other != null) {
+                RemoveHittingOtherMonster(other.monsterId);
+            }
             isHittingOtherMonster = false;
         }
+    }
+
+    private void RemoveHittingOtherMonster(int otherMonsterId) {
+        if(!hittingMonsterObjs.ContainsKey(otherMonsterId)) {
+            return;
+        }
+        var monster = hittingMonsterObjs[otherMonsterId];
+        if (monster != null) {
+            monster.hittingMonsterObjs.Remove(monsterId);
+            if (monster.hittingMonsterObjs.Keys.Count <= 0) {
+                monster.isHittingOtherMonster = false;
+            }
+        }
+    }
+
+    private void RemoveHittingFromAllOtherMonsters() {
+        foreach (var otherMonsterId in hittingMonsterObjs.Keys) {
+            RemoveHittingOtherMonster(otherMonsterId);
+        }
+        isHittingOtherMonster = false;
     }
 
     private void Taunt() {
         isTauting = true;
         animator.SetTrigger("Taunt");
-        if (!enemyAudioSource.isPlaying || enemyAudioSource.clip != tauntSound) {
-            enemyAudioSource.clip = tauntSound;
-            enemyAudioSource.Play();
+        if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != tauntSound) {
+            monsterAudioSource.clip = tauntSound;
+            monsterAudioSource.Play();
         }
 
         if (setIsTautingCoroutine != null) StopCoroutine(setIsTautingCoroutine);
@@ -165,6 +200,7 @@ public class Monster : MonoBehaviour
             MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
             ReleaseLock();
             MonsterManager.Instance.SpawnEnemiesDelayed();
+            RemoveHittingFromAllOtherMonsters();
             Destroy(gameObject);
         }
 
