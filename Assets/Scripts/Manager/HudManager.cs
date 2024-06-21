@@ -202,6 +202,7 @@ public class HudManager : MonoBehaviour
     public void ApplyOptions() {
         SettingsManager.Instance.ApplySoundSettings();
         SettingsManager.Instance.ApplyDifficultySettings();
+        SettingsManager.Instance.ApplyResolutionSettings();
         SetAndActivateTempInfoText("Options saved");
     }
 

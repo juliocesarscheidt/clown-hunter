@@ -26,10 +26,10 @@ public class Monster : MonoBehaviour
     public bool isStopped = false;
 
     public bool isRunning = false;
-    // private float timerToRun;
 
     public bool isHittingOtherMonster = false;
     private Dictionary<int, Monster> hittingMonsterObjs = new();
+    // public List<Monster> hittingMonsters = new();
 
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
@@ -65,6 +65,8 @@ public class Monster : MonoBehaviour
             transform.position,
             targetPosition
         );
+
+        // hittingMonsters = hittingMonsterObjs.Values.ToList();
 
         if (CanMove()) {
             agent.SetDestination(targetPosition);
@@ -123,8 +125,7 @@ public class Monster : MonoBehaviour
                 // check which monster is closer to player, that one will continue walking, but the other will stop
                 if (other.distanceToTarget > distanceToTarget) {
                     other.isHittingOtherMonster = true;
-                    // isHittingOtherMonster = false;
-
+                    isHittingOtherMonster = false;
                 } else {
                     isHittingOtherMonster = true;
                     other.isHittingOtherMonster = false;
@@ -138,6 +139,7 @@ public class Monster : MonoBehaviour
             Monster other = collider.gameObject.GetComponentInParent<Monster>();
             if (other != null) {
                 RemoveHittingOtherMonster(other.monsterId);
+                hittingMonsterObjs.Remove(other.monsterId);
             }
             isHittingOtherMonster = false;
         }
@@ -150,9 +152,7 @@ public class Monster : MonoBehaviour
         var monster = hittingMonsterObjs[otherMonsterId];
         if (monster != null) {
             monster.hittingMonsterObjs.Remove(monsterId);
-            if (monster.hittingMonsterObjs.Keys.Count <= 0) {
-                monster.isHittingOtherMonster = false;
-            }
+            monster.isHittingOtherMonster = false;
         }
     }
 
@@ -197,10 +197,13 @@ public class Monster : MonoBehaviour
         if (health <= 0) {
             health = 0;
             isDead = true;
-            MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
-            ReleaseLock();
-            MonsterManager.Instance.SpawnEnemiesDelayed();
+            
+            ReleaseLock(); // release attack lock
             RemoveHittingFromAllOtherMonsters();
+            // hittingMonsterObjs = new();
+            MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
+            MonsterManager.Instance.SpawnEnemiesDelayed();
+
             Destroy(gameObject);
         }
 

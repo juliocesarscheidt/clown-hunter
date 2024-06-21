@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,14 @@ public class SettingsManager : MonoBehaviour
     public TextMeshProUGUI volumeInfoText;
     public float defaultVolume = 1f;
     public float volume;
+
+    public TMP_Dropdown resolutionDropdown;
+    private List<int[]> supportedResolutions = new() { new int[] { 2560, 1080 }, new int[] { 1920, 1080 }, new int[] { 1280, 720 } };
+    public int resolutionWidth;
+    public int resolutionHeight;
+    public int defaultScreenWidth = 1920;
+    public int defaultScreenHeight = 1080;
+    public CanvasScaler mainCanvas;
 
     public TMP_Dropdown difficultyDropdown;
     public int defaultDifficulty = 0;
@@ -44,6 +53,16 @@ public class SettingsManager : MonoBehaviour
         difficulty = PlayerPrefs.GetInt("difficulty", defaultDifficulty);
         difficultyDropdown.value = difficulty;
         SetDifficultySettings(difficulty);
+
+        resolutionWidth = PlayerPrefs.GetInt("screen_width", defaultScreenWidth);
+        resolutionHeight = PlayerPrefs.GetInt("screen_height", defaultScreenHeight);
+        for (int i = 0; i < supportedResolutions.Count; i++) {
+            if (resolutionWidth == supportedResolutions[i][0] && resolutionHeight == supportedResolutions[i][1]) {
+                resolutionDropdown.value = i;
+                break;
+            }
+        }
+        SetResolutionSettings(resolutionWidth, resolutionHeight);
     }
 
     private void SetDifficultySettings(int difficulty) {
@@ -113,6 +132,25 @@ public class SettingsManager : MonoBehaviour
         volume = audioSlider.value;
         PlayerPrefs.SetFloat("volume", volume);
         SetSoundSettings(volume);
+    }
+
+    private void SetResolutionSettings(int screenWidth, int screenHeight, bool fullScreen = true) {
+        Resolution resolution = Screen.currentResolution;
+        Debug.Log($"Current resolution: {resolution.width}x{resolution.height}");
+        Screen.SetResolution(screenWidth, screenHeight, fullScreen);
+        Debug.Log($"Screen.width {Screen.width} | Screen.height {Screen.height}");
+        if (mainCanvas != null) {
+            mainCanvas.referenceResolution = new Vector2(screenWidth, screenHeight);
+        }
+    }
+
+    public void ApplyResolutionSettings() {
+        int resolutionIndex = resolutionDropdown.value;
+        resolutionWidth = supportedResolutions[resolutionIndex][0];
+        resolutionHeight = supportedResolutions[resolutionIndex][1];
+        PlayerPrefs.SetInt("screen_width", resolutionWidth);
+        PlayerPrefs.SetInt("screen_height", resolutionHeight);
+        SetResolutionSettings(resolutionWidth, resolutionHeight);
     }
 
     public void SetVolumeInfoText() {

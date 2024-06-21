@@ -220,12 +220,7 @@ public class PlayerStats : MonoBehaviour
 
     public void FillAllAmmo() {
         for (int i = 0; i < guns.Count; i++) {
-            int diffBullets = Mathf.Min(
-                maxBullets[i] - currentBullets[i],
-                availableBullets[i]
-            );
-            availableBullets[i] -= diffBullets;
-            currentBullets[i] += diffBullets;
+            currentBullets[i] = maxBullets[i];
         }
         HudManager.Instance.AdjustBulletsCount();
     }
