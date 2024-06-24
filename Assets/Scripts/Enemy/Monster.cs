@@ -26,10 +26,17 @@ public class Monster : MonoBehaviour
     public bool isStopped = false;
 
     public bool isRunning = false;
+    [SerializeField]
+    private int probabilityToRun = 0;
+    [SerializeField]
+    private bool alreadyDraftAction = false;
+    [SerializeField]
+    private float timeToDraftProbability = 0f;
+    [SerializeField]
+    private float randomTimeToDraftAction = 0f;
 
     public bool isHittingOtherMonster = false;
     private Dictionary<int, Monster> hittingMonsterObjs = new();
-    // public List<Monster> hittingMonsters = new();
 
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
@@ -52,6 +59,9 @@ public class Monster : MonoBehaviour
         monsterAudioSource = GetComponent<AudioSource>();
 
         playerStats = FindObjectOfType<PlayerStats>();
+
+        probabilityToRun = Random.Range(1, 21);
+        randomTimeToDraftAction = Random.Range(5, 11);
     }
 
     void FixedUpdate() {
@@ -66,14 +76,30 @@ public class Monster : MonoBehaviour
             targetPosition
         );
 
-        // hittingMonsters = hittingMonsterObjs.Values.ToList();
-
         if (CanMove()) {
             agent.SetDestination(targetPosition);
             if (distanceToTarget > distanceToAttack && !isHittingOtherMonster) {
-                Walk();
+                if (alreadyDraftAction) {
+                    // from 1 to 20
+                    probabilityToRun = Random.Range(1, 21);
+                    alreadyDraftAction = false;
+                }
+                // 10% of chance to run, otherwise walk
+                if (probabilityToRun == 8 || probabilityToRun == 12) {
+                    Run();
+                } else {
+                    Walk();
+                }
             } else {
                 StopWalk();
+            }
+
+            timeToDraftProbability += Time.deltaTime;
+            // from 5 to 10 seconds
+            if (!alreadyDraftAction && timeToDraftProbability >= randomTimeToDraftAction) {
+                alreadyDraftAction = true;
+                timeToDraftProbability = 0;
+                randomTimeToDraftAction = Random.Range(5, 11);
             }
         } else {
             StopWalk();
@@ -97,7 +123,7 @@ public class Monster : MonoBehaviour
         }
 
         if (!isStopped) {
-            if (distanceToTarget <= 10f && CanMove()) {
+            if (distanceToTarget <= 10f && CanMove() && !isRunning) {
                 timerToTaunt += Time.deltaTime;
                 if (timerToTaunt >= Random.Range(10, 30)) {
                     Taunt();
@@ -200,7 +226,7 @@ public class Monster : MonoBehaviour
             
             ReleaseLock(); // release attack lock
             RemoveHittingFromAllOtherMonsters();
-            // hittingMonsterObjs = new();
+
             MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
             MonsterManager.Instance.SpawnEnemiesDelayed();
 
@@ -224,20 +250,6 @@ public class Monster : MonoBehaviour
 
         animator.SetBool("Walking", false);
         animator.SetBool("Running", false);
-    }
-
-    public IEnumerator WalkAfterSeconds(float seconds) {
-        // wait
-        yield return new WaitForSeconds(seconds);
-        // set to walking
-        Walk();
-    }
-
-    public IEnumerator RunAfterSeconds(float seconds) {
-        // wait
-        yield return new WaitForSeconds(seconds);
-        // set to running
-        Run();
     }
 
     private void Walk() {

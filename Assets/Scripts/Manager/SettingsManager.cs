@@ -70,7 +70,7 @@ public class SettingsManager : MonoBehaviour
         /*
          * 0 = Easy
          * 1 = Normal
-         * 2 = Gard
+         * 2 = Hard
          * 3 = God (no cheats allowed)
          */
         if (difficulty == maxDifficulty) {
