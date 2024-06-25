@@ -2,10 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro.EditorUtilities;
 using TMPro;
-using TMPro.Examples;
 
 public class Monster : MonoBehaviour
 {
