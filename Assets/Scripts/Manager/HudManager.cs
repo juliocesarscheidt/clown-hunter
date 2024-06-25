@@ -60,16 +60,17 @@ public class HudManager : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape) && !playerStats.isDead && isRunningGame) {
-            if (!isPaused) {
-                ShowPauseGamePanel();
-            } else {
-                HidePauseGamePanel();
+        if (!playerStats.isDead && isRunningGame) {
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                if (!isPaused) {
+                    ShowPauseGamePanel();
+                } else {
+                    HidePauseGamePanel();
+                }
             }
-        }
-
-        if (showBloodImage && !playerStats.isDead && isRunningGame) {
-            CheckBloodImage();
+            if (showBloodImage) {
+                CheckBloodImage();
+            }
         }
 
         if (showTempInfoText) {
@@ -88,9 +89,8 @@ public class HudManager : MonoBehaviour
             }
         }
     }
-
-    /*
-    // adjust cursor when focus out - TODO
+ 
+    // adjust cursor when focus out
     private void OnApplicationFocus(bool hasFocus) {
         Debug.Log($"OnApplicationFocus :: hasFocus {hasFocus}");
         if (!hasFocus) {
@@ -105,14 +105,15 @@ public class HudManager : MonoBehaviour
             }
         }
     }
-    */
 
     private void LockCursor() {
+        // Debug.Log("Called LockCursor");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void UnlockCursor() {
+        // Debug.Log("Called UnlockCursor");
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }

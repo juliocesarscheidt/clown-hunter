@@ -18,19 +18,19 @@ public class CheatManager : MonoBehaviour
     private string typedString = string.Empty;
 
     public enum CheatEnum {
-        INVENCIBLE,
         INFINITE_AMMO,
         INFINITE_SPRINT,
+        INVENCIBLE,
         INVENCIBLE_MONSTERS,
-        DEBUG_MONSTERS,
+        DEBUG,
     }
 
     public Dictionary<string, CheatEnum> cheatCodes = new() {
         {"AMMOGOD", CheatEnum.INFINITE_AMMO},
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
         {"SUPERHUMAN", CheatEnum.INVENCIBLE},
-        {"MADMONSTERS", CheatEnum.INVENCIBLE_MONSTERS},
-        {"DEBUGMONSTERS", CheatEnum.DEBUG_MONSTERS},
+        {"MADMONSTER", CheatEnum.INVENCIBLE_MONSTERS},
+        {"DEBUG", CheatEnum.DEBUG},
     };
 
     private void Awake() {
@@ -107,7 +107,7 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
                 break;
-            case CheatEnum.DEBUG_MONSTERS:
+            case CheatEnum.DEBUG:
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(false);
             break;
         }
@@ -137,7 +137,7 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
             break;
-            case CheatEnum.DEBUG_MONSTERS:
+            case CheatEnum.DEBUG:
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(true);
             break;
         }
