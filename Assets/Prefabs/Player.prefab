@@ -2060,7 +2060,6 @@ MonoBehaviour:
   health: 100
   isDead: 0
   criticalHitDamage: 100
-  defaultRegularHitDamage: 35
   regularHitDamage: 35
   stepsAudioSource: {fileID: 7825377457038859620}
   stepsWalkingAudioClip: {fileID: 8300000, guid: 27e82e3ac36225b4890b2cef698a689a,
@@ -2071,7 +2070,7 @@ MonoBehaviour:
   canShoot: 0
   isReloading: 0
   isAiming: 0
-  takeDamage: 1
+  canReceiveDamage: 1
   isBeingDamaged: 0
   damageVariation: 10
   shotParticleEffectPos:
@@ -2180,7 +2179,7 @@ MonoBehaviour:
   jump: 1
   sprint: 0
   analogMovement: 0
-  cursorLocked: 1
+  cursorLocked: 0
   cursorInputForLook: 1
 --- !u!114 &3568913473152573969
 MonoBehaviour:

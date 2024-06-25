@@ -14340,6 +14340,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PointToMonsterAttack
       objectReference: {fileID: 0}
+    - target: {fileID: 3091017872603407550, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.15000153
+      objectReference: {fileID: 0}
     - target: {fileID: 3395290276176298126, guid: 79fd79cfec879b344a87bfdff4bffa7b,
         type: 3}
       propertyPath: m_Name
@@ -14404,6 +14409,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8352301641967870071, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.15000153
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
