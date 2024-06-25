@@ -13,7 +13,7 @@ public class PlayerStats : MonoBehaviour
     public bool isDead = false;
 
     public int criticalHitDamage = 100;
-    public int defaultRegularHitDamage = 35;
+    private int defaultRegularHitDamage = 35;
     public int regularHitDamage = 35;
 
     private FirstPersonController playerController;
@@ -124,6 +124,10 @@ public class PlayerStats : MonoBehaviour
 
     void ChangeGunByHotkey(int hotkey) {
         ChangeGun(hotkey - 1);
+    }
+
+    public void ChangeRegularHitDamage(int addHitDamageAmount) {
+        regularHitDamage = defaultRegularHitDamage + addHitDamageAmount;
     }
 
     public void EnterAimingState() {

@@ -15,7 +15,7 @@ public class MonsterManager : MonoBehaviour
     private int enemiesAlive = 0;
     private int lastEnemySpawnedIndex = 0;
 
-    public int defaultRegularHitDamage = 25;
+    private int defaultRegularHitDamage = 25;
     public int regularHitDamage = 25;
 
     private int enemiesSpawnedCounter = 0;
@@ -25,6 +25,10 @@ public class MonsterManager : MonoBehaviour
     private readonly Object attackLock = new();
     [SerializeField]
     private List<int> releasedAttackToMonsterIds = new();
+
+    public float runProbabilityPercentage = 15f;
+    public bool canReceiveDamage = true;
+    public bool showCurrentState = false;
 
     void Awake() {
         if (Instance != null && Instance != this) {
@@ -37,6 +41,42 @@ public class MonsterManager : MonoBehaviour
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         SpawnEnemies();
+    }
+
+    public void ChangeRunProbabilityPercentageToAllMonsters(float percentage) {
+        runProbabilityPercentage = percentage;
+        foreach (Monster monster in monstersPool.Values) {
+            if (monster != null) {
+                monster.ChangeRunProbabilityPercentage(runProbabilityPercentage);
+            }
+        }
+    }
+
+    public void ChangeRegularHitDamageToAllMonsters(int addHitDamageAmount) {
+        regularHitDamage = defaultRegularHitDamage + addHitDamageAmount;
+        foreach (Monster monster in monstersPool.Values) {
+            if (monster != null) {
+                monster.regularHitDamage = regularHitDamage;
+            }
+        }
+    }
+
+    public void ChangeCanReceiveDamageToAllMonsters(bool canReceive) {
+        canReceiveDamage = canReceive;
+        foreach (Monster monster in monstersPool.Values) {
+            if (monster != null) {
+                monster.canReceiveDamage = canReceiveDamage;
+            }
+        }
+    }
+
+    public void ChangeShowCurrentStateToAllMonsters(bool show) {
+        showCurrentState = show;
+        foreach (Monster monster in monstersPool.Values) {
+            if (monster != null) {
+                monster.showCurrentState = showCurrentState;
+            }
+        }
     }
 
     public bool GetAttackLock(int monstedId) {
@@ -129,8 +169,13 @@ public class MonsterManager : MonoBehaviour
             );
             enemyObject.name = $"{enemyObject.name}-{enemiesSpawnedCounter}"; 
             if (enemyObject.TryGetComponent(out Monster monster)) {
-                monster.regularHitDamage = regularHitDamage;
                 monster.monsterId = enemiesSpawnedCounter;
+                // setting configurations to monster
+                monster.regularHitDamage = regularHitDamage;
+                monster.canReceiveDamage = canReceiveDamage;
+                monster.showCurrentState = showCurrentState;
+                monster.ChangeRunProbabilityPercentage(runProbabilityPercentage);
+
                 AddMonsterToPool(enemiesSpawnedCounter, monster);
             }
 

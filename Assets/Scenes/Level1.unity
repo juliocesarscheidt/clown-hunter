@@ -5144,10 +5144,12 @@ MonoBehaviour:
   - {fileID: 8153896276418500810, guid: 67286f02ee07aa94d8efda870c2961f3, type: 3}
   - {fileID: 3375046419239285577, guid: ef2478b5143b1174a88614452ecb2e81, type: 3}
   enemiesToSpawn: 4
-  defaultRegularHitDamage: 25
   regularHitDamage: 25
   maxSimultaneousAttacks: 2
   releasedAttackToMonsterIds: 
+  runProbabilityPercentage: 15
+  canReceiveDamage: 1
+  showCurrentState: 0
 --- !u!1 &792626043
 GameObject:
   m_ObjectHideFlags: 0

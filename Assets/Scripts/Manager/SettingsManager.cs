@@ -92,23 +92,27 @@ public class SettingsManager : MonoBehaviour
         // difficulty 3 = regularHitDamage - 15
         PlayerStats playerStats = FindObjectOfType<PlayerStats>();
         if (playerStats != null) {
-            playerStats.regularHitDamage = (difficulty * -5) + playerStats.defaultRegularHitDamage;
+            playerStats.ChangeRegularHitDamage(difficulty * -5);
         }
 
-        // difficulty 0 = regularHitDamage
-        // difficulty 1 = regularHitDamage + 10
-        // difficulty 2 = regularHitDamage + 20
-        // difficulty 3 = regularHitDamage + 30
         if (MonsterManager.Instance != null) {
-            MonsterManager.Instance.regularHitDamage = (difficulty * 10) + MonsterManager.Instance.defaultRegularHitDamage;
-        }
+            // difficulty 0 = regularHitDamage
+            // difficulty 1 = regularHitDamage + 10
+            // difficulty 2 = regularHitDamage + 20
+            // difficulty 3 = regularHitDamage + 30
+            MonsterManager.Instance.ChangeRegularHitDamageToAllMonsters(difficulty * 10);
 
-        // difficulty 0 = maxSimultaneousAttacks = 2
-        // difficulty 1 = maxSimultaneousAttacks = 2
-        // difficulty 2 = maxSimultaneousAttacks = 3
-        // difficulty 3 = maxSimultaneousAttacks = 3
-        if (MonsterManager.Instance != null) {
+            // difficulty 0 = maxSimultaneousAttacks = 2
+            // difficulty 1 = maxSimultaneousAttacks = 2
+            // difficulty 2 = maxSimultaneousAttacks = 3
+            // difficulty 3 = maxSimultaneousAttacks = 3
             MonsterManager.Instance.maxSimultaneousAttacks = Mathf.CeilToInt((difficulty / 2f) + 1.5f);
+
+            // difficulty 0 = runProbabilityPercentage = 15
+            // difficulty 1 = runProbabilityPercentage = 20
+            // difficulty 2 = runProbabilityPercentage = 25
+            // difficulty 3 = runProbabilityPercentage = 30
+            MonsterManager.Instance.ChangeRunProbabilityPercentageToAllMonsters((difficulty * 5) + 15);
         }
     }
 

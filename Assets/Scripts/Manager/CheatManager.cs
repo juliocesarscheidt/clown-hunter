@@ -18,15 +18,19 @@ public class CheatManager : MonoBehaviour
     private string typedString = string.Empty;
 
     public enum CheatEnum {
-        Invencible,
-        InfiniteAmmo,
-        InfiniteSprint,
+        INVENCIBLE,
+        INFINITE_AMMO,
+        INFINITE_SPRINT,
+        INVENCIBLE_MONSTERS,
+        DEBUG_MONSTERS,
     }
 
     public Dictionary<string, CheatEnum> cheatCodes = new() {
-        {"AMMOGOD", CheatEnum.InfiniteAmmo},
-        {"SPRINTGOD", CheatEnum.InfiniteSprint},
-        {"SUPERHUMAN", CheatEnum.Invencible},
+        {"AMMOGOD", CheatEnum.INFINITE_AMMO},
+        {"RUNNER", CheatEnum.INFINITE_SPRINT},
+        {"SUPERHUMAN", CheatEnum.INVENCIBLE},
+        {"MADMONSTERS", CheatEnum.INVENCIBLE_MONSTERS},
+        {"DEBUGMONSTERS", CheatEnum.DEBUG_MONSTERS},
     };
 
     private void Awake() {
@@ -35,9 +39,7 @@ public class CheatManager : MonoBehaviour
         } else {
             Instance = this;
         }
-    }
 
-    void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
     }
 
@@ -88,20 +90,26 @@ public class CheatManager : MonoBehaviour
         foreach (CheatEnum cheat in cheatCodes.Values) {
             DeactivateCheat(cheat);
         }
-        HudManager.Instance.SetAndActivateCheatActivatedText($"Cheats deactivated");
+        HudManager.Instance.SetAndActivateCheatActivatedText("Cheats deactivated");
     }
 
     public void DeactivateCheat(CheatEnum cheat) {
         switch (cheat) {
-            case CheatEnum.InfiniteAmmo:
+            case CheatEnum.INFINITE_AMMO:
                 playerStats.spendAmmo = true;
                 break;
-            case CheatEnum.InfiniteSprint:
+            case CheatEnum.INFINITE_SPRINT:
                 playerStats.SetSpendStamina(true);
                 break;
-            case CheatEnum.Invencible:
+            case CheatEnum.INVENCIBLE:
                 playerStats.canReceiveDamage = true;
                 break;
+            case CheatEnum.INVENCIBLE_MONSTERS:
+                MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
+                break;
+            case CheatEnum.DEBUG_MONSTERS:
+                MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(false);
+            break;
         }
     }
 
@@ -115,16 +123,22 @@ public class CheatManager : MonoBehaviour
         cheatAudioSource.Play();
 
         switch (cheat) {
-            case CheatEnum.InfiniteAmmo:
+            case CheatEnum.INFINITE_AMMO:
                 playerStats.spendAmmo = false;
                 playerStats.FillAllAmmo();
                 break;
-            case CheatEnum.InfiniteSprint:
+            case CheatEnum.INFINITE_SPRINT:
                 playerStats.SetSpendStamina(false);
                 break;
-            case CheatEnum.Invencible:
+            case CheatEnum.INVENCIBLE:
                 playerStats.canReceiveDamage = false;
                 playerStats.FillHealth();
+            break;
+            case CheatEnum.INVENCIBLE_MONSTERS:
+                MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
+            break;
+            case CheatEnum.DEBUG_MONSTERS:
+                MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(true);
             break;
         }
     }

@@ -3,6 +3,9 @@ using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro.EditorUtilities;
+using TMPro;
+using TMPro.Examples;
 
 public class Monster : MonoBehaviour
 {
@@ -13,7 +16,7 @@ public class Monster : MonoBehaviour
 
     public int monsterId;
 
-    public AudioClip tauntSound;
+    public AudioClip roarSound;
     public int health = 100;
     public float defaultSpeed = 3.0f;
     public bool isDead = false;
@@ -35,21 +38,25 @@ public class Monster : MonoBehaviour
     [SerializeField]
     private float randomPeriodToRaffleAction = 0f;
 
-    public int maxProbabilityNumberToRaffle = 100;
+    public readonly int maxProbabilityNumberToRaffle = 100;
+    public readonly int minProbabilityNumberToRaffle = 1;
+
     public float runProbabilityPercentage = 15f;
     [SerializeField]
     private List<int> probabilityToRunRaffledNumbers = new();
 
     private enum States {
-        Walking,
-        Running,
-        Idle,
-        Attacking,
-        Roaring,
-        TakingDamage,
+        WALKING,
+        RUNNING,
+        IDLE,
+        ATTACKING,
+        ROARING,
+        TAKING_DAMAGE,
     };
     [SerializeField]
-    private States currentState = States.Idle;
+    private States currentState = States.IDLE;
+    public TMP_Text currentStateText;
+    public bool showCurrentState = false;
 
     public bool isHittingOtherMonster = false;
     private Dictionary<int, Monster> hittingMonsterObjs = new();
@@ -81,28 +88,6 @@ public class Monster : MonoBehaviour
         RaffleRandomPeriodToRaffleAction();
     }
 
-    private void FillProbabilityToRunRaffledNumbers() {
-        int amountOfNumbersToRaffleForRunProbability = Mathf.FloorToInt(maxProbabilityNumberToRaffle * (runProbabilityPercentage / 100f));
-        int halfOfNumbersToRaffle = Mathf.FloorToInt(amountOfNumbersToRaffleForRunProbability / 2f);
-        int halfOfProbabilitiesNumber = maxProbabilityNumberToRaffle / 2;
-
-        for (int i = halfOfProbabilitiesNumber - halfOfNumbersToRaffle; i < halfOfProbabilitiesNumber + halfOfNumbersToRaffle + 1; i++) {
-            if (probabilityToRunRaffledNumbers.Count > amountOfNumbersToRaffleForRunProbability) break;
-            probabilityToRunRaffledNumbers.Add(i);
-        }
-    }
-
-    private void RaffleRandomPeriodToRaffleAction() {
-        // from 5 to 10 seconds
-        randomPeriodToRaffleAction = Random.Range(5, 11);
-    }
-
-    private void RaffleActionRaffledNumber() {
-        // from 1 to 100 numbers
-        currentActionRaffledNumber = Random.Range(1, maxProbabilityNumberToRaffle+1);
-        alreadyRaffledAction = true;
-    }
-
     void FixedUpdate() {
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead || playerStats.isDead) {
             StopWalk();
@@ -114,6 +99,13 @@ public class Monster : MonoBehaviour
             transform.position,
             targetPosition
         );
+
+        if (showCurrentState) {
+            currentStateText.gameObject.SetActive(true);
+            currentStateText.text = currentState.ToString();
+        } else {
+            currentStateText.gameObject.SetActive(false);
+        }
 
         if (CanMove()) {
             agent.SetDestination(targetPosition);
@@ -162,7 +154,8 @@ public class Monster : MonoBehaviour
         if (!isStopped) {
             if (distanceToTarget <= 10f && CanMove() && !isRunning) {
                 timerToRoar += Time.deltaTime;
-                if (timerToRoar >= Random.Range(10, 30)) {
+                // from 10 to 45 seconds
+                if (timerToRoar >= Random.Range(10, 46)) {
                     Roar();
                     timerToRoar = 0;
                 }
@@ -172,6 +165,37 @@ public class Monster : MonoBehaviour
 
     private bool CanMove() {
         return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isRoaring;
+    }
+
+    public void ChangeRunProbabilityPercentage(float percentage) {
+        if (percentage < minProbabilityNumberToRaffle || percentage > maxProbabilityNumberToRaffle) return;
+        runProbabilityPercentage = percentage;
+        FillProbabilityToRunRaffledNumbers();
+    }
+
+    private void FillProbabilityToRunRaffledNumbers() {
+        probabilityToRunRaffledNumbers.Clear();
+
+        int amountOfNumbersToRaffleForRunProbability = Mathf.FloorToInt(maxProbabilityNumberToRaffle * (runProbabilityPercentage / 100f));
+        int halfOfNumbersToRaffle = Mathf.FloorToInt(amountOfNumbersToRaffleForRunProbability / 2f);
+        int halfOfProbabilitiesNumber = maxProbabilityNumberToRaffle / 2;
+
+        for (int i = halfOfProbabilitiesNumber - halfOfNumbersToRaffle; i < halfOfProbabilitiesNumber + halfOfNumbersToRaffle + 1; i++) {
+            if (i < minProbabilityNumberToRaffle || i > maxProbabilityNumberToRaffle) continue;
+            if (probabilityToRunRaffledNumbers.Count >= amountOfNumbersToRaffleForRunProbability) break;
+            probabilityToRunRaffledNumbers.Add(i);
+        }
+    }
+
+    private void RaffleRandomPeriodToRaffleAction() {
+        // from 5 to 15 seconds
+        randomPeriodToRaffleAction = Random.Range(5, 16);
+    }
+
+    private void RaffleActionRaffledNumber() {
+        // from 1 to 100 numbers by default
+        currentActionRaffledNumber = Random.Range(minProbabilityNumberToRaffle, maxProbabilityNumberToRaffle + 1);
+        alreadyRaffledAction = true;
     }
 
     private void OnTriggerEnter(Collider collider) {
@@ -229,15 +253,15 @@ public class Monster : MonoBehaviour
     private void Roar() {
         isRoaring = true;
         animator.SetTrigger("Roar");
-        if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != tauntSound) {
-            monsterAudioSource.clip = tauntSound;
+        if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != roarSound) {
+            monsterAudioSource.clip = roarSound;
             monsterAudioSource.Play();
         }
 
         if (setIsRoaringCoroutine != null) StopCoroutine(setIsRoaringCoroutine);
         setIsRoaringCoroutine = StartCoroutine(SetIsRoaringFalsyAfterSeconds(2f));
 
-        currentState = States.Roaring;
+        currentState = States.ROARING;
     }
 
     private void Attack() {
@@ -250,7 +274,7 @@ public class Monster : MonoBehaviour
         int damage = Random.Range(regularHitDamage - damageVariation, regularHitDamage + damageVariation);
         playerStats.ApplyDamage(damage);
 
-        currentState = States.Attacking;
+        currentState = States.ATTACKING;
     }
 
     public void ApplyDamage(int damage) {
@@ -261,7 +285,7 @@ public class Monster : MonoBehaviour
         animator.SetTrigger("Damage");
         isBeingDamaged = true;
 
-        currentState = States.TakingDamage;
+        currentState = States.TAKING_DAMAGE;
 
         if (health <= 0) {
             health = 0;
@@ -295,7 +319,7 @@ public class Monster : MonoBehaviour
         animator.SetBool("Running", false);
 
         if (!isBeingDamaged && !isAttacking && !isRoaring) {
-            currentState = States.Idle;
+            currentState = States.IDLE;
         }
     }
 
@@ -307,7 +331,7 @@ public class Monster : MonoBehaviour
         animator.SetBool("Running", false);
         animator.SetBool("Walking", true);
 
-        currentState = States.Walking;
+        currentState = States.WALKING;
     }
 
     private void Run() {
@@ -318,7 +342,7 @@ public class Monster : MonoBehaviour
         animator.SetBool("Walking", false);
         animator.SetBool("Running", true);
 
-        currentState = States.Running;
+        currentState = States.RUNNING;
     }
 
     public IEnumerator SetIsBeingDamagedFalsyAfterSeconds(float seconds) {
