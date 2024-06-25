@@ -27,13 +27,29 @@ public class Monster : MonoBehaviour
 
     public bool isRunning = false;
     [SerializeField]
-    private int probabilityToRun = 0;
+    private int currentActionRaffledNumber = 0;
     [SerializeField]
-    private bool alreadyDraftAction = false;
+    private bool alreadyRaffledAction = false;
     [SerializeField]
-    private float timeToDraftProbability = 0f;
+    private float timerToRaffleAction = 0f;
     [SerializeField]
-    private float randomTimeToDraftAction = 0f;
+    private float randomPeriodToRaffleAction = 0f;
+
+    public int maxProbabilityNumberToRaffle = 100;
+    public float runProbabilityPercentage = 15f;
+    [SerializeField]
+    private List<int> probabilityToRunRaffledNumbers = new();
+
+    private enum States {
+        Walking,
+        Running,
+        Idle,
+        Attacking,
+        Roaring,
+        TakingDamage,
+    };
+    [SerializeField]
+    private States currentState = States.Idle;
 
     public bool isHittingOtherMonster = false;
     private Dictionary<int, Monster> hittingMonsterObjs = new();
@@ -41,13 +57,13 @@ public class Monster : MonoBehaviour
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
 
-    public bool takeDamage = true;
+    public bool canReceiveDamage = true;
     public bool isBeingDamaged = false;
     private Coroutine setIsBeingDamagedCoroutine;
 
-    public bool isTauting = false;
-    private Coroutine setIsTautingCoroutine;
-    private float timerToTaunt;
+    public bool isRoaring = false;
+    private Coroutine setIsRoaringCoroutine;
+    private float timerToRoar;
 
     private Vector3 targetPosition;
     [SerializeField]
@@ -60,8 +76,31 @@ public class Monster : MonoBehaviour
 
         playerStats = FindObjectOfType<PlayerStats>();
 
-        probabilityToRun = Random.Range(1, 21);
-        randomTimeToDraftAction = Random.Range(5, 11);
+        FillProbabilityToRunRaffledNumbers();
+        RaffleActionRaffledNumber();
+        RaffleRandomPeriodToRaffleAction();
+    }
+
+    private void FillProbabilityToRunRaffledNumbers() {
+        int amountOfNumbersToRaffleForRunProbability = Mathf.FloorToInt(maxProbabilityNumberToRaffle * (runProbabilityPercentage / 100f));
+        int halfOfNumbersToRaffle = Mathf.FloorToInt(amountOfNumbersToRaffleForRunProbability / 2f);
+        int halfOfProbabilitiesNumber = maxProbabilityNumberToRaffle / 2;
+
+        for (int i = halfOfProbabilitiesNumber - halfOfNumbersToRaffle; i < halfOfProbabilitiesNumber + halfOfNumbersToRaffle + 1; i++) {
+            if (probabilityToRunRaffledNumbers.Count > amountOfNumbersToRaffleForRunProbability) break;
+            probabilityToRunRaffledNumbers.Add(i);
+        }
+    }
+
+    private void RaffleRandomPeriodToRaffleAction() {
+        // from 5 to 10 seconds
+        randomPeriodToRaffleAction = Random.Range(5, 11);
+    }
+
+    private void RaffleActionRaffledNumber() {
+        // from 1 to 100 numbers
+        currentActionRaffledNumber = Random.Range(1, maxProbabilityNumberToRaffle+1);
+        alreadyRaffledAction = true;
     }
 
     void FixedUpdate() {
@@ -78,14 +117,13 @@ public class Monster : MonoBehaviour
 
         if (CanMove()) {
             agent.SetDestination(targetPosition);
+
             if (distanceToTarget > distanceToAttack && !isHittingOtherMonster) {
-                if (alreadyDraftAction) {
-                    // from 1 to 20
-                    probabilityToRun = Random.Range(1, 21);
-                    alreadyDraftAction = false;
+                if (!alreadyRaffledAction) {
+                    RaffleActionRaffledNumber();
                 }
                 // 10% of chance to run, otherwise walk
-                if (probabilityToRun == 8 || probabilityToRun == 12) {
+                if (probabilityToRunRaffledNumbers.Contains(currentActionRaffledNumber)) {
                     Run();
                 } else {
                     Walk();
@@ -94,12 +132,11 @@ public class Monster : MonoBehaviour
                 StopWalk();
             }
 
-            timeToDraftProbability += Time.deltaTime;
-            // from 5 to 10 seconds
-            if (!alreadyDraftAction && timeToDraftProbability >= randomTimeToDraftAction) {
-                alreadyDraftAction = true;
-                timeToDraftProbability = 0;
-                randomTimeToDraftAction = Random.Range(5, 11);
+            timerToRaffleAction += Time.deltaTime;
+            if (alreadyRaffledAction && timerToRaffleAction >= randomPeriodToRaffleAction) {
+                alreadyRaffledAction = false;
+                timerToRaffleAction = 0;
+                RaffleRandomPeriodToRaffleAction();
             }
         } else {
             StopWalk();
@@ -124,17 +161,17 @@ public class Monster : MonoBehaviour
 
         if (!isStopped) {
             if (distanceToTarget <= 10f && CanMove() && !isRunning) {
-                timerToTaunt += Time.deltaTime;
-                if (timerToTaunt >= Random.Range(10, 30)) {
-                    Taunt();
-                    timerToTaunt = 0;
+                timerToRoar += Time.deltaTime;
+                if (timerToRoar >= Random.Range(10, 30)) {
+                    Roar();
+                    timerToRoar = 0;
                 }
             }
         }
     }
 
     private bool CanMove() {
-        return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isTauting;
+        return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isRoaring;
     }
 
     private void OnTriggerEnter(Collider collider) {
@@ -189,16 +226,18 @@ public class Monster : MonoBehaviour
         isHittingOtherMonster = false;
     }
 
-    private void Taunt() {
-        isTauting = true;
-        animator.SetTrigger("Taunt");
+    private void Roar() {
+        isRoaring = true;
+        animator.SetTrigger("Roar");
         if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != tauntSound) {
             monsterAudioSource.clip = tauntSound;
             monsterAudioSource.Play();
         }
 
-        if (setIsTautingCoroutine != null) StopCoroutine(setIsTautingCoroutine);
-        setIsTautingCoroutine = StartCoroutine(SetIsTautingFalsyAfterSeconds(2f));
+        if (setIsRoaringCoroutine != null) StopCoroutine(setIsRoaringCoroutine);
+        setIsRoaringCoroutine = StartCoroutine(SetIsRoaringFalsyAfterSeconds(2f));
+
+        currentState = States.Roaring;
     }
 
     private void Attack() {
@@ -210,15 +249,19 @@ public class Monster : MonoBehaviour
 
         int damage = Random.Range(regularHitDamage - damageVariation, regularHitDamage + damageVariation);
         playerStats.ApplyDamage(damage);
+
+        currentState = States.Attacking;
     }
 
     public void ApplyDamage(int damage) {
-        if (takeDamage) {
+        if (canReceiveDamage) {
             health = Mathf.Max(health - damage, 0);
         }
 
         animator.SetTrigger("Damage");
         isBeingDamaged = true;
+
+        currentState = States.TakingDamage;
 
         if (health <= 0) {
             health = 0;
@@ -250,6 +293,10 @@ public class Monster : MonoBehaviour
 
         animator.SetBool("Walking", false);
         animator.SetBool("Running", false);
+
+        if (!isBeingDamaged && !isAttacking && !isRoaring) {
+            currentState = States.Idle;
+        }
     }
 
     private void Walk() {
@@ -259,6 +306,8 @@ public class Monster : MonoBehaviour
 
         animator.SetBool("Running", false);
         animator.SetBool("Walking", true);
+
+        currentState = States.Walking;
     }
 
     private void Run() {
@@ -268,6 +317,8 @@ public class Monster : MonoBehaviour
 
         animator.SetBool("Walking", false);
         animator.SetBool("Running", true);
+
+        currentState = States.Running;
     }
 
     public IEnumerator SetIsBeingDamagedFalsyAfterSeconds(float seconds) {
@@ -283,10 +334,10 @@ public class Monster : MonoBehaviour
         ReleaseLock();
     }
 
-    public IEnumerator SetIsTautingFalsyAfterSeconds(float seconds) {
+    public IEnumerator SetIsRoaringFalsyAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
-        isTauting = false;
+        isRoaring = false;
     }
 
     private bool GetLock() {

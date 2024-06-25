@@ -27,7 +27,7 @@ public class PlayerStats : MonoBehaviour
     public bool isReloading = false;
     public bool isAiming = false;
 
-    public bool takeDamage = true;
+    public bool canReceiveDamage = true;
     public bool isBeingDamaged = false;
     private Coroutine setIsBeingDamagedCoroutine;
     public int damageVariation = 10;
@@ -181,7 +181,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void ApplyDamage(int damage) {
-        if (takeDamage) {
+        if (canReceiveDamage) {
             health = Mathf.Max(health - damage, 0);
         }
 
@@ -212,7 +212,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void CollectFirstAid(int healthAmount) {
-        if (takeDamage) {
+        if (canReceiveDamage) {
             health = Mathf.Min(health + healthAmount, maxHealth);
             HudManager.Instance.AdjustHealthBar(health, maxHealth);
         }

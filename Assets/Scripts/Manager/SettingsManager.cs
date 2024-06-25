@@ -136,9 +136,9 @@ public class SettingsManager : MonoBehaviour
 
     private void SetResolutionSettings(int screenWidth, int screenHeight, bool fullScreen = true) {
         Resolution resolution = Screen.currentResolution;
-        Debug.Log($"Current resolution: {resolution.width}x{resolution.height}");
+        // Debug.Log($"Current resolution: {resolution.width}x{resolution.height}");
         Screen.SetResolution(screenWidth, screenHeight, fullScreen);
-        Debug.Log($"Screen.width {Screen.width} | Screen.height {Screen.height}");
+        // Debug.Log($"Screen.width {Screen.width} | Screen.height {Screen.height}");
         if (mainCanvas != null) {
             mainCanvas.referenceResolution = new Vector2(screenWidth, screenHeight);
         }

@@ -100,7 +100,7 @@ public class CheatManager : MonoBehaviour
                 playerStats.SetSpendStamina(true);
                 break;
             case CheatEnum.Invencible:
-                playerStats.takeDamage = true;
+                playerStats.canReceiveDamage = true;
                 break;
         }
     }
@@ -123,7 +123,7 @@ public class CheatManager : MonoBehaviour
                 playerStats.SetSpendStamina(false);
                 break;
             case CheatEnum.Invencible:
-                playerStats.takeDamage = false;
+                playerStats.canReceiveDamage = false;
                 playerStats.FillHealth();
             break;
         }
