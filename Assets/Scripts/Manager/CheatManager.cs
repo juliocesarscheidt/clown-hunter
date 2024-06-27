@@ -30,7 +30,7 @@ public class CheatManager : MonoBehaviour
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
         {"SUPERHUMAN", CheatEnum.INVENCIBLE},
         {"MADMONSTER", CheatEnum.INVENCIBLE_MONSTERS},
-        {"DEBUG", CheatEnum.DEBUG},
+        {"DEVMODE", CheatEnum.DEBUG},
     };
 
     private void Awake() {

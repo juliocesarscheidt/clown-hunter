@@ -53,9 +53,7 @@ public class InteractionManager : MonoBehaviour
 
                         if (hit.transform.gameObject.TryGetComponent(out Interactable obj)) {
                             // show object outline
-                            if (!obj.isOutlineEnabled) {
-                                obj.EnableOutline();
-                            }
+                            if (!obj.isOutlineEnabled) obj.EnableOutline();
 
                             if (Input.GetKeyDown(KeyCode.E)) {
                                 obj.Collect();

@@ -92,28 +92,23 @@ public class HudManager : MonoBehaviour
  
     // adjust cursor when focus out
     private void OnApplicationFocus(bool hasFocus) {
-        Debug.Log($"OnApplicationFocus :: hasFocus {hasFocus}");
         if (!hasFocus) {
             if (isRunningGame && !IsPaused) {
-                Debug.Log($"OnApplicationFocus calling pause :: isRunningGame {isRunningGame} | IsPaused {IsPaused}");
                 ShowPauseGamePanel();
             }
         } else {
             if ((isRunningGame && IsPaused) || !isRunningGame) {
-                Debug.Log($"OnApplicationFocus unlocking cursor :: isRunningGame {isRunningGame} | IsPaused {IsPaused}");
                 UnlockCursor();
             }
         }
     }
 
     private void LockCursor() {
-        // Debug.Log("Called LockCursor");
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void UnlockCursor() {
-        // Debug.Log("Called UnlockCursor");
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
