@@ -256,7 +256,7 @@ public class Monster : MonoBehaviour
         }
 
         if (setIsLaughingCoroutine != null) StopCoroutine(setIsLaughingCoroutine);
-        setIsLaughingCoroutine = StartCoroutine(SetIsRoaringFalsyAfterSeconds(3f));
+        setIsLaughingCoroutine = StartCoroutine(SetIsLaughingFalsyAfterSeconds(3f));
 
         currentState = States.LAUGHING;
     }
@@ -355,7 +355,7 @@ public class Monster : MonoBehaviour
         ReleaseLock();
     }
 
-    public IEnumerator SetIsRoaringFalsyAfterSeconds(float seconds) {
+    public IEnumerator SetIsLaughingFalsyAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
         isLaughing = false;

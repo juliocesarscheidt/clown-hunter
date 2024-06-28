@@ -108,6 +108,7 @@ public class CheatManager : MonoBehaviour
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
                 break;
             case CheatEnum.DEBUG:
+                HudManager.Instance.showFps = false;
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(false);
             break;
         }
@@ -138,6 +139,7 @@ public class CheatManager : MonoBehaviour
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
             break;
             case CheatEnum.DEBUG:
+                HudManager.Instance.showFps = true;
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(true);
             break;
         }

@@ -99,6 +99,6 @@ public class PaperManager : MonoBehaviour
     }
 
     public void AdjustPaperCounterText() {
-        paperCounterText.text = paperCollected + "/" + papersTotalToCollect;
+        paperCounterText.text = $"- Collect 5 newspapers ({paperCollected}/{papersTotalToCollect})";
     }
 }

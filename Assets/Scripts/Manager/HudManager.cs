@@ -35,6 +35,7 @@ public class HudManager : MonoBehaviour
 
     public GameObject uiInfoWraperObject;
     public TextMeshProUGUI bulletsCounterText;
+    public Image gunIconImage;
 
     public TextMeshProUGUI tempInfoText;
     private bool showTempInfoText = false;
@@ -43,6 +44,11 @@ public class HudManager : MonoBehaviour
     public TextMeshProUGUI cheatActivatedText;
     private bool showCheatActivatedText = false;
     private float showCheatActivatedTextTimer = 0f;
+
+    public bool showFps = false;
+    public float updateFpsFrequency = 0.2f;
+    private float updateFpsTimer;
+    public TextMeshProUGUI fpsText;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -88,9 +94,16 @@ public class HudManager : MonoBehaviour
                 showCheatActivatedTextTimer = 0f;
             }
         }
+
+        if (showFps) {
+            fpsText.gameObject.SetActive(true);
+            UpdateFpsDisplay();
+        } else {
+            fpsText.gameObject.SetActive(false);
+        }
     }
- 
-    // adjust cursor when focus out
+
+    // adjust cursor when focus in and out
     private void OnApplicationFocus(bool hasFocus) {
         if (!hasFocus) {
             if (isRunningGame && !IsPaused) {
@@ -100,6 +113,16 @@ public class HudManager : MonoBehaviour
             if ((isRunningGame && IsPaused) || !isRunningGame) {
                 UnlockCursor();
             }
+        }
+    }
+
+    private void UpdateFpsDisplay() {
+        float fps;
+        updateFpsTimer -= Time.deltaTime;
+        if (updateFpsTimer <= 0) {
+            fps = 1f / Time.unscaledDeltaTime;
+            fpsText.text = $"FPS: {Mathf.Round(fps)}";
+            updateFpsTimer = updateFpsFrequency;
         }
     }
 
@@ -235,18 +258,11 @@ public class HudManager : MonoBehaviour
         LevelLoaderManager.Instance.Quit();
     }
 
-    public bool IsRunningGame {
-        get { return isRunningGame; }
-    }
-
-    public bool IsPaused {
-        get { return isPaused; }
-    }
-
     public void AdjustBulletsCount() {
         if (playerStats != null) {
             bulletsCounterText.text =
                 $"{playerStats.CurrentBullets}/{playerStats.AvailableBullets}";
+            gunIconImage.sprite = playerStats.SelectedGun.gunIconImage;
         }
     }
 
@@ -285,5 +301,13 @@ public class HudManager : MonoBehaviour
         if (showBloodImageTimer >= timeToShowBloodImage) {
             HideBloodImage();
         }
+    }
+
+    public bool IsRunningGame {
+        get { return isRunningGame; }
+    }
+
+    public bool IsPaused {
+        get { return isPaused; }
     }
 }

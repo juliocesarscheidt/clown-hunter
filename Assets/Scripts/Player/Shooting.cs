@@ -1,4 +1,3 @@
-using Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerStats))]
@@ -62,22 +61,6 @@ public class Shooting : MonoBehaviour
                     );
                     particleEffectInstance.transform.parent = playerStats.SelectedGunObject.transform;
                     Destroy(particleEffectInstance, 0.1f);
-
-                    /*
-                    // bullet object - TODO
-                    GameObject bulletInstance = Instantiate(
-                        playerStats.SelectedGun.gunPrefabBullet,
-                        gunBarrelShotTransform.position,
-                        gunBarrelShotTransform.rotation
-                    );
-                    Physics.IgnoreCollision(bulletInstance.GetComponent<Collider>(), playerStats.GetComponentInChildren<CapsuleCollider>());
-                    Physics.IgnoreCollision(bulletInstance.GetComponent<Collider>(), playerStats.GetComponentInChildren<SphereCollider>());
-                    bulletInstance.GetComponent<Rigidbody>().AddForce(
-                        gunBarrelShotTransform.forward * 20f,
-                        ForceMode.Impulse
-                    );
-                    Destroy(bulletInstance, 5f);
-                    */
 
                     // bullet hole
                     if (bulletHit.transform.CompareTag(TagsController.Ground) ||

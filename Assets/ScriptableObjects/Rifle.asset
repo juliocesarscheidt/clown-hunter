@@ -22,6 +22,7 @@ MonoBehaviour:
   gunShotSound: {fileID: 8300000, guid: 8eef2a5afec358f439860ade8b9e7516, type: 3}
   gunReloadSound: {fileID: 8300000, guid: 9ca81837384828f48833d2ec6096629d, type: 3}
   gunEmptySound: {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}
+  gunIconImage: {fileID: 21300000, guid: 66f796ceb06b9434e8c792593eac128b, type: 3}
   timeToShootInterval: 0.05
   timeToReloadInterval: 3
   isAutomaticGun: 1

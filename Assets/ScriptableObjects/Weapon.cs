@@ -11,6 +11,8 @@ public class Weapon : ScriptableObject {
     public AudioClip gunReloadSound;
     public AudioClip gunEmptySound;
 
+    public Sprite gunIconImage;
+
     public float timeToShootInterval;
     public float timeToReloadInterval = 3f;
 
