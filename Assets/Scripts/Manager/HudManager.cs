@@ -15,8 +15,8 @@ public class HudManager : MonoBehaviour
 
     public GameObject GameOverImage;
     public GameObject EndGameImage;
-    public GameObject PressEGameObject;
     public GameObject PauseGamePanel;
+    public TextMeshProUGUI PressEText;
 
     public GameObject OptionsGamePanelBg;
     public List<GameObject> OptionsGamePanelLayers;
@@ -104,6 +104,7 @@ public class HudManager : MonoBehaviour
     }
 
     // adjust cursor when focus in and out
+    // had to disable "Cursor Locked" option on StarterAssetsInputs script
     private void OnApplicationFocus(bool hasFocus) {
         if (!hasFocus) {
             if (isRunningGame && !IsPaused) {
@@ -156,11 +157,11 @@ public class HudManager : MonoBehaviour
     }
 
     public void ShowPressEObject() {
-        PressEGameObject.SetActive(true);
+        PressEText.gameObject.SetActive(true);
     }
 
     public void HidePressEObject() {
-        PressEGameObject.SetActive(false);
+        PressEText.gameObject.SetActive(false);
     }
 
     public void ShowPauseGamePanel() {
@@ -227,7 +228,7 @@ public class HudManager : MonoBehaviour
 
     public void SetAndActivateTempInfoText(string text) {
         showTempInfoText = text.Length > 0;
-        tempInfoText.gameObject.SetActive(showTempInfoText);
+        tempInfoText.enabled = showTempInfoText;
         tempInfoText.text = text;
     }
 

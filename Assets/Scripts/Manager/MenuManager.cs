@@ -60,7 +60,7 @@ public class MenuManager : MonoBehaviour
 
     private void SetAndActivateTempInfoText(string text) {
         showTempInfoText = text.Length > 0;
-        tempInfoText.gameObject.SetActive(showTempInfoText);
+        tempInfoText.enabled = showTempInfoText;
         tempInfoText.text = text;
     }
 }

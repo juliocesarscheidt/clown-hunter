@@ -17,7 +17,13 @@ public class SettingsManager : MonoBehaviour
     public float volume;
 
     public TMP_Dropdown resolutionDropdown;
-    private List<int[]> supportedResolutions = new() { new int[] { 2560, 1080 }, new int[] { 1920, 1080 }, new int[] { 1280, 720 } };
+    private readonly List<int[]> supportedResolutions = new() {
+        new int[] { 2560, 1440 },
+        new int[] { 2560, 1080 },
+        new int[] { 1920, 1080 },
+        new int[] { 1366, 768 },
+        new int[] { 1280, 720 },
+    };
     public int resolutionWidth;
     public int resolutionHeight;
     public int defaultScreenWidth = 1920;
