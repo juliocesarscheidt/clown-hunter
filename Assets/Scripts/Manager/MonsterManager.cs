@@ -122,10 +122,10 @@ public class MonsterManager : MonoBehaviour
         }
 
         enemiesAlive = monstersPool.Keys.Count;
-        Debug.Log($"enemies alive {enemiesAlive}");
+        // Debug.Log($"enemies alive {enemiesAlive}");
 
         int enemiesDiffToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
-        Debug.Log($"enemies diff to spawn {enemiesDiffToSpawn}");
+        // Debug.Log($"enemies diff to spawn {enemiesDiffToSpawn}");
         if (enemiesDiffToSpawn == 0) {
             return;
         }

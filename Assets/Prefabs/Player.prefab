@@ -3041,7 +3041,7 @@ GameObject:
   - component: {fileID: 3672577484988119374}
   - component: {fileID: 3459260532061280809}
   m_Layer: 0
-  m_Name: NightViisionAudioSource
+  m_Name: NightVisionAudioSource
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

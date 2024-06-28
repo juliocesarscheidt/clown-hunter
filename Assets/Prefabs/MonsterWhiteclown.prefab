@@ -839,7 +839,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1193588686746369726
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1653,7 +1653,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.8, y: 0.4, z: 0.8}
+  m_Size: {x: 0.7, y: 0.4, z: 0.8}
   m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!1 &5869139957748839936
 GameObject:
@@ -2309,7 +2309,7 @@ Transform:
   m_GameObject: {fileID: 8153896276418500810}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 50, y: 0, z: 60}
+  m_LocalPosition: {x: 50, y: 0.042, z: 60.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2331,7 +2331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   monsterId: 0
-  roarSound: {fileID: 8300000, guid: 16c1d95d9f1718849810d504adc64147, type: 3}
+  laughSound: {fileID: 8300000, guid: e4fd710253f61f9489c376d0c04e7543, type: 3}
   health: 100
   defaultSpeed: 3
   isDead: 0
@@ -2355,7 +2355,7 @@ MonoBehaviour:
   isAttacking: 0
   canReceiveDamage: 1
   isBeingDamaged: 0
-  isRoaring: 0
+  isLaughing: 0
   distanceToTarget: 0
 --- !u!114 &1049673865534877313
 MonoBehaviour:
@@ -2783,8 +2783,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 0.45
+  m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1204622394506335441

@@ -45,9 +45,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.21887732
+  m_TransitionDuration: 0.075
   m_TransitionOffset: 0
-  m_ExitTime: 0.8506911
+  m_ExitTime: 0.92
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -73,9 +73,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.08522332
+  m_TransitionDuration: 0.075
   m_TransitionOffset: 0
-  m_ExitTime: 0.9239881
+  m_ExitTime: 0.92
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -131,9 +131,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.1777612
+  m_TransitionDuration: 0.075
   m_TransitionOffset: 0
-  m_ExitTime: 0.84407806
+  m_ExitTime: 0.92
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -340,7 +340,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Roar
+  - m_Name: Laugh
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -464,7 +464,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Roar
+    m_ConditionEvent: Laugh
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 4643517888511050916}
@@ -598,7 +598,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Taunt
+  m_Name: Laughing
   m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
@@ -614,7 +614,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 0dbfbb8552004af41b15c73a045f7dae,
+  m_Motion: {fileID: -203655887218126122, guid: a8c3d37403edbb84cb829d02781a7ad4,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 

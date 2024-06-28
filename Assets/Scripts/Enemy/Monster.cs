@@ -13,7 +13,7 @@ public class Monster : MonoBehaviour
 
     public int monsterId;
 
-    public AudioClip roarSound;
+    public AudioClip laughSound;
     public int health = 100;
     public float defaultSpeed = 3.0f;
     public bool isDead = false;
@@ -47,7 +47,7 @@ public class Monster : MonoBehaviour
         RUNNING,
         IDLE,
         ATTACKING,
-        ROARING,
+        LAUGHING,
         TAKING_DAMAGE,
     };
     [SerializeField]
@@ -65,9 +65,9 @@ public class Monster : MonoBehaviour
     public bool isBeingDamaged = false;
     private Coroutine setIsBeingDamagedCoroutine;
 
-    public bool isRoaring = false;
-    private Coroutine setIsRoaringCoroutine;
-    private float timerToRoar;
+    public bool isLaughing = false;
+    private Coroutine setIsLaughingCoroutine;
+    private float timerToLaugh;
 
     private Vector3 targetPosition;
     [SerializeField]
@@ -139,7 +139,7 @@ public class Monster : MonoBehaviour
             if (dotRotationMonsterToPlayerDiff > 0.85f) {
                 // calling this inside this block to avoid unneeded calls
                 bool isInPointOfView = playerStats.ObjectIsInPointOfView(gameObject);
-                if (isInPointOfView && GetLock()) {
+                if (isInPointOfView && GetAttackLock()) {
                     Attack();
                 }
             } else {
@@ -150,18 +150,18 @@ public class Monster : MonoBehaviour
 
         if (!isStopped) {
             if (distanceToTarget <= 10f && CanMove() && !isRunning) {
-                timerToRoar += Time.deltaTime;
+                timerToLaugh += Time.deltaTime;
                 // from 10 to 45 seconds
-                if (timerToRoar >= Random.Range(10, 46)) {
-                    Roar();
-                    timerToRoar = 0;
+                if (timerToLaugh >= Random.Range(10, 46)) {
+                    Laugh();
+                    timerToLaugh = 0;
                 }
             }
         }
     }
 
     private bool CanMove() {
-        return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isRoaring;
+        return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isLaughing;
     }
 
     public void ChangeRunProbabilityPercentage(float percentage) {
@@ -247,18 +247,18 @@ public class Monster : MonoBehaviour
         isHittingOtherMonster = false;
     }
 
-    private void Roar() {
-        isRoaring = true;
-        animator.SetTrigger("Roar");
-        if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != roarSound) {
-            monsterAudioSource.clip = roarSound;
+    private void Laugh() {
+        isLaughing = true;
+        animator.SetTrigger("Laugh");
+        if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != laughSound) {
+            monsterAudioSource.clip = laughSound;
             monsterAudioSource.Play();
         }
 
-        if (setIsRoaringCoroutine != null) StopCoroutine(setIsRoaringCoroutine);
-        setIsRoaringCoroutine = StartCoroutine(SetIsRoaringFalsyAfterSeconds(2f));
+        if (setIsLaughingCoroutine != null) StopCoroutine(setIsLaughingCoroutine);
+        setIsLaughingCoroutine = StartCoroutine(SetIsRoaringFalsyAfterSeconds(3f));
 
-        currentState = States.ROARING;
+        currentState = States.LAUGHING;
     }
 
     private void Attack() {
@@ -315,7 +315,7 @@ public class Monster : MonoBehaviour
         animator.SetBool("Walking", false);
         animator.SetBool("Running", false);
 
-        if (!isBeingDamaged && !isAttacking && !isRoaring) {
+        if (!isBeingDamaged && !isAttacking && !isLaughing) {
             currentState = States.IDLE;
         }
     }
@@ -358,10 +358,10 @@ public class Monster : MonoBehaviour
     public IEnumerator SetIsRoaringFalsyAfterSeconds(float seconds) {
         // wait
         yield return new WaitForSeconds(seconds);
-        isRoaring = false;
+        isLaughing = false;
     }
 
-    private bool GetLock() {
+    private bool GetAttackLock() {
         return MonsterManager.Instance.GetAttackLock(monsterId);
     }
 

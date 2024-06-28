@@ -119,7 +119,7 @@ public class CheatManager : MonoBehaviour
             return;
         }
 
-        HudManager.Instance.SetAndActivateCheatActivatedText($"Cheat activated {cheat}");
+        HudManager.Instance.SetAndActivateCheatActivatedText("Cheat activated");
         cheatAudioSource.Play();
 
         switch (cheat) {
