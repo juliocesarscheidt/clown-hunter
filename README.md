@@ -6,7 +6,7 @@ You can download it and play through the [releases](https://github.com/juliocesa
 
 ## Screenshots
 
-![menu](./Images/Cover.png)
+![menu](./Images/Banner.png)
 
 ![in game](./Images/In-Game-001.png)
 
