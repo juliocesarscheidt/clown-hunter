@@ -292,7 +292,8 @@ public class Monster : MonoBehaviour
             RemoveHittingFromAllOtherMonsters();
 
             MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
-            MonsterManager.Instance.SpawnEnemiesDelayed();
+            MonsterManager.Instance.AddMonsterDeadToTaskManager();
+            MonsterManager.Instance.SpawnEnemies();
 
             Destroy(gameObject);
         }

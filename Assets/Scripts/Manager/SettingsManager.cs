@@ -89,7 +89,7 @@ public class SettingsManager : MonoBehaviour
         // difficulty 2 = + 6 enemies
         // difficulty 3 = + 8 enemies
         if (PaperManager.Instance != null) {
-            PaperManager.Instance.enemiesToAddOnPaperCollected = (difficulty + 1) * enemiesToAddOnPaperCollectedByDifficulty;
+            PaperManager.Instance.monstersToAddOnPaperCollected = (difficulty + 1) * enemiesToAddOnPaperCollectedByDifficulty;
         }
 
         // difficulty 0 = regularHitDamage
@@ -127,7 +127,7 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetInt("difficulty", difficulty);
         SetDifficultySettings(difficulty);
         if (MonsterManager.Instance != null) {
-            MonsterManager.Instance.SpawnEnemiesDelayed();
+            MonsterManager.Instance.SpawnEnemies();
         }
     }
 

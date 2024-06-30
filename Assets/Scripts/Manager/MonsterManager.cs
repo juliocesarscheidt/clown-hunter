@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static TaskManager;
 
 public class MonsterManager : MonoBehaviour
 {
@@ -11,8 +12,8 @@ public class MonsterManager : MonoBehaviour
     public List<GameObject> spawnPoints;
     public List<GameObject> enemiesPrefabs;
 
-    public int enemiesToSpawn = 3;
-    private int enemiesAlive = 0;
+    public int monstersToSpawn = 4;
+    private int monstersAlive = 0;
     private int lastEnemySpawnedIndex = 0;
 
     private int defaultRegularHitDamage = 25;
@@ -29,6 +30,8 @@ public class MonsterManager : MonoBehaviour
     public float runProbabilityPercentage = 15f;
     public bool canReceiveDamage = true;
     public bool showCurrentState = false;
+
+    private int thisTaskIndex = (int) TaskType.EliminateTheRemainingClowns;
 
     void Awake() {
         if (Instance != null && Instance != this) {
@@ -100,10 +103,16 @@ public class MonsterManager : MonoBehaviour
 
     public void AddMonsterToPool(int id, Monster monster) {
         monstersPool.Add(id, monster);
+        UpdateMonstersAliveCounter();
     }
 
     public void RemoveMonsterFromPool(int id) {
         monstersPool.Remove(id);
+        UpdateMonstersAliveCounter();
+    }
+
+    public void AddMonsterDeadToTaskManager() {
+        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
     }
 
     public IEnumerator SpawnEnemiesAfterSeconds(float seconds) {
@@ -116,17 +125,29 @@ public class MonsterManager : MonoBehaviour
         StartCoroutine(SpawnEnemiesAfterSeconds(2f));
     }
 
+    private void UpdateMonstersAliveCounter() {
+        monstersAlive = monstersPool.Keys.Count;
+        // Debug.Log($"monsters alive {monstersAlive}");
+        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, monstersAlive);
+    }
+
     public void SpawnEnemies() {
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
         }
 
-        enemiesAlive = monstersPool.Keys.Count;
-        // Debug.Log($"enemies alive {enemiesAlive}");
+        // update counter initially to check how many monsters to spawn
+        UpdateMonstersAliveCounter();
 
-        int enemiesDiffToSpawn = Mathf.Max(enemiesToSpawn - enemiesAlive, 0);
+        int enemiesDiffToSpawn = Mathf.Max(monstersToSpawn - monstersAlive, 0);
         // Debug.Log($"enemies diff to spawn {enemiesDiffToSpawn}");
         if (enemiesDiffToSpawn == 0) {
+            TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, monstersAlive);
+            return;
+        }
+        
+        // if is the current task, stop spawning more monsters
+        if (TaskManager.Instance.IsCurrentTask(thisTaskIndex)) {
             return;
         }
 
@@ -186,8 +207,10 @@ public class MonsterManager : MonoBehaviour
 
             lastEnemySpawnedIndex = currentEnemySpawnedIndex;
 
-            enemiesAlive++;
             enemiesSpawnedCounter++;
         }
+
+        // update counter again after spawning
+        UpdateMonstersAliveCounter();
     }
 }

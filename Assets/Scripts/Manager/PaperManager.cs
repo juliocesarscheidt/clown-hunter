@@ -1,25 +1,22 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using static TaskManager;
 
 public class PaperManager : MonoBehaviour
 {
     public static PaperManager Instance { get; private set; }
 
-    private PlayerStats playerStats;
-
-    public TextMeshProUGUI paperCounterText;
     public GameObject paperPrefab;
 
+    private PlayerStats playerStats;
     // spawnPoints will be splited by areas
-    public Dictionary<int, List<GameObject>> spawnPoints = new();
+    private Dictionary<int, List<GameObject>> spawnPoints = new();
     public List<GameObject> spawnPointsAreas;
 
-    public int papersToSpawn = 5;
-    public int papersTotalToCollect = 5;
-    private int paperCollected = 0;
+    public int totalPapersToCollect = 5;
+    public int monstersToAddOnPaperCollected = 2;
 
-    public int enemiesToAddOnPaperCollected = 2;
+    private int thisTaskIndex = (int) TaskType.FindAndCollectNewspapers;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -42,7 +39,9 @@ public class PaperManager : MonoBehaviour
         }
 
         SpawnPapers();
-        AdjustPaperCounterText();
+
+        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, totalPapersToCollect);
+        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, 0);
     }
 
     public void SpawnPapers() {
@@ -51,7 +50,7 @@ public class PaperManager : MonoBehaviour
         }
 
         int spawnAreasQuantity = spawnPointsAreas.Count;
-        int diffToSpawn = papersToSpawn;
+        int diffToSpawn = totalPapersToCollect;
 
         List<int> randomSpawnAreas = new();
 
@@ -87,18 +86,8 @@ public class PaperManager : MonoBehaviour
     }
 
     public void CollectPaper() {
-        paperCollected++;
-        AdjustPaperCounterText();
-
-        MonsterManager.Instance.enemiesToSpawn += enemiesToAddOnPaperCollected;
-        MonsterManager.Instance.SpawnEnemiesDelayed();
-
-        if (paperCollected >= papersTotalToCollect) {
-            HudManager.Instance.ShowEndGameImage();
-        }
-    }
-
-    public void AdjustPaperCounterText() {
-        paperCounterText.text = $"- Collect 5 newspapers ({paperCollected}/{papersTotalToCollect})";
+        MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
+        MonsterManager.Instance.SpawnEnemies();
+        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
     }
 }
