@@ -73,6 +73,14 @@ public class Monster : MonoBehaviour
     [SerializeField]
     private float distanceToTarget;
 
+    private readonly Dictionary<string, int> animationHashes = new() {
+        { "Walking", Animator.StringToHash("Walking") },
+        { "Running", Animator.StringToHash("Running") },
+        { "Attack", Animator.StringToHash("Attack") },
+        { "Damage", Animator.StringToHash("Damage") },
+        { "Laugh", Animator.StringToHash("Laugh") },
+    };
+
     void Start() {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
@@ -151,8 +159,8 @@ public class Monster : MonoBehaviour
         if (!isStopped) {
             if (distanceToTarget <= 10f && CanMove() && !isRunning) {
                 timerToLaugh += Time.deltaTime;
-                // from 10 to 45 seconds
-                if (timerToLaugh >= Random.Range(10, 46)) {
+                // from 10 to 35 seconds
+                if (timerToLaugh >= Random.Range(10, 36)) {
                     Laugh();
                     timerToLaugh = 0;
                 }
@@ -249,7 +257,8 @@ public class Monster : MonoBehaviour
 
     private void Laugh() {
         isLaughing = true;
-        animator.SetTrigger("Laugh");
+
+        animator.SetTrigger(animationHashes["Laugh"]);
         if (!monsterAudioSource.isPlaying || monsterAudioSource.clip != laughSound) {
             monsterAudioSource.clip = laughSound;
             monsterAudioSource.Play();
@@ -263,7 +272,7 @@ public class Monster : MonoBehaviour
 
     private void Attack() {
         isAttacking = true;
-        animator.SetTrigger("Attack");
+        animator.SetTrigger(animationHashes["Attack"]);
 
         if (setIsAttackingCoroutine != null) StopCoroutine(setIsAttackingCoroutine);
         setIsAttackingCoroutine = StartCoroutine(SetIsAttackingFalsyAfterSeconds(attackDurationTime * 1.5f));
@@ -279,7 +288,7 @@ public class Monster : MonoBehaviour
             health = Mathf.Max(health - damage, 0);
         }
 
-        animator.SetTrigger("Damage");
+        animator.SetTrigger(animationHashes["Damage"]);
         isBeingDamaged = true;
 
         currentState = States.TAKING_DAMAGE;
@@ -313,8 +322,8 @@ public class Monster : MonoBehaviour
         SetIsStopped(true);
         isRunning = false;
 
-        animator.SetBool("Walking", false);
-        animator.SetBool("Running", false);
+        animator.SetBool(animationHashes["Walking"], false);
+        animator.SetBool(animationHashes["Running"], false);
 
         if (!isBeingDamaged && !isAttacking && !isLaughing) {
             currentState = States.IDLE;
@@ -326,8 +335,8 @@ public class Monster : MonoBehaviour
         SetIsStopped(false);
         isRunning = false;
 
-        animator.SetBool("Running", false);
-        animator.SetBool("Walking", true);
+        animator.SetBool(animationHashes["Running"], false);
+        animator.SetBool(animationHashes["Walking"], true);
 
         currentState = States.WALKING;
     }
@@ -337,8 +346,8 @@ public class Monster : MonoBehaviour
         SetIsStopped(false);
         isRunning = true;
 
-        animator.SetBool("Walking", false);
-        animator.SetBool("Running", true);
+        animator.SetBool(animationHashes["Walking"], false);
+        animator.SetBool(animationHashes["Running"], true);
 
         currentState = States.RUNNING;
     }

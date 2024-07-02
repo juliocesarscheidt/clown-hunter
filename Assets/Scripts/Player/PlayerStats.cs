@@ -60,6 +60,12 @@ public class PlayerStats : MonoBehaviour
 
     public GameObject pointToMonsterAttack;
 
+    private readonly Dictionary<string, int> animationHashes = new() {
+        { "isReloading", Animator.StringToHash("isReloading") },
+        { "isAiming", Animator.StringToHash("isAiming") },
+
+    };
+
     void Awake() {
         for (int i = 0; i < guns.Count; i++) {
             currentBullets.Add(guns[i].currentBullets);
@@ -134,8 +140,8 @@ public class PlayerStats : MonoBehaviour
         isAiming = true;
 
         if (GunAnimator != null) {
-            GunAnimator.SetBool("isReloading", false);
-            GunAnimator.SetBool("isAiming", true);
+            GunAnimator.SetBool(animationHashes["isReloading"], false);
+            GunAnimator.SetBool(animationHashes["isAiming"], true);
         }
 
         virtualCamera.m_Lens.FieldOfView = 35;
@@ -147,7 +153,7 @@ public class PlayerStats : MonoBehaviour
         canShoot = false;
 
         if (GunAnimator != null) {
-            GunAnimator.SetBool("isAiming", false);
+            GunAnimator.SetBool(animationHashes["isAiming"], false);
         }
 
         virtualCamera.m_Lens.FieldOfView = defaultFieldOfView;
