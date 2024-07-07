@@ -27,6 +27,7 @@ public class MonsterManager : MonoBehaviour
     [SerializeField]
     private List<int> releasedAttackToMonsterIds = new();
 
+    private float oldRunProbabilityPercentage = 15f;
     public float runProbabilityPercentage = 15f;
     public bool canReceiveDamage = true;
     public bool showCurrentState = false;
@@ -47,12 +48,18 @@ public class MonsterManager : MonoBehaviour
     }
 
     public void ChangeRunProbabilityPercentageToAllMonsters(float percentage) {
+        oldRunProbabilityPercentage = runProbabilityPercentage;
         runProbabilityPercentage = percentage;
         foreach (Monster monster in monstersPool.Values) {
             if (monster != null) {
                 monster.ChangeRunProbabilityPercentage(runProbabilityPercentage);
             }
         }
+    }
+
+    public void ResetDefaultRunProbabilityPercentageToAllMonsters() {
+        runProbabilityPercentage = oldRunProbabilityPercentage;
+        ChangeRunProbabilityPercentageToAllMonsters(runProbabilityPercentage);
     }
 
     public void ChangeRegularHitDamageToAllMonsters(int addHitDamageAmount) {
@@ -81,7 +88,7 @@ public class MonsterManager : MonoBehaviour
             }
         }
     }
-
+    
     public bool GetAttackLock(int monstedId) {
         if (releasedAttackToMonsterIds.Count < maxSimultaneousAttacks) {
             // only one monster can get this lock t a time, to avoid unexpected situations

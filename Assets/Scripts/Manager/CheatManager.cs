@@ -22,15 +22,17 @@ public class CheatManager : MonoBehaviour
         INFINITE_SPRINT,
         INVENCIBLE,
         INVENCIBLE_MONSTERS,
-        DEBUG,
+        RUNNER_MONSTERS,
+        DEVMODE,
     }
 
     public Dictionary<string, CheatEnum> cheatCodes = new() {
         {"AMMOGOD", CheatEnum.INFINITE_AMMO},
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
         {"SUPERHUMAN", CheatEnum.INVENCIBLE},
-        {"MADMONSTER", CheatEnum.INVENCIBLE_MONSTERS},
-        {"DEVMODE", CheatEnum.DEBUG},
+        {"OMNIMONSTER", CheatEnum.INVENCIBLE_MONSTERS},
+        {"TIRELESSMONSTER", CheatEnum.RUNNER_MONSTERS},
+        {"DEVMODE", CheatEnum.DEVMODE},
     };
 
     private void Awake() {
@@ -107,7 +109,10 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
                 break;
-            case CheatEnum.DEBUG:
+            case CheatEnum.RUNNER_MONSTERS:
+                MonsterManager.Instance.ResetDefaultRunProbabilityPercentageToAllMonsters();
+                break;
+            case CheatEnum.DEVMODE:
                 HudManager.Instance.showFps = false;
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(false);
             break;
@@ -138,7 +143,10 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
             break;
-            case CheatEnum.DEBUG:
+            case CheatEnum.RUNNER_MONSTERS:
+                MonsterManager.Instance.ChangeRunProbabilityPercentageToAllMonsters(100f);
+                break;
+            case CheatEnum.DEVMODE:
                 HudManager.Instance.showFps = true;
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(true);
             break;
