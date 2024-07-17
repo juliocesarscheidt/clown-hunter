@@ -18,6 +18,7 @@ public class SettingsManager : MonoBehaviour
 
     public TMP_Dropdown resolutionDropdown;
     private readonly List<int[]> supportedResolutions = new() {
+        new int[] { 3840, 2160 },
         new int[] { 2560, 1440 },
         new int[] { 2560, 1080 },
         new int[] { 1920, 1080 },
