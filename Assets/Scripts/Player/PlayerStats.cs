@@ -99,11 +99,34 @@ public class PlayerStats : MonoBehaviour
             }
 
             if (!isReloading) {
+                // by numeric keys
                 Enumerable.Range(1, guns.Count).ToList().ForEach(idx => {
                     if (Input.GetKeyDown(idx.ToString())) {
                         ChangeGunByHotkey(idx);
                     }
                 });
+
+                // by mouse scroll
+                float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
+                if (mouseScroll != 0) {
+                    int nextGunIndex = selectedGunIndex + (mouseScroll > 0 ? 1 : -1);
+                    if (nextGunIndex < 0) {
+                        nextGunIndex = guns.Count - 1;
+                    } else if (nextGunIndex >= guns.Count) {
+                        nextGunIndex = 0;
+                    }
+                    ChangeGun(nextGunIndex);
+                }
+
+                // by joystick
+                float verticalJoystick = Input.GetAxis("JoystickVerticalButtons");
+                if (verticalJoystick != 0) {
+                    if (verticalJoystick == 1) {
+                        ChangeGunByHotkey(1);
+                    } else if (verticalJoystick == -1) {
+                        ChangeGunByHotkey(2);
+                    }
+                }
             }
 
         } else {

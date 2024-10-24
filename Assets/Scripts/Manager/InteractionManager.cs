@@ -55,7 +55,7 @@ public class InteractionManager : MonoBehaviour
                             // show object outline
                             if (!obj.isOutlineEnabled) obj.EnableOutline();
 
-                            if (Input.GetKeyDown(KeyCode.E)) {
+                            if (Input.GetButtonDown("Interact")) {
                                 obj.Collect();
                                 interactionAudioSource.Play();
 

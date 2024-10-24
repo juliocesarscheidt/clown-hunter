@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 [RequireComponent(typeof(PlayerStats))]
 public class Shooting : MonoBehaviour
@@ -22,7 +23,7 @@ public class Shooting : MonoBehaviour
 
         Aim();
 
-        if (CanManageGun() && Input.GetKeyDown(KeyCode.R) &&
+        if (CanManageGun() && Input.GetButtonDown("Reload") &&
             playerStats.spendAmmo &&
             playerStats.CurrentBullets != playerStats.MaxBullets &&
             playerStats.AvailableBullets > 0) {

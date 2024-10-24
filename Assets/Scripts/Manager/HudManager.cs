@@ -67,7 +67,7 @@ public class HudManager : MonoBehaviour
 
     void Update() {
         if (!playerStats.isDead && isRunningGame) {
-            if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (Input.GetButtonDown("Return")) {
                 if (!isPaused) {
                     ShowPauseGamePanel();
                 } else {

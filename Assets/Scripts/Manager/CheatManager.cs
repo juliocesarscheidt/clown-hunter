@@ -22,7 +22,7 @@ public class CheatManager : MonoBehaviour
         INFINITE_SPRINT,
         INVENCIBLE,
         INVENCIBLE_MONSTERS,
-        RUNNER_MONSTERS,
+        RUNNING_MONSTERS,
         DEVMODE,
     }
 
@@ -31,7 +31,7 @@ public class CheatManager : MonoBehaviour
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
         {"SUPERHUMAN", CheatEnum.INVENCIBLE},
         {"OMNIMONSTER", CheatEnum.INVENCIBLE_MONSTERS},
-        {"TIRELESSMONSTER", CheatEnum.RUNNER_MONSTERS},
+        {"MADMONSTER", CheatEnum.RUNNING_MONSTERS},
         {"DEVMODE", CheatEnum.DEVMODE},
     };
 
@@ -109,7 +109,7 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
                 break;
-            case CheatEnum.RUNNER_MONSTERS:
+            case CheatEnum.RUNNING_MONSTERS:
                 MonsterManager.Instance.ResetDefaultRunProbabilityPercentageToAllMonsters();
                 break;
             case CheatEnum.DEVMODE:
@@ -143,7 +143,7 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
             break;
-            case CheatEnum.RUNNER_MONSTERS:
+            case CheatEnum.RUNNING_MONSTERS:
                 MonsterManager.Instance.ChangeRunProbabilityPercentageToAllMonsters(100f);
                 break;
             case CheatEnum.DEVMODE:

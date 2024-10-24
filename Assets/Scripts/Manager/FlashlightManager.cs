@@ -7,8 +7,12 @@ public class FlashlightManager : MonoBehaviour
     public AudioSource flashlightAudioSource;
     public Light flashlight;
 
+    public float timeToSwitchOnOff = 0.25f;
+    private float timer = 0f;
+
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
+        timer = timeToSwitchOnOff;
 
         if (flashlight != null) {
             flashlight.enabled = false;
@@ -19,9 +23,16 @@ public class FlashlightManager : MonoBehaviour
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
         }
-        if (Input.GetKeyDown(KeyCode.F)) {
-            flashlightAudioSource.Play();
-            flashlight.enabled = !flashlight.enabled;
+
+        timer += Time.deltaTime;
+
+        if (timer >= timeToSwitchOnOff) {
+            if (Input.GetAxis("JoystickHorizontalButtons") == -1 || Input.GetButtonDown("Flashlight")) {
+                flashlightAudioSource.Play();
+                flashlight.enabled = !flashlight.enabled;
+
+                timer = 0;
+            }
         }
     }
 }
