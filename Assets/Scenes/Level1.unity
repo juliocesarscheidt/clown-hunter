@@ -988,7 +988,7 @@ GameObject:
   m_Component:
   - component: {fileID: 276176281}
   m_Layer: 5
-  m_Name: PressEObject
+  m_Name: PressInteractObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1797,7 +1797,7 @@ GameObject:
   - component: {fileID: 381591860}
   - component: {fileID: 381591859}
   m_Layer: 5
-  m_Name: PressEText
+  m_Name: PressInteractText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3609,6 +3609,8 @@ MonoBehaviour:
   - GunAmmo
   - FirstAid
   interactables: []
+  inputActionAsset: {fileID: -944628639613478452, guid: 4419d82f33d36e848b3ed5af4c8da37e,
+    type: 3}
 --- !u!82 &682027099
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4186,7 +4188,7 @@ MonoBehaviour:
   GameOverImage: {fileID: 1842989319}
   EndGameImage: {fileID: 1641789710}
   PauseGamePanel: {fileID: 1641811281}
-  PressEText: {fileID: 381591859}
+  PressInteractText: {fileID: 381591859}
   OptionsGamePanelBg: {fileID: 8700203914008622681}
   OptionsGamePanelLayers:
   - {fileID: 8346745219773040537}

@@ -121,9 +121,9 @@ public class PlayerStats : MonoBehaviour
                 // by joystick
                 float verticalJoystick = Input.GetAxis("JoystickVerticalButtons");
                 if (verticalJoystick != 0) {
-                    if (verticalJoystick == 1) {
+                    if (verticalJoystick == 1 && selectedGunIndex != 0) {
                         ChangeGunByHotkey(1);
-                    } else if (verticalJoystick == -1) {
+                    } else if (verticalJoystick == -1 && selectedGunIndex != 1) {
                         ChangeGunByHotkey(2);
                     }
                 }

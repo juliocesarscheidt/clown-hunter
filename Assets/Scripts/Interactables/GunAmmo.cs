@@ -13,7 +13,7 @@ public class GunAmmo : Interactable
     }
 
     public override void Collect() {
-        HudManager.Instance.HidePressEObject();
+        HudManager.Instance.HidePressInteractObject();
         playerStats.CollectAmmo(bulletsAmount);
     }
 

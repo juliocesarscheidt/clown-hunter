@@ -13,7 +13,7 @@ public class FirstAid : Interactable
     }
 
     public override void Collect() {
-        HudManager.Instance.HidePressEObject();
+        HudManager.Instance.HidePressInteractObject();
         playerStats.CollectFirstAid(healthAmount);
     }
 

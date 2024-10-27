@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InteractionManager : MonoBehaviour
 {
@@ -10,13 +11,34 @@ public class InteractionManager : MonoBehaviour
     private AudioSource interactionAudioSource;
     [SerializeField]
     private List<Interactable> interactables = new();
-    
+
+    [SerializeField]
+    private InputActionAsset inputActionAsset;
+
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         interactionAudioSource = GetComponent<AudioSource>();
 
         foreach (var obj in FindObjectsByType(typeof(Interactable), FindObjectsSortMode.None)) {
             interactables.Add(obj as Interactable);
+        }
+
+        InputSystem.onActionChange += InputActionChangeCallback;
+    }
+
+    private void InputActionChangeCallback(object obj, InputActionChange change) {
+        if (change == InputActionChange.ActionPerformed) {
+            InputAction receivedInputAction = (InputAction) obj;
+            InputDevice lastDevice = receivedInputAction.activeControl.device;
+
+            var isKeyboardAndMouse = lastDevice.name.Equals("Keyboard") || lastDevice.name.Equals("Mouse");
+            // Debug.Log($"InputActionChangeCallback: {lastDevice.name} - {isKeyboardAndMouse}");
+            if (isKeyboardAndMouse) {
+                HudManager.Instance.SetPressInteractTextToMouseKeyboard();
+            } else {
+                // XInputControllerWindows
+                HudManager.Instance.SetPressInteractTextToXBoxJoystick();
+            }
         }
     }
 
@@ -26,6 +48,7 @@ public class InteractionManager : MonoBehaviour
         } else {
             Instance = this;
         }
+
     }
 
     private void LateUpdate() {
@@ -39,7 +62,7 @@ public class InteractionManager : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit)) {
             float distanceToPlayer = Vector3.Distance(hit.transform.position, playerStats.transform.position);
             if (distanceToPlayer > 5f) {
-                HudManager.Instance.HidePressEObject();
+                HudManager.Instance.HidePressInteractObject();
                 DisableAllOutlines();
 
                 return;
@@ -48,8 +71,8 @@ public class InteractionManager : MonoBehaviour
             if (tagsToInteract.Exists(t => hit.collider.CompareTag(t))) {
                 foreach (var tag in tagsToInteract) {
                     if (hit.collider.CompareTag(tag)) {
-                        // display UIU message
-                        HudManager.Instance.ShowPressEObject();
+                        // display UI message
+                        HudManager.Instance.ShowPressInteractObject();
 
                         if (hit.transform.gameObject.TryGetComponent(out Interactable obj)) {
                             // show object outline
@@ -69,7 +92,7 @@ public class InteractionManager : MonoBehaviour
                 }
             
             } else {
-                HudManager.Instance.HidePressEObject();
+                HudManager.Instance.HidePressInteractObject();
                 DisableAllOutlines();
             }
         }

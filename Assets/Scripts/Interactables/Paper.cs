@@ -10,7 +10,7 @@ public class Paper : Interactable
     }
 
     public override void Collect() {
-        HudManager.Instance.HidePressEObject();
+        HudManager.Instance.HidePressInteractObject();
         PaperManager.Instance.CollectPaper();
     }
 
