@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,27 +12,33 @@ public class CheatManager : MonoBehaviour
 
     public float timeToType = 2f;
     private float typingTimer = 0.0f;
-    
+
     [SerializeField]
-    private int currentTypingIndex = 0;
+    private string currentInput = string.Empty;
+
     [SerializeField]
-    private string typedString = string.Empty;
+    private float resetTimeout = 3.0f; // Reset if user stops typing
+
+    private float lastKeyTime;
+    private int maxCheatLength;
 
     public enum CheatEnum {
         INFINITE_AMMO,
         INFINITE_SPRINT,
-        INVENCIBLE,
+        INVENCIBLE_PLAYER,
         INVENCIBLE_MONSTERS,
-        RUNNING_MONSTERS,
+        MAD_MONSTERS,
+        SHOW_PAPERS,
         DEVMODE,
     }
 
     public Dictionary<string, CheatEnum> cheatCodes = new() {
         {"AMMOGOD", CheatEnum.INFINITE_AMMO},
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
-        {"SUPERHUMAN", CheatEnum.INVENCIBLE},
-        {"OMNIMONSTER", CheatEnum.INVENCIBLE_MONSTERS},
-        {"MADMONSTER", CheatEnum.RUNNING_MONSTERS},
+        {"SUPERHUMAN", CheatEnum.INVENCIBLE_PLAYER},
+        {"OMNIMONSTERS", CheatEnum.INVENCIBLE_MONSTERS},
+        {"MADMONSTERS", CheatEnum.MAD_MONSTERS},
+        {"SHOWPAPERS", CheatEnum.SHOW_PAPERS},
         {"DEVMODE", CheatEnum.DEVMODE},
     };
 
@@ -43,48 +50,44 @@ public class CheatManager : MonoBehaviour
         }
 
         playerStats = FindObjectOfType<PlayerStats>();
+
+        // Cache the longest cheat length to cap the buffer size
+        maxCheatLength = cheatCodes.Keys.Max(c => c.Length);
     }
 
-    private void OnGUI() {
-        Event e = Event.current;
-        if (
-            e.type == EventType.KeyDown &&
-            e.keyCode.ToString().Length == 1 &&
-            char.IsLetter(e.keyCode.ToString()[0])
-        ){
-            string currentKeyCode = e.keyCode.ToString();
-            List<string> cheatCodesToCheck = cheatCodes.Keys.ToList().FindAll(cheat => cheat.StartsWith(typedString));
+    private void Update() {
+        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
+            return;
+        }
+        if (currentInput.Length > 0 && Time.time - lastKeyTime > resetTimeout) {
+            currentInput = string.Empty;
+        }
 
-            foreach (string cheatSequence in cheatCodesToCheck) {
-                CheatEnum cheat = cheatCodes[cheatSequence];
-                int cheatKeyCodeLen = cheatSequence.Length;
-                if (currentTypingIndex > cheatKeyCodeLen) {
-                    continue;    
+        if (!string.IsNullOrEmpty(Input.inputString)){
+            foreach (char c in Input.inputString)  {
+                if (c == "\b"[0] || c == "\n"[0] || c == "\r"[0]) {
+                    currentInput = string.Empty;
+                    continue;
                 }
-                char expectedKeyCode = cheatSequence[currentTypingIndex];
-                if (currentKeyCode == expectedKeyCode.ToString()) {
-                    typingTimer = 0;
-                    currentTypingIndex++;
-                    typedString = $"{typedString}{expectedKeyCode}";
-                    if (currentTypingIndex == cheatKeyCodeLen) {
-                        currentTypingIndex = 0;
-                        typedString = string.Empty;
-                        ActivateCheat(cheat);
-                    }
-                    break;
+                currentInput += c;
+                lastKeyTime = Time.time;
+
+                if (currentInput.Length > maxCheatLength) {
+                    currentInput = currentInput.Substring(currentInput.Length - maxCheatLength);
                 }
+
+                CheckCheatCodes();
             }
         }
     }
 
-    void Update() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
-            return;
-        }
-        typingTimer += Time.deltaTime;
-        if (typingTimer >= timeToType) {
-            currentTypingIndex = 0;
-            typedString = string.Empty;
+    private void CheckCheatCodes()    {
+        foreach (var pair in cheatCodes) {
+            if (currentInput.EndsWith(pair.Key, StringComparison.OrdinalIgnoreCase)) {
+                ActivateCheat(pair.Value);
+                currentInput = string.Empty; // Clear buffer after activation
+                break;
+            }
         }
     }
 
@@ -103,14 +106,17 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INFINITE_SPRINT:
                 playerStats.SetSpendStamina(true);
                 break;
-            case CheatEnum.INVENCIBLE:
+            case CheatEnum.INVENCIBLE_PLAYER:
                 playerStats.canReceiveDamage = true;
                 break;
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
                 break;
-            case CheatEnum.RUNNING_MONSTERS:
+            case CheatEnum.MAD_MONSTERS:
                 MonsterManager.Instance.ResetDefaultRunProbabilityPercentageToAllMonsters();
+                break;
+            case CheatEnum.SHOW_PAPERS:
+                PaperManager.Instance.ShowAllPapers(false);
                 break;
             case CheatEnum.DEVMODE:
                 HudManager.Instance.showFps = false;
@@ -136,15 +142,18 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INFINITE_SPRINT:
                 playerStats.SetSpendStamina(false);
                 break;
-            case CheatEnum.INVENCIBLE:
+            case CheatEnum.INVENCIBLE_PLAYER:
                 playerStats.canReceiveDamage = false;
                 playerStats.FillHealth();
             break;
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
             break;
-            case CheatEnum.RUNNING_MONSTERS:
+            case CheatEnum.MAD_MONSTERS:
                 MonsterManager.Instance.ChangeRunProbabilityPercentageToAllMonsters(100f);
+                break;
+            case CheatEnum.SHOW_PAPERS:
+                PaperManager.Instance.ShowAllPapers(true);
                 break;
             case CheatEnum.DEVMODE:
                 HudManager.Instance.showFps = true;

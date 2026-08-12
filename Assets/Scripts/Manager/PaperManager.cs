@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static TaskManager;
 
@@ -7,6 +8,10 @@ public class PaperManager : MonoBehaviour
     public static PaperManager Instance { get; private set; }
 
     public GameObject paperPrefab;
+    [SerializeField]
+    private List<GameObject> spawnedPapers = new();
+    public int defaultLayerIndex = 0;
+    public int paperLayerIndex = 7;
 
     private PlayerStats playerStats;
     // spawnPoints will be splited by areas
@@ -78,6 +83,7 @@ public class PaperManager : MonoBehaviour
                 spawnPoint.transform.rotation
             );
             paper.transform.parent = spawnPoint.transform;
+            spawnedPapers.Add(paper);
 
             if (paper.TryGetComponent(out Interactable component)) {
                 InteractionManager.Instance.AddInteractable(component);
@@ -89,5 +95,24 @@ public class PaperManager : MonoBehaviour
         MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
         MonsterManager.Instance.SpawnEnemies();
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
+    }
+
+    public void ShowAllPapers(bool showAllPapers) {
+        // change the layer to Paper
+        foreach(var obj in spawnedPapers) {
+            if (obj.transform.childCount == 0) {
+                continue;
+            }
+
+            if (obj.TryGetComponent<Paper>(out var p)) {
+                if (showAllPapers) {
+                    p.SetForcedOutlineEnabled();
+                    p.SetPaperObjLayer(paperLayerIndex);
+                } else {
+                    p.SetForcedOutlineDisabled();
+                    p.SetPaperObjLayer(defaultLayerIndex);
+                }
+            }
+        }
     }
 }

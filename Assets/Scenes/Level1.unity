@@ -7061,6 +7061,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paperPrefab: {fileID: 2745878109546410035, guid: 38299cc4b3c1fcb4f9235dc7ecd1ccf7,
     type: 3}
+  defaultLayerIndex: 0
+  paperLayerIndex: 7
   spawnPointsAreas:
   - {fileID: 816525971}
   - {fileID: 1581413448}
@@ -12567,6 +12569,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671610046709554143, guid: 79fd79cfec879b344a87bfdff4bffa7b,
+        type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 192
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
