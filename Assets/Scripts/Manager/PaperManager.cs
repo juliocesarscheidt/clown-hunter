@@ -11,7 +11,7 @@ public class PaperManager : MonoBehaviour
     [SerializeField]
     private List<GameObject> spawnedPapers = new();
     public int defaultLayerIndex = 0;
-    public int paperLayerIndex = 7;
+    public int paperLayerIndex = 6;
 
     private PlayerStats playerStats;
     // spawnPoints will be splited by areas

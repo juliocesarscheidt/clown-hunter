@@ -334,37 +334,6 @@ RectTransform:
   m_AnchoredPosition: {x: 3.703125, y: 0}
   m_SizeDelta: {x: -1.0572, y: 7.2516}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &114092810
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 114092811}
-  m_Layer: 0
-  m_Name: PaperPos
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &114092811
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 114092810}
-  serializedVersion: 2
-  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
-  m_LocalPosition: {x: 50.63, y: 1.489, z: 44.664}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 816525972}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &162115789
 GameObject:
   m_ObjectHideFlags: 0
@@ -3921,8 +3890,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cheatAudioSource: {fileID: 706041743}
   timeToType: 2
-  currentTypingIndex: 0
-  typedString: 
+  currentInput: 
+  resetTimeout: 3
 --- !u!82 &706041743
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4876,7 +4845,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 114092811}
   - {fileID: 442391314}
   - {fileID: 782635170}
   - {fileID: 2122864577}
@@ -7061,6 +7029,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paperPrefab: {fileID: 2745878109546410035, guid: 38299cc4b3c1fcb4f9235dc7ecd1ccf7,
     type: 3}
+  spawnedPapers: []
   defaultLayerIndex: 0
   paperLayerIndex: 7
   spawnPointsAreas:
@@ -12569,11 +12538,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5671610046709554143, guid: 79fd79cfec879b344a87bfdff4bffa7b,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 192
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
