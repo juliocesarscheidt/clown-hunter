@@ -28,4 +28,4 @@ MonoBehaviour:
   isAutomaticGun: 1
   currentBullets: 30
   maxBullets: 30
-  availableBullets: 120
+  availableBullets: 60

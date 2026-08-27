@@ -9,9 +9,7 @@ public class CheatManager : MonoBehaviour
 
     private PlayerStats playerStats;
     public AudioSource cheatAudioSource;
-
     public float timeToType = 2f;
-    private float typingTimer = 0.0f;
 
     [SerializeField]
     private string currentInput = string.Empty;
@@ -126,7 +124,7 @@ public class CheatManager : MonoBehaviour
     }
 
     public void ActivateCheat(CheatEnum cheat) {
-        if (SettingsManager.Instance.difficulty == SettingsManager.Instance.maxDifficulty) {
+        if (SettingsManager.Instance.GetDifficulty() == SettingsManager.Instance.maxDifficulty) {
             HudManager.Instance.SetAndActivateCheatActivatedText("No cheats allowed");
             return;
         }

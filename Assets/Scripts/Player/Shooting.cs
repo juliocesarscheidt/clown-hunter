@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
 
 [RequireComponent(typeof(PlayerStats))]
 public class Shooting : MonoBehaviour
@@ -11,6 +10,8 @@ public class Shooting : MonoBehaviour
     private PlayerStats playerStats;
     private float shootTimer = 0f;
     private float reloadTimer = 0f;
+    [SerializeField]
+    private bool isTimingToggleAim = false;
 
     void Awake() {
         playerStats = GetComponent<PlayerStats>();
@@ -118,21 +119,51 @@ public class Shooting : MonoBehaviour
     }
 
     void Aim() {
-        if (CanManageGun() && Input.GetButton("Fire2")) {
+        var holdToAim = SettingsManager.Instance.GetHoldToggleAimHold();
+
+        if (CanManageGun()) {
+            if (holdToAim) {
+                isTimingToggleAim = false;
+                if (Input.GetButton("Fire2")) {
+                    shootTimer += Time.deltaTime;
+                    playerStats.EnterAimingState();
+                    if (shootTimer > playerStats.SelectedGun.timeToShootInterval) {
+                        playerStats.canShoot = true;
+                    }
+                    if (playerStats.canShoot) {
+                        Shoot();
+                    }
+                } else {
+                    shootTimer = 0f;
+                    playerStats.ExitAimingState();
+                }
+            } else {
+                if (Input.GetButtonDown("Fire2")) {
+                    if (!playerStats.isAiming) {
+                        isTimingToggleAim = true;
+                        playerStats.EnterAimingState();
+                        
+                    } else {
+                        shootTimer = 0f;
+                        isTimingToggleAim = false;
+                        playerStats.ExitAimingState();
+                    }
+                }
+            }
+        } else {
+            shootTimer = 0f;
+            playerStats.ExitAimingState();
+            isTimingToggleAim = false;
+        }
+
+        if (isTimingToggleAim) {
             shootTimer += Time.deltaTime;
-
-            playerStats.EnterAimingState();
-
             if (shootTimer > playerStats.SelectedGun.timeToShootInterval) {
                 playerStats.canShoot = true;
             }
             if (playerStats.canShoot) {
                 Shoot();
             }
-
-        } else {
-            shootTimer = 0f;
-            playerStats.ExitAimingState();
         }
     }
 

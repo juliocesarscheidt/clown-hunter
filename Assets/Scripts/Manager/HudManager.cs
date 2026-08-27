@@ -231,6 +231,7 @@ public class HudManager : MonoBehaviour
         SettingsManager.Instance.ApplySoundSettings();
         SettingsManager.Instance.ApplyDifficultySettings();
         SettingsManager.Instance.ApplyResolutionSettings();
+        SettingsManager.Instance.ApplyHoldToggleAimSettings();
         SetAndActivateTempInfoText("Options saved");
     }
 

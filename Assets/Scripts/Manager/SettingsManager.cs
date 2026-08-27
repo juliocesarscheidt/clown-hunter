@@ -14,7 +14,17 @@ public class SettingsManager : MonoBehaviour
     public Slider audioSlider;
     public TextMeshProUGUI volumeInfoText;
     public float defaultVolume = 1f;
-    public float volume;
+    [SerializeField]
+    private float volume;
+
+    public TMP_Dropdown holdToggleAimDropdown;
+    [SerializeField]
+    private int holdToggleAim;
+    public int defaultHoldToggleAim = 0;
+    public enum HoldToogleAimEnum {
+        HOLD,
+        TOGGLE,
+    };
 
     public TMP_Dropdown resolutionDropdown;
     private readonly List<int[]> supportedResolutions = new() {
@@ -35,7 +45,8 @@ public class SettingsManager : MonoBehaviour
     public int defaultDifficulty = 0;
     public int maxDifficulty = 3;
     public int enemiesToAddOnPaperCollectedByDifficulty = 2;
-    public int difficulty;
+    [SerializeField]
+    private int difficulty;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -60,6 +71,9 @@ public class SettingsManager : MonoBehaviour
         difficulty = PlayerPrefs.GetInt("difficulty", defaultDifficulty);
         difficultyDropdown.value = difficulty;
         SetDifficultySettings(difficulty);
+
+        holdToggleAim = PlayerPrefs.GetInt("hold_toggle_aim", defaultHoldToggleAim);
+        holdToggleAimDropdown.value = holdToggleAim;
 
         resolutionWidth = PlayerPrefs.GetInt("screen_width", defaultScreenWidth);
         resolutionHeight = PlayerPrefs.GetInt("screen_height", defaultScreenHeight);
@@ -132,6 +146,8 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
+    public int GetDifficulty() { return difficulty; }
+
     private void SetSoundSettings(float volume) {
         for (int i = 0; i < audioSources.Length; i++) {
             float originalVolume = audioSourcesOriginalVolumes[i];
@@ -163,6 +179,13 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetInt("screen_height", resolutionHeight);
         SetResolutionSettings(resolutionWidth, resolutionHeight);
     }
+
+    public void ApplyHoldToggleAimSettings() {
+        holdToggleAim = holdToggleAimDropdown.value;
+        PlayerPrefs.SetInt("hold_toggle_aim", holdToggleAim);
+    }
+
+    public bool GetHoldToggleAimHold() { return holdToggleAim == (int) HoldToogleAimEnum.HOLD; }
 
     public void SetVolumeInfoText() {
         volumeInfoText.text = $"{Mathf.Round(audioSlider.value * 100)}";
