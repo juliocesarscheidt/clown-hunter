@@ -94,7 +94,7 @@ public class SettingsManager : MonoBehaviour
          * 2 = Hard
          * 3 = God (no cheats allowed)
          */
-        if (difficulty == maxDifficulty) {
+        if (CheatManager.Instance != null && difficulty == maxDifficulty) {
             CheatManager.Instance.DeactivateCheats();
         }
 

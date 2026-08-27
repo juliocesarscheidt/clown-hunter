@@ -100,6 +100,9 @@ public class PaperManager : MonoBehaviour
     public void ShowAllPapers(bool showAllPapers) {
         // change the layer to Paper
         foreach(var obj in spawnedPapers) {
+            if (!obj.activeSelf) {
+                continue;
+            }
             if (obj.transform.childCount == 0) {
                 continue;
             }

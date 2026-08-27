@@ -118,12 +118,14 @@ public class Shooting : MonoBehaviour
         }
     }
 
+
     void Aim() {
         var holdToAim = SettingsManager.Instance.GetHoldToggleAimHold();
 
         if (CanManageGun()) {
             if (holdToAim) {
                 isTimingToggleAim = false;
+
                 if (Input.GetButton("Fire2")) {
                     shootTimer += Time.deltaTime;
                     playerStats.EnterAimingState();
@@ -134,7 +136,7 @@ public class Shooting : MonoBehaviour
                         Shoot();
                     }
                 } else {
-                    shootTimer = 0f;
+                    ResetShootTime();
                     playerStats.ExitAimingState();
                 }
             } else {
@@ -144,16 +146,14 @@ public class Shooting : MonoBehaviour
                         playerStats.EnterAimingState();
                         
                     } else {
-                        shootTimer = 0f;
-                        isTimingToggleAim = false;
+                        ResetShootTimeAndTimingToggleAim();
                         playerStats.ExitAimingState();
                     }
                 }
             }
         } else {
-            shootTimer = 0f;
+            ResetShootTimeAndTimingToggleAim();
             playerStats.ExitAimingState();
-            isTimingToggleAim = false;
         }
 
         if (isTimingToggleAim) {
@@ -165,6 +165,15 @@ public class Shooting : MonoBehaviour
                 Shoot();
             }
         }
+    }
+
+    public void ResetShootTime() {
+        shootTimer = 0f;
+    }
+
+    public void ResetShootTimeAndTimingToggleAim() {
+        ResetShootTime();
+        isTimingToggleAim = false;
     }
 
     void ReloadGun() {

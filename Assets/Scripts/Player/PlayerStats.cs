@@ -17,6 +17,7 @@ public class PlayerStats : MonoBehaviour
     public int regularHitDamage = 35;
 
     private FirstPersonController playerController;
+    private Shooting playerShooting;
 
     public AudioSource stepsAudioSource;
     public AudioClip stepsWalkingAudioClip;
@@ -73,6 +74,7 @@ public class PlayerStats : MonoBehaviour
             availableBullets.Add(guns[i].availableBullets);
         }
         playerController = GetComponent<FirstPersonController>();
+        playerShooting = GetComponent<Shooting>();
     }
 
     void Start() {
@@ -149,6 +151,9 @@ public class PlayerStats : MonoBehaviour
         gunAudioSource = selectedGunObject.GetComponent<AudioSource>();
 
         HudManager.Instance.AdjustBulletsCount();
+
+        playerShooting.ResetShootTimeAndTimingToggleAim();
+        ExitAimingState();
     }
 
     void ChangeGunByHotkey(int hotkey) {
