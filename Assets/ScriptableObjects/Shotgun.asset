@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11e3236c57dedb447989f6113a0d869f, type: 3}
+  m_Name: Shotgun
+  m_EditorClassIdentifier: 
+  gunName: Shotgun
+  gunPrefabObject: {fileID: 4373842828661901899, guid: cecbe0fec9b513b45b938f9a4f5eeca7,
+    type: 3}
+  particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
+    type: 3}
+  bulletHolePrefab: {fileID: 2718296896328130136, guid: 20e316ab08197894996269fa1b346b0d,
+    type: 3}
+  gunShotSound: {fileID: 8300000, guid: 7721726e3b4efb7428d0a68ba2dc0ecf, type: 3}
+  gunReloadSound: {fileID: 8300000, guid: 7eb3cb1a3a878b2419158f6c0367b058, type: 3}
+  gunEmptySound: {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}
+  gunIconImage: {fileID: 21300000, guid: 85eda5e9fcab98949bc1fe08dba25953, type: 3}
+  timeToShootInterval: 0.45
+  timeToReloadInterval: 2.3
+  isAutomaticGun: 0
+  currentBullets: 5
+  maxBullets: 5
+  availableBullets: 30
+  hitDamage: 50

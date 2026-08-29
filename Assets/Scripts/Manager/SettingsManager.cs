@@ -107,20 +107,20 @@ public class SettingsManager : MonoBehaviour
             PaperManager.Instance.monstersToAddOnPaperCollected = (difficulty + 1) * enemiesToAddOnPaperCollectedByDifficulty;
         }
 
-        // difficulty 0 = regularHitDamage
-        // difficulty 1 = regularHitDamage - 5
-        // difficulty 2 = regularHitDamage - 10
-        // difficulty 3 = regularHitDamage - 15
+        // difficulty 0 = currentHitDamage
+        // difficulty 1 = currentHitDamage - 5
+        // difficulty 2 = currentHitDamage - 10
+        // difficulty 3 = currentHitDamage - 15
         PlayerStats playerStats = FindObjectOfType<PlayerStats>();
         if (playerStats != null) {
-            playerStats.ChangeRegularHitDamage(difficulty * -5);
+            playerStats.ChangeAddHitDamageAmount(difficulty * -5);
         }
 
         if (MonsterManager.Instance != null) {
-            // difficulty 0 = regularHitDamage
-            // difficulty 1 = regularHitDamage + 10
-            // difficulty 2 = regularHitDamage + 20
-            // difficulty 3 = regularHitDamage + 30
+            // difficulty 0 = currentHitDamage
+            // difficulty 1 = currentHitDamage + 10
+            // difficulty 2 = currentHitDamage + 20
+            // difficulty 3 = currentHitDamage + 30
             MonsterManager.Instance.ChangeRegularHitDamageToAllMonsters(difficulty * 10);
 
             // difficulty 0 = maxSimultaneousAttacks = 2

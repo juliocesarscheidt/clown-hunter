@@ -16,8 +16,9 @@ public class MonsterManager : MonoBehaviour
     private int monstersAlive = 0;
     private int lastEnemySpawnedIndex = 0;
 
-    private int defaultRegularHitDamage = 25;
-    public int regularHitDamage = 25;
+    public int defaultHitDamage = 25;
+    [SerializeField]
+    private int currentHitDamage = 25;
 
     private int enemiesSpawnedCounter = 0;
     private Dictionary<int, Monster> monstersPool = new();
@@ -63,10 +64,10 @@ public class MonsterManager : MonoBehaviour
     }
 
     public void ChangeRegularHitDamageToAllMonsters(int addHitDamageAmount) {
-        regularHitDamage = defaultRegularHitDamage + addHitDamageAmount;
+        currentHitDamage = defaultHitDamage + addHitDamageAmount;
         foreach (Monster monster in monstersPool.Values) {
             if (monster != null) {
-                monster.regularHitDamage = regularHitDamage;
+                monster.SetCurrentHitDamage(currentHitDamage);
             }
         }
     }
@@ -199,7 +200,7 @@ public class MonsterManager : MonoBehaviour
             if (enemyObject.TryGetComponent(out Monster monster)) {
                 monster.monsterId = enemiesSpawnedCounter;
                 // setting configurations to monster
-                monster.regularHitDamage = regularHitDamage;
+                monster.SetCurrentHitDamage(currentHitDamage);
                 monster.canReceiveDamage = canReceiveDamage;
                 monster.showCurrentState = showCurrentState;
                 monster.ChangeRunProbabilityPercentage(runProbabilityPercentage);

@@ -5,7 +5,7 @@ public class Weapon : ScriptableObject {
     public string gunName;
     public GameObject gunPrefabObject;
     public GameObject particleShotEffect;
-    public GameObject gunPrefabBullet;
+    public GameObject bulletHolePrefab;
 
     public AudioClip gunShotSound;
     public AudioClip gunReloadSound;
@@ -21,4 +21,6 @@ public class Weapon : ScriptableObject {
     public int currentBullets;
     public int maxBullets;
     public int availableBullets;
+
+    public int hitDamage;
 }

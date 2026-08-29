@@ -5,7 +5,6 @@ public class Shooting : MonoBehaviour
 {
     public GameObject particleShotEffect;
     public GameObject particleBloodEffect;
-    public GameObject bulletHolePrefab;
 
     private PlayerStats playerStats;
     private float shootTimer = 0f;
@@ -69,7 +68,7 @@ public class Shooting : MonoBehaviour
                         bulletHit.transform.CompareTag(TagsController.Ceiling) ||
                         bulletHit.transform.CompareTag(TagsController.Wall)) {
                         GameObject bulletHole = Instantiate(
-                            bulletHolePrefab,
+                            playerStats.SelectedGun.bulletHolePrefab,
                             bulletHit.point + bulletHit.normal * 0.001f,
                             Quaternion.FromToRotation(Vector3.forward, bulletHit.normal)
                         );
@@ -95,8 +94,11 @@ public class Shooting : MonoBehaviour
 
                     if (bulletHit.transform.CompareTag(TagsController.Enemy)) {
                         Monster monster = bulletHit.transform.GetComponent<Monster>();
-                        int damage = Random.Range(playerStats.regularHitDamage - playerStats.damageVariation,
-                            playerStats.regularHitDamage + playerStats.damageVariation);
+
+                        int floor = playerStats.GetCurrentHitDamage() - playerStats.damageVariation;
+                        int ceil = playerStats.GetCurrentHitDamage() + playerStats.damageVariation;
+
+                        int damage = Random.Range(floor, ceil);
                         monster.ApplyDamage(damage);
                     }
 

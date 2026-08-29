@@ -17,15 +17,16 @@ MonoBehaviour:
     type: 3}
   particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
     type: 3}
-  gunPrefabBullet: {fileID: 7451251649253747066, guid: aa57ff4f47b54f842a3786286717c1ae,
+  bulletHolePrefab: {fileID: 2718296896328130136, guid: aff6acb500ed8a84cb80e0005c71e9f4,
     type: 3}
   gunShotSound: {fileID: 8300000, guid: 2cdbef1639fff6c439e9d7b8e6c51919, type: 3}
   gunReloadSound: {fileID: 8300000, guid: 5282f3be90851e54f8ae737aba4d08e3, type: 3}
   gunEmptySound: {fileID: 8300000, guid: a1a0745171b6d4945bf4e8a0f4198adf, type: 3}
   gunIconImage: {fileID: 21300000, guid: 2a60d954310ac8846bbc00b4f2a8fadf, type: 3}
   timeToShootInterval: 0.3
-  timeToReloadInterval: 3
+  timeToReloadInterval: 2.3
   isAutomaticGun: 0
   currentBullets: 6
   maxBullets: 6
   availableBullets: 18
+  hitDamage: 35

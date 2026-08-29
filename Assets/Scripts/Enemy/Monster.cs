@@ -18,7 +18,8 @@ public class Monster : MonoBehaviour
     public float defaultSpeed = 3.0f;
     public bool isDead = false;
     public int criticalHitDamage = 100;
-    public int regularHitDamage = 25;
+    [SerializeField]
+    private int currentHitDamage = 25;
     public int damageVariation = 10;
     public float distanceToAttack = 1.25f;
     public float attackDurationTime = 1.5f;
@@ -277,10 +278,21 @@ public class Monster : MonoBehaviour
         if (setIsAttackingCoroutine != null) StopCoroutine(setIsAttackingCoroutine);
         setIsAttackingCoroutine = StartCoroutine(SetIsAttackingFalsyAfterSeconds(attackDurationTime * 1.5f));
 
-        int damage = Random.Range(regularHitDamage - damageVariation, regularHitDamage + damageVariation);
+        int floor = currentHitDamage - damageVariation;
+        int ceil = currentHitDamage + damageVariation;
+
+        int damage = Random.Range(floor, ceil);
         playerStats.ApplyDamage(damage);
 
         currentState = States.ATTACKING;
+    }
+
+    public int GetCurrentHitDamage() {
+        return currentHitDamage;
+    }
+
+    public void SetCurrentHitDamage(int currentHitDamage) {
+        this.currentHitDamage = currentHitDamage;
     }
 
     public void ApplyDamage(int damage) {

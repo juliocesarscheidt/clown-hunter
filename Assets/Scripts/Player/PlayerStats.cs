@@ -13,8 +13,10 @@ public class PlayerStats : MonoBehaviour
     public bool isDead = false;
 
     public int criticalHitDamage = 100;
-    private int defaultRegularHitDamage = 35;
-    public int regularHitDamage = 35;
+    public int defaultHitDamage = 0; // it comes from the selected gun
+    [SerializeField]
+    private int currentHitDamage = 0;
+    private int addHitDamageAmount = 0;
 
     private FirstPersonController playerController;
     private Shooting playerShooting;
@@ -154,14 +156,26 @@ public class PlayerStats : MonoBehaviour
 
         playerShooting.ResetShootTimeAndTimingToggleAim();
         ExitAimingState();
+
+        defaultHitDamage = selectedGun.hitDamage;
+        UpdateCurrentHitDamage();
     }
 
     void ChangeGunByHotkey(int hotkey) {
         ChangeGun(hotkey - 1);
     }
 
-    public void ChangeRegularHitDamage(int addHitDamageAmount) {
-        regularHitDamage = defaultRegularHitDamage + addHitDamageAmount;
+    public void ChangeAddHitDamageAmount(int addHitDamageAmount) {
+        this.addHitDamageAmount = addHitDamageAmount;
+        UpdateCurrentHitDamage();
+    }
+
+    private void UpdateCurrentHitDamage() {
+        currentHitDamage = defaultHitDamage + addHitDamageAmount;
+    }
+
+    public int GetCurrentHitDamage() {
+        return currentHitDamage;
     }
 
     public void EnterAimingState() {
