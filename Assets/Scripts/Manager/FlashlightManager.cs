@@ -6,6 +6,7 @@ public class FlashlightManager : MonoBehaviour
 
     public AudioSource flashlightAudioSource;
     public Light flashlight;
+    public bool flashlightEnabledAtStart = true;
 
     public float timeToSwitchOnOff = 0.25f;
     private float timer = 0f;
@@ -15,7 +16,7 @@ public class FlashlightManager : MonoBehaviour
         timer = timeToSwitchOnOff;
 
         if (flashlight != null) {
-            flashlight.enabled = false;
+            flashlight.enabled = flashlightEnabledAtStart;
         }
     }
 

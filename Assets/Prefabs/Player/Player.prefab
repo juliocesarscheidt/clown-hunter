@@ -1153,6 +1153,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 269cb73f0094e064183aab040e66e64c, type: 2}
   selectedGun: {fileID: 11400000, guid: 0805304669691d44fb82de214c953a16, type: 2}
   selectedGunIndex: -1
+  defaultGunIndex: 0
   selectedGunObject: {fileID: 208045414655017588}
   currentGunReticle: {fileID: 0}
   spendAmmo: 1
@@ -3531,7 +3532,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7460527020377747143}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0

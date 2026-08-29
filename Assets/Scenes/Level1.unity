@@ -3425,6 +3425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flashlightAudioSource: {fileID: 3717265849078788517}
   flashlight: {fileID: 8184129441182042757}
+  flashlightEnabledAtStart: 1
   timeToSwitchOnOff: 0.25
 --- !u!1 &675403713
 GameObject:

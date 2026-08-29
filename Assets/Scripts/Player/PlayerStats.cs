@@ -75,6 +75,9 @@ public class PlayerStats : MonoBehaviour
     };
 
     void Awake() {
+        playerController = GetComponent<FirstPersonController>();
+        playerShooting = GetComponent<Shooting>();
+
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
 
@@ -84,14 +87,9 @@ public class PlayerStats : MonoBehaviour
         }
 
         EnableDefaultGuns();
-
-        playerController = GetComponent<FirstPersonController>();
-        playerShooting = GetComponent<Shooting>();
     }
 
-    void Start() {
-        ChangeGun(defaultGunIndex);
-    }
+    void Start() {}
 
     void Update() {
         if (HudManager.Instance.IsRunningGame) {
@@ -178,7 +176,6 @@ public class PlayerStats : MonoBehaviour
         gunAnimator = selectedGunObject.GetComponent<Animator>();
         gunAudioSource = selectedGunObject.GetComponent<AudioSource>();
 
-        HudManager.Instance.AdjustBulletsCount();
 
         playerShooting.ResetShootTimeAndTimingToggleAim();
         ExitAimingState();
@@ -189,6 +186,10 @@ public class PlayerStats : MonoBehaviour
 
         defaultHitDamage = selectedGun.hitDamage;
         UpdateCurrentHitDamage();
+
+        if (HudManager.Instance != null) {
+            HudManager.Instance.AdjustBulletsCount();
+        }
     }
 
     void ChangeGunByHotkey(int hotkey) {
@@ -204,12 +205,13 @@ public class PlayerStats : MonoBehaviour
             var gun = guns[i];
             SetGunEnabled(i, gun.isEnabledByDefault);
         }
-        ChangeGun(defaultGunIndex);
+        if (selectedGunIndex != defaultGunIndex) {
+            ChangeGun(defaultGunIndex);
+        }
     }
 
     public void EnableAllGuns() {
         for (int i = 0; i < guns.Count; i++) {
-            var gun = guns[i];
             SetGunEnabled(i, true);
         }
     }

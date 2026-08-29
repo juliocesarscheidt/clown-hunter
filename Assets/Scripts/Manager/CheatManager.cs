@@ -101,16 +101,24 @@ public class CheatManager : MonoBehaviour
     public void DeactivateCheat(CheatEnum cheat) {
         switch (cheat) {
             case CheatEnum.ALL_WEAPONS:
-                playerStats.EnableDefaultGuns();
+                if (playerStats != null) {
+                    playerStats.EnableDefaultGuns();
+                }
                 break;
             case CheatEnum.INFINITE_AMMO:
-                playerStats.spendAmmo = true;
+                if (playerStats != null) {
+                    playerStats.spendAmmo = true;
+                }
                 break;
             case CheatEnum.INFINITE_SPRINT:
-                playerStats.SetSpendStamina(true);
+                if (playerStats != null) {
+                    playerStats.SetSpendStamina(true);
+                }
                 break;
             case CheatEnum.INVENCIBLE_PLAYER:
-                playerStats.canReceiveDamage = true;
+                if (playerStats != null) {
+                    playerStats.canReceiveDamage = true;
+                }
                 break;
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
@@ -139,18 +147,26 @@ public class CheatManager : MonoBehaviour
 
         switch (cheat) {
             case CheatEnum.ALL_WEAPONS:
-                playerStats.EnableAllGuns();
+                if (playerStats != null) {
+                    playerStats.EnableAllGuns();
+                }
                 break;
             case CheatEnum.INFINITE_AMMO:
-                playerStats.spendAmmo = false;
-                playerStats.FillAllAmmo();
+                if (playerStats != null) {
+                    playerStats.spendAmmo = false;
+                    playerStats.FillAllAmmo();
+                }
                 break;
             case CheatEnum.INFINITE_SPRINT:
-                playerStats.SetSpendStamina(false);
+                if (playerStats != null) {
+                    playerStats.SetSpendStamina(false);
+                }
                 break;
             case CheatEnum.INVENCIBLE_PLAYER:
-                playerStats.canReceiveDamage = false;
-                playerStats.FillHealth();
+                if (playerStats != null) {
+                    playerStats.canReceiveDamage = false;
+                    playerStats.FillHealth();
+                }
             break;
             case CheatEnum.INVENCIBLE_MONSTERS:
                 MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
