@@ -63,7 +63,7 @@ public class MonsterManager : MonoBehaviour
         ChangeRunProbabilityPercentageToAllMonsters(runProbabilityPercentage);
     }
 
-    public void ChangeRegularHitDamageToAllMonsters(int addHitDamageAmount) {
+    public void ChangeCurrentHitDamageToAllMonsters(int addHitDamageAmount) {
         currentHitDamage = defaultHitDamage + addHitDamageAmount;
         foreach (Monster monster in monstersPool.Values) {
             if (monster != null) {

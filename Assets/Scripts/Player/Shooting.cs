@@ -120,7 +120,6 @@ public class Shooting : MonoBehaviour
         }
     }
 
-
     void Aim() {
         var holdToAim = SettingsManager.Instance.GetHoldToggleAimHold();
 

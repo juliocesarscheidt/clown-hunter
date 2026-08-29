@@ -271,7 +271,7 @@ public class HudManager : MonoBehaviour
     public void AdjustBulletsCount() {
         if (playerStats != null) {
             bulletsCounterText.text =
-                $"{playerStats.CurrentBullets}/{playerStats.AvailableBullets}";
+                $"{playerStats.CurrentBullets} [{playerStats.AvailableBullets}]";
             gunIconImage.sprite = playerStats.SelectedGun.gunIconImage;
         }
     }

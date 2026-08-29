@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(FirstPersonController))]
 public class PlayerStats : MonoBehaviour
@@ -40,14 +41,18 @@ public class PlayerStats : MonoBehaviour
     private Animator gunAnimator;
     private AudioSource gunAudioSource;
 
+    private Dictionary<int, bool> gunsEnabled = new();
     public GameObject gunsGameObjectParent;
     public List<Weapon> guns;
     [SerializeField]
     private Weapon selectedGun;
     [SerializeField]
-    private int selectedGunIndex = 0;
+    private int selectedGunIndex = -1;
+    public int defaultGunIndex = 0;
     [SerializeField]
     private GameObject selectedGunObject;
+    [SerializeField]
+    private GameObject currentGunReticle;
 
     public bool spendAmmo = true;
     [SerializeField]
@@ -71,16 +76,21 @@ public class PlayerStats : MonoBehaviour
 
     void Awake() {
         for (int i = 0; i < guns.Count; i++) {
-            currentBullets.Add(guns[i].currentBullets);
-            maxBullets.Add(guns[i].maxBullets);
-            availableBullets.Add(guns[i].availableBullets);
+            var gun = guns[i];
+
+            currentBullets.Add(gun.currentBullets);
+            maxBullets.Add(gun.maxBullets);
+            availableBullets.Add(gun.availableBullets);
         }
+
+        EnableDefaultGuns();
+
         playerController = GetComponent<FirstPersonController>();
         playerShooting = GetComponent<Shooting>();
     }
 
     void Start() {
-        ChangeGun(0);
+        ChangeGun(defaultGunIndex);
     }
 
     void Update() {
@@ -114,15 +124,23 @@ public class PlayerStats : MonoBehaviour
                 float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
                 if (mouseScroll != 0) {
                     int nextGunIndex = selectedGunIndex + (mouseScroll > 0 ? 1 : -1);
-                    if (nextGunIndex < 0) {
-                        nextGunIndex = guns.Count - 1;
-                    } else if (nextGunIndex >= guns.Count) {
-                        nextGunIndex = 0;
+                    while (true) {
+                        if (nextGunIndex < 0) {
+                            nextGunIndex = guns.Count - 1;
+                        } else if (nextGunIndex >= guns.Count) {
+                            nextGunIndex = 0;
+                        }
+                        // check if the nextGunIndex is from an enabled gun
+                        if (gunsEnabled[nextGunIndex]) {
+                            break;
+                        }
+                        nextGunIndex = nextGunIndex + (mouseScroll > 0 ? 1 : -1);
                     }
                     ChangeGun(nextGunIndex);
                 }
 
-                // by joystick
+                // TODO: by joystick
+                /*
                 float verticalJoystick = Input.GetAxis("JoystickVerticalButtons");
                 if (verticalJoystick != 0) {
                     if (verticalJoystick == 1 && selectedGunIndex != 0) {
@@ -131,6 +149,7 @@ public class PlayerStats : MonoBehaviour
                         ChangeGunByHotkey(2);
                     }
                 }
+                */
             }
 
         } else {
@@ -139,6 +158,13 @@ public class PlayerStats : MonoBehaviour
     }
 
     void ChangeGun(int index) {
+        if (!gunsEnabled[index]) {
+            return;
+        }
+        if (selectedGunIndex == index) {
+            return;
+        }
+
         // hide other guns
         for (int i = 0; i < gunsGameObjectParent.transform.childCount; i++) {
             gunsGameObjectParent.transform.GetChild(i).gameObject.SetActive(false);
@@ -157,12 +183,35 @@ public class PlayerStats : MonoBehaviour
         playerShooting.ResetShootTimeAndTimingToggleAim();
         ExitAimingState();
 
+        if (currentGunReticle.TryGetComponent(out Image img)) {
+            img.sprite = selectedGun.gunReticleImage;
+        }
+
         defaultHitDamage = selectedGun.hitDamage;
         UpdateCurrentHitDamage();
     }
 
     void ChangeGunByHotkey(int hotkey) {
         ChangeGun(hotkey - 1);
+    }
+
+    public void SetGunEnabled(int index, bool enabled) {
+        gunsEnabled[index] = enabled;
+    }
+
+    public void EnableDefaultGuns() {
+        for (int i = 0; i < guns.Count; i++) {
+            var gun = guns[i];
+            SetGunEnabled(i, gun.isEnabledByDefault);
+        }
+        ChangeGun(defaultGunIndex);
+    }
+
+    public void EnableAllGuns() {
+        for (int i = 0; i < guns.Count; i++) {
+            var gun = guns[i];
+            SetGunEnabled(i, true);
+        }
     }
 
     public void ChangeAddHitDamageAmount(int addHitDamageAmount) {
@@ -253,6 +302,10 @@ public class PlayerStats : MonoBehaviour
             isDead = true;
             HudManager.Instance.ShowGameOverImage();
         }
+    }
+
+    public void CollectGunSetEnabled(int index) {
+        SetGunEnabled(index, true);
     }
 
     public void CollectAmmo(int bulletsAmount) {

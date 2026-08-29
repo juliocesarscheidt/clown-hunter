@@ -121,7 +121,7 @@ public class SettingsManager : MonoBehaviour
             // difficulty 1 = currentHitDamage + 10
             // difficulty 2 = currentHitDamage + 20
             // difficulty 3 = currentHitDamage + 30
-            MonsterManager.Instance.ChangeRegularHitDamageToAllMonsters(difficulty * 10);
+            MonsterManager.Instance.ChangeCurrentHitDamageToAllMonsters(difficulty * 10);
 
             // difficulty 0 = maxSimultaneousAttacks = 2
             // difficulty 1 = maxSimultaneousAttacks = 2

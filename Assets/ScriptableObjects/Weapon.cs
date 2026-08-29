@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Weapon")]
 public class Weapon : ScriptableObject {
@@ -6,6 +7,8 @@ public class Weapon : ScriptableObject {
     public GameObject gunPrefabObject;
     public GameObject particleShotEffect;
     public GameObject bulletHolePrefab;
+
+    public Sprite gunReticleImage;
 
     public AudioClip gunShotSound;
     public AudioClip gunReloadSound;
@@ -23,4 +26,6 @@ public class Weapon : ScriptableObject {
     public int availableBullets;
 
     public int hitDamage;
+
+    public bool isEnabledByDefault;
 }

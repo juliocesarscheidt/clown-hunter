@@ -21,6 +21,7 @@ public class CheatManager : MonoBehaviour
     private int maxCheatLength;
 
     public enum CheatEnum {
+        ALL_WEAPONS,
         INFINITE_AMMO,
         INFINITE_SPRINT,
         INVENCIBLE_PLAYER,
@@ -31,6 +32,7 @@ public class CheatManager : MonoBehaviour
     }
 
     public Dictionary<string, CheatEnum> cheatCodes = new() {
+        {"GUNNER", CheatEnum.ALL_WEAPONS },
         {"AMMOGOD", CheatEnum.INFINITE_AMMO},
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
         {"SUPERHUMAN", CheatEnum.INVENCIBLE_PLAYER},
@@ -98,6 +100,9 @@ public class CheatManager : MonoBehaviour
 
     public void DeactivateCheat(CheatEnum cheat) {
         switch (cheat) {
+            case CheatEnum.ALL_WEAPONS:
+                playerStats.EnableDefaultGuns();
+                break;
             case CheatEnum.INFINITE_AMMO:
                 playerStats.spendAmmo = true;
                 break;
@@ -133,6 +138,9 @@ public class CheatManager : MonoBehaviour
         cheatAudioSource.Play();
 
         switch (cheat) {
+            case CheatEnum.ALL_WEAPONS:
+                playerStats.EnableAllGuns();
+                break;
             case CheatEnum.INFINITE_AMMO:
                 playerStats.spendAmmo = false;
                 playerStats.FillAllAmmo();
