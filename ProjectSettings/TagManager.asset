@@ -15,6 +15,7 @@ TagManager:
   - Wall
   - EnemyArea
   - GunCollect
+  - Barrel
   layers:
   - Default
   - TransparentFX

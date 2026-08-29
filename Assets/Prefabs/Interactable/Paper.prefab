@@ -82,7 +82,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 375
+    m_Bits: 887
   m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3d956f5ea41cd043bf3e65d47aa871b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isOutlineEnabled: 0
 --- !u!65 &1634803173657428840
 BoxCollider:
   m_ObjectHideFlags: 0

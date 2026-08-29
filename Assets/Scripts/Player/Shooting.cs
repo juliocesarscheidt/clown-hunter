@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerStats))]
@@ -66,7 +67,8 @@ public class Shooting : MonoBehaviour
                     // bullet hole
                     if (bulletHit.transform.CompareTag(TagsController.Ground) ||
                         bulletHit.transform.CompareTag(TagsController.Ceiling) ||
-                        bulletHit.transform.CompareTag(TagsController.Wall)) {
+                        bulletHit.transform.CompareTag(TagsController.Wall) ||
+                        bulletHit.transform.CompareTag(TagsController.Barrel)) {
                         GameObject bulletHole = Instantiate(
                             playerStats.SelectedGun.bulletHolePrefab,
                             bulletHit.point + bulletHit.normal * 0.001f,

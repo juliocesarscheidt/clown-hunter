@@ -13,6 +13,8 @@ public class TagsController : MonoBehaviour
         GunAmmo,
         FirstAid,
         EnemyArea,
+        GunCollect,
+        Barrel,
     }
 
     public static string GetTag(Tags tag) {
@@ -57,5 +59,13 @@ public class TagsController : MonoBehaviour
 
     public static string EnemyArea {
         get { return GetTag(Tags.EnemyArea); }
+    }
+
+    public static string GunCollect {
+        get { return GetTag(Tags.GunCollect); }
+    }
+
+    public static string Barrel {
+        get { return GetTag(Tags.Barrel); }
     }
 }
