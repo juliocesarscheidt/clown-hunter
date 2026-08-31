@@ -308,6 +308,7 @@ public class PlayerStats : MonoBehaviour
 
     public void CollectGunSetEnabled(int index) {
         SetGunEnabled(index, true);
+        ChangeGun(index);
     }
 
     public void CollectAmmo(int bulletsAmount) {
