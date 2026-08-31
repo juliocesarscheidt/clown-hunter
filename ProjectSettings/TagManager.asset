@@ -16,6 +16,7 @@ TagManager:
   - EnemyArea
   - GunCollect
   - Barrel
+  - Desk
   layers:
   - Default
   - TransparentFX
