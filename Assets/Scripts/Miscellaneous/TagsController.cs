@@ -15,6 +15,7 @@ public class TagsController : MonoBehaviour
         EnemyArea,
         GunCollect,
         Barrel,
+        Desk,
     }
 
     public static string GetTag(Tags tag) {
@@ -67,5 +68,9 @@ public class TagsController : MonoBehaviour
 
     public static string Barrel {
         get { return GetTag(Tags.Barrel); }
+    }
+
+    public static string Desk {
+        get { return GetTag(Tags.Desk); }
     }
 }
