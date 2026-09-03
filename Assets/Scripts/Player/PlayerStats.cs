@@ -51,8 +51,14 @@ public class PlayerStats : MonoBehaviour
     public int defaultGunIndex = 0;
     [SerializeField]
     private GameObject selectedGunObject;
-    [SerializeField]
-    private GameObject currentGunReticle;
+    private float changeGunTimer = 0f;
+    public float changeGunInterval = 0.2f;
+    private bool isChangingGun = false;
+
+    public GameObject currentGunReticle;
+    private bool isReticleRed = false;
+    private float reticleRedTimer = 0f;
+    public float reticleRedInterval = 0.5f;
 
     public bool spendAmmo = true;
     [SerializeField]
@@ -89,8 +95,6 @@ public class PlayerStats : MonoBehaviour
         EnableDefaultGuns();
     }
 
-    void Start() {}
-
     void Update() {
         if (HudManager.Instance.IsRunningGame) {
             if (HudManager.Instance.IsPaused) {
@@ -110,6 +114,17 @@ public class PlayerStats : MonoBehaviour
                 playerController.CanMoveCamera = true;
             }
 
+            if (isReticleRed) {
+                ChangeReticleToColorWithTimer(Color.red);
+                reticleRedTimer += Time.deltaTime;
+                if (reticleRedTimer > reticleRedInterval) {
+                    isReticleRed = false;
+                    reticleRedTimer = 0f;
+                }
+            } else {
+                ChangeReticleToColorWithTimer(Color.white);
+            }
+
             if (!isReloading) {
                 // by numeric keys
                 Enumerable.Range(1, guns.Count).ToList().ForEach(idx => {
@@ -120,7 +135,7 @@ public class PlayerStats : MonoBehaviour
 
                 // by mouse scroll
                 float mouseScroll = Input.GetAxis("Mouse ScrollWheel");
-                if (mouseScroll != 0) {
+                if (mouseScroll != 0 && !isChangingGun) {
                     int nextGunIndex = selectedGunIndex + (mouseScroll > 0 ? 1 : -1);
                     while (true) {
                         if (nextGunIndex < 0) {
@@ -132,24 +147,39 @@ public class PlayerStats : MonoBehaviour
                         if (gunsEnabled[nextGunIndex]) {
                             break;
                         }
-                        nextGunIndex = nextGunIndex + (mouseScroll > 0 ? 1 : -1);
+                        nextGunIndex += (mouseScroll > 0 ? 1 : -1);
                     }
+                    isChangingGun = true;
                     ChangeGun(nextGunIndex);
                 }
 
-                // TODO: by joystick
-                /*
                 float verticalJoystick = Input.GetAxis("JoystickVerticalButtons");
-                if (verticalJoystick != 0) {
-                    if (verticalJoystick == 1 && selectedGunIndex != 0) {
-                        ChangeGunByHotkey(1);
-                    } else if (verticalJoystick == -1 && selectedGunIndex != 1) {
-                        ChangeGunByHotkey(2);
+                if (verticalJoystick != 0 && !isChangingGun) {
+                    int nextGunIndex = selectedGunIndex + (verticalJoystick > 0 ? 1 : -1);
+                    while (true) {
+                        if (nextGunIndex < 0) {
+                            nextGunIndex = guns.Count - 1;
+                        } else if (nextGunIndex >= guns.Count) {
+                            nextGunIndex = 0;
+                        }
+                        // check if the nextGunIndex is from an enabled gun
+                        if (gunsEnabled[nextGunIndex]) {
+                            break;
+                        }
+                        nextGunIndex += (verticalJoystick > 0 ? 1 : -1);
+                    }
+                    isChangingGun = true;
+                    ChangeGun(nextGunIndex);
+                }
+
+                if (isChangingGun) {
+                    changeGunTimer += Time.deltaTime;
+                    if (changeGunTimer > changeGunInterval) {
+                        isChangingGun = false;
+                        changeGunTimer = 0f;
                     }
                 }
-                */
             }
-
         } else {
             DisablePlayerMovementAndCamera();
         }
@@ -176,7 +206,6 @@ public class PlayerStats : MonoBehaviour
         gunAnimator = selectedGunObject.GetComponent<Animator>();
         gunAudioSource = selectedGunObject.GetComponent<AudioSource>();
 
-
         playerShooting.ResetShootTimeAndTimingToggleAim();
         ExitAimingState();
 
@@ -190,6 +219,17 @@ public class PlayerStats : MonoBehaviour
         if (HudManager.Instance != null) {
             HudManager.Instance.AdjustBulletsCount();
         }
+    }
+
+    public void ChangeReticleToColorWithTimer(Color color) {
+        if (currentGunReticle.TryGetComponent(out Image img)) {
+            img.color = color;
+        }
+    }
+
+    public void SetIsReticleRed(bool isReticleRed) {
+        this.isReticleRed = isReticleRed;
+        reticleRedTimer = 0f;
     }
 
     void ChangeGunByHotkey(int hotkey) {
