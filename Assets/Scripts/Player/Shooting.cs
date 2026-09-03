@@ -87,6 +87,9 @@ public class Shooting : MonoBehaviour
                             bulletHit.transform.rotation
                         );
                         Destroy(bloodInstance, 1f);
+
+                        // change reticle to red
+                        playerStats.SetIsReticleRed(true);
                     }
 
                     // damage

@@ -596,7 +596,9 @@ MonoBehaviour:
   selectedGunIndex: -1
   defaultGunIndex: 0
   selectedGunObject: {fileID: 3591431352129468767}
+  changeGunInterval: 0.2
   currentGunReticle: {fileID: 0}
+  reticleRedInterval: 0.5
   spendAmmo: 1
   currentBullets: 
   maxBullets: 

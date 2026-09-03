@@ -33,7 +33,7 @@ public class MonsterManager : MonoBehaviour
     public bool canReceiveDamage = true;
     public bool showCurrentState = false;
 
-    private int thisTaskIndex = (int) TaskType.EliminateTheRemainingClowns;
+    private readonly int thisTaskIndex = (int) TaskType.EliminateTheRemainingClowns;
 
     void Awake() {
         if (Instance != null && Instance != this) {
