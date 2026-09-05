@@ -38,7 +38,7 @@ public class TaskManager : MonoBehaviour
     public TextMeshProUGUI taskInfoText;
 
     public enum TaskType : int {
-        FindAndCollectNewspapers = 0,
+        CollectTheNewspapers = 0,
         EliminateTheRemainingClowns = 1,
     }
 
@@ -46,7 +46,7 @@ public class TaskManager : MonoBehaviour
     private int currentTaskIndex = 0;
 
     private readonly Dictionary<int, Task> tasks = new() {
-        { (int)TaskType.FindAndCollectNewspapers, new Task("Find and collect newspapers", 0) }, // the totalProgress is dynamic
+        { (int)TaskType.CollectTheNewspapers, new Task("Collect the newspapers", 0) }, // the totalProgress is dynamic
         { (int)TaskType.EliminateTheRemainingClowns, new Task("Eliminate the remaining clowns", 0) }, // the totalProgress is dynamic
     };
  
@@ -101,7 +101,7 @@ public class TaskManager : MonoBehaviour
     }
 
     private string GenerateTaskInfoText() {
-        return $"- {tasks[currentTaskIndex].description} ({tasks[currentTaskIndex].currentProgress}/{tasks[currentTaskIndex].totalProgress})";
+        return $"- {tasks[currentTaskIndex].description} [{tasks[currentTaskIndex].currentProgress}/{tasks[currentTaskIndex].totalProgress}]";
     }
 
     private void UpdateTaskInfoText(string text) {

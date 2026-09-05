@@ -7,7 +7,14 @@ public class InteractionManager : MonoBehaviour
     public static InteractionManager Instance { get; private set; }
 
     private PlayerStats playerStats;
-    public List<string> tagsToInteract = new() { TagsController.Paper, TagsController.GunAmmo, TagsController.FirstAid };
+    /*
+    public List<string> tagsToInteract = new() {
+        TagsController.Paper,
+        TagsController.GunAmmo,
+        TagsController.FirstAid,
+        TagsController.GunCollect
+    };
+    */
     private AudioSource interactionAudioSource;
     [SerializeField]
     private List<Interactable> interactables = new();
@@ -33,11 +40,12 @@ public class InteractionManager : MonoBehaviour
 
             var isKeyboardAndMouse = lastDevice.name.Equals("Keyboard") || lastDevice.name.Equals("Mouse");
             // Debug.Log($"InputActionChangeCallback: {lastDevice.name} - {isKeyboardAndMouse}");
+
             if (isKeyboardAndMouse) {
-                HudManager.Instance.SetPressInteractTextToMouseKeyboard();
+                SetPressInteractTextToMouseKeyboard();
             } else {
                 // XInputControllerWindows
-                HudManager.Instance.SetPressInteractTextToXBoxJoystick();
+                SetPressInteractTextToXBoxJoystick();
             }
         }
     }
@@ -48,7 +56,6 @@ public class InteractionManager : MonoBehaviour
         } else {
             Instance = this;
         }
-
     }
 
     private void LateUpdate() {
@@ -56,6 +63,7 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
+        /*
         Vector3 center = new(0.5F, 0.5F, 0);
         Ray ray = Camera.main.ViewportPointToRay(center);
 
@@ -96,8 +104,10 @@ public class InteractionManager : MonoBehaviour
                 DisableAllOutlines();
             }
         }
+        */
     }
 
+    /*
     private void DisableAllOutlines() {
         foreach (var interactable in interactables) {
             if (interactable.isOutlineEnabled) {
@@ -105,8 +115,30 @@ public class InteractionManager : MonoBehaviour
             }
         }
     }
+    */
 
-    public void AddInteractable(Interactable interactable) {
-        interactables.Add(interactable);
+    public void SetPressInteractTextToMouseKeyboard() {
+        foreach (var interactable in interactables) {
+            interactable.SetInteractText("[E]");
+        }
+    }
+
+    public void SetPressInteractTextToXBoxJoystick() {
+        foreach (var interactable in interactables) {
+            interactable.SetInteractText("[Y]");
+        }
+    }
+
+    public void AddInteractable(Interactable obj) {
+        interactables.Add(obj);
+    }
+
+    public void RemoveInteractable(Interactable obj) {
+        int index = interactables.FindIndex(interactable => interactable == obj);
+        if (index >= 0) interactables.RemoveAt(index);
+    }
+
+    public void PlayCollectAudio() {
+        interactionAudioSource.Play();
     }
 }

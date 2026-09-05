@@ -1,20 +1,15 @@
 using UnityEngine;
 
-public class Paper : Interactable
-{
-    private Outline outlineScript;
+public class Paper : Interactable {
     private bool forcedOutlineEnabled = false;
     private GameObject paperObj;
 
-    private void Start() {
-        outlineScript = GetComponentInChildren<Outline>();
-        DisableOutline();
-
+    private new void Start() {
+        base.Start();
         paperObj = transform.GetChild(0).gameObject;
     }
 
     public override void Collect() {
-        HudManager.Instance.HidePressInteractObject();
         PaperManager.Instance.CollectPaper();
     }
 

@@ -6,15 +6,11 @@ TagManager:
   tags:
   - CinemachineTarget
   - Enemy
-  - Paper
   - EnemyHead
-  - GunAmmo
-  - FirstAid
   - Ground
   - Ceiling
   - Wall
   - EnemyArea
-  - GunCollect
   - Barrel
   - Desk
   layers:

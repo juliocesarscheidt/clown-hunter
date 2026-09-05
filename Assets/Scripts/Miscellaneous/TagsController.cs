@@ -9,11 +9,7 @@ public class TagsController : MonoBehaviour
         Ground,
         Ceiling,
         Wall,
-        Paper,
-        GunAmmo,
-        FirstAid,
         EnemyArea,
-        GunCollect,
         Barrel,
         Desk,
     }
@@ -46,24 +42,8 @@ public class TagsController : MonoBehaviour
         get { return GetTag(Tags.Wall); }
     }
 
-    public static string Paper {
-        get { return GetTag(Tags.Paper); }
-    }
-
-    public static string GunAmmo {
-        get { return GetTag(Tags.GunAmmo); }
-    }
-
-    public static string FirstAid {
-        get { return GetTag(Tags.FirstAid); }
-    }
-
     public static string EnemyArea {
         get { return GetTag(Tags.EnemyArea); }
-    }
-
-    public static string GunCollect {
-        get { return GetTag(Tags.GunCollect); }
     }
 
     public static string Barrel {
