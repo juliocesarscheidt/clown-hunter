@@ -834,7 +834,7 @@ GameObject:
   - component: {fileID: 2572923447976096679}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6714,6 +6714,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0.028237741
+      objectReference: {fileID: 0}
+    - target: {fileID: 2904880313786452080, guid: cecbe0fec9b513b45b938f9a4f5eeca7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 3.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 2904880313786452080, guid: cecbe0fec9b513b45b938f9a4f5eeca7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 173.326
+      objectReference: {fileID: 0}
+    - target: {fileID: 2904880313786452080, guid: cecbe0fec9b513b45b938f9a4f5eeca7,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0.377
       objectReference: {fileID: 0}
     - target: {fileID: 4373842828661901899, guid: cecbe0fec9b513b45b938f9a4f5eeca7,
         type: 3}

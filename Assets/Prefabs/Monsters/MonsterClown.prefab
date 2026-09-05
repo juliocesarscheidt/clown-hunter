@@ -55,10 +55,10 @@ MonoBehaviour:
   monsterId: 0
   laughSound: {fileID: 8300000, guid: e4fd710253f61f9489c376d0c04e7543, type: 3}
   health: 100
-  defaultSpeed: 3
+  defaultSpeed: 3.5
   isDead: 0
   criticalHitDamage: 100
-  regularHitDamage: 25
+  currentHitDamage: 25
   damageVariation: 10
   distanceToAttack: 0.5
   attackDurationTime: 1.5
@@ -108,7 +108,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.3
-  m_Speed: 3
+  m_Speed: 3.5
   m_Acceleration: 6
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -323,7 +323,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -367,8 +367,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: TAKING_DAMAGE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
+  m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

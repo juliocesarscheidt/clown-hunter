@@ -21,7 +21,7 @@ public class PaperManager : MonoBehaviour
     public int totalPapersToCollect = 5;
     public int monstersToAddOnPaperCollected = 2;
 
-    private int thisTaskIndex = (int) TaskType.FindAndCollectNewspapers;
+    private readonly int thisTaskIndex = (int) TaskType.CollectTheNewspapers;
 
     private void Awake() {
         if (Instance != null && Instance != this) {

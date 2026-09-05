@@ -16,7 +16,6 @@ public class HudManager : MonoBehaviour
     public GameObject GameOverImage;
     public GameObject EndGameImage;
     public GameObject PauseGamePanel;
-    public TextMeshProUGUI PressInteractText;
 
     public GameObject OptionsGamePanelBg;
     public List<GameObject> OptionsGamePanelLayers;
@@ -140,7 +139,7 @@ public class HudManager : MonoBehaviour
     private void FinishGameUi() {
         isRunningGame = false;
 
-        HidePressInteractObject();
+        // HidePressInteractObject();
         uiInfoWraperObject.SetActive(false);
 
         UnlockCursor();
@@ -154,22 +153,6 @@ public class HudManager : MonoBehaviour
     public void ShowEndGameImage() {
         FinishGameUi();
         EndGameImage.SetActive(true);
-    }
-
-    public void ShowPressInteractObject() {
-        PressInteractText.gameObject.SetActive(true);
-    }
-
-    public void HidePressInteractObject() {
-        PressInteractText.gameObject.SetActive(false);
-    }
-
-    public void SetPressInteractTextToMouseKeyboard() {
-        PressInteractText.text = "Press [E] to interact";
-    }
-
-    public void SetPressInteractTextToXBoxJoystick() {
-        PressInteractText.text = "Press (Y) to interact";
     }
 
     public void ShowPauseGamePanel() {

@@ -1,25 +1,17 @@
 using UnityEngine;
 
-public class GunCollect : Interactable
-{
-    private PlayerStats playerStats;
-    private Outline outlineScript;
-
+public class GunCollect : Interactable {
     public string gunName; // the same as the scriptable weapon name
+    [SerializeField]
     private int playerGunIndex;
 
-    void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
-        outlineScript = GetComponentInChildren<Outline>();
-        DisableOutline();
-
+    public new void Start() {
+        base.Start();
         playerGunIndex = playerStats.guns.FindIndex((w) => w.gunName == gunName);
     }
 
     public override void Collect() {
-        HudManager.Instance.HidePressInteractObject();
-        Debug.Log($"playerGunIndex {playerGunIndex}");
-
+        // Debug.Log($"playerGunIndex {playerGunIndex}");
         playerStats.CollectGunSetEnabled(playerGunIndex);
     }
 
