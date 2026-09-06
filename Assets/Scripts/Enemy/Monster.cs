@@ -70,9 +70,10 @@ public class Monster : MonoBehaviour
     private Coroutine setIsLaughingCoroutine;
     private float timerToLaugh;
 
-    private Vector3 targetPosition;
+    private Vector3 targetPositionToAttack;
     [SerializeField]
-    private float distanceToTarget;
+    private float distanceToPositionToAttack;
+    public LayerMask obstacleLayer; // the wall/obstacle layer to detect between the interactable and player
 
     private readonly Dictionary<string, int> animationHashes = new() {
         { "Walking", Animator.StringToHash("Walking") },
@@ -100,11 +101,8 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        targetPosition = playerStats.pointToMonsterAttack.transform.position;
-        distanceToTarget = Vector3.Distance(
-            transform.position,
-            targetPosition
-        );
+        targetPositionToAttack = playerStats.pointToMonsterAttack.transform.position;
+        distanceToPositionToAttack = Vector3.Distance(transform.position, targetPositionToAttack);
 
         if (showCurrentState) {
             currentStateText.gameObject.SetActive(true);
@@ -114,9 +112,9 @@ public class Monster : MonoBehaviour
         }
 
         if (CanMove()) {
-            agent.SetDestination(targetPosition);
+            agent.SetDestination(targetPositionToAttack);
 
-            if (distanceToTarget > distanceToAttack && !isHittingOtherMonster) {
+            if (distanceToPositionToAttack > distanceToAttack && !isHittingOtherMonster) {
                 if (!alreadyRaffledAction) {
                     RaffleActionRaffledNumber();
                 }
@@ -140,16 +138,23 @@ public class Monster : MonoBehaviour
             StopWalk();
         }
        
-        if (distanceToTarget <= distanceToAttack && CanMove()) {
+        if (distanceToPositionToAttack <= distanceToAttack && CanMove()) {
             // from -1 to 1 => -1 is looking at the opposite, 1 means it's looking at the player
             float dotRotationMonsterToPlayerDiff = Vector3.Dot(transform.forward,
                 (playerStats.transform.position - transform.position).normalized);
 
-            if (dotRotationMonsterToPlayerDiff > 0.85f) {
+            if (dotRotationMonsterToPlayerDiff > 0.75f) {
                 // calling this inside this block to avoid unneeded calls
-                bool isInPointOfView = playerStats.ObjectIsInPointOfView(gameObject);
-                if (isInPointOfView && GetAttackLock()) {
-                    Attack();
+                if (playerStats.ObjectIsInPointOfView(gameObject)) {
+                    // check if there is a wall between the monster and target
+                    // using the real player position
+                    Vector3 directionToPlayer = playerStats.transform.position - transform.position;
+                    float distanceToPlayer = directionToPlayer.magnitude;
+
+                    if (!Physics.Raycast(transform.position, directionToPlayer.normalized, distanceToPlayer, obstacleLayer)) {
+                        // then, lastly get the lock to attack
+                        if (GetAttackLock()) Attack();
+                    }
                 }
             } else {
                 Quaternion targetRotation = Quaternion.LookRotation(playerStats.transform.position - transform.position);
@@ -158,7 +163,7 @@ public class Monster : MonoBehaviour
         }
 
         if (!isStopped) {
-            if (distanceToTarget <= 10f && CanMove() && !isRunning) {
+            if (distanceToPositionToAttack <= 10f && CanMove() && !isRunning) {
                 timerToLaugh += Time.deltaTime;
                 // from 10 to 35 seconds
                 if (timerToLaugh >= Random.Range(10, 36)) {
@@ -216,7 +221,7 @@ public class Monster : MonoBehaviour
                 }
 
                 // check which monster is closer to player, that one will continue walking, but the other will stop
-                if (other.distanceToTarget > distanceToTarget) {
+                if (other.distanceToPositionToAttack > distanceToPositionToAttack) {
                     other.isHittingOtherMonster = true;
                     isHittingOtherMonster = false;
                 } else {

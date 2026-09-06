@@ -79,6 +79,9 @@ MonoBehaviour:
   isBeingDamaged: 0
   isLaughing: 0
   distanceToTarget: 0
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!114 &3683353046662366449
 MonoBehaviour:
   m_ObjectHideFlags: 0
