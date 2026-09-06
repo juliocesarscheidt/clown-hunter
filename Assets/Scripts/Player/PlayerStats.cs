@@ -395,8 +395,12 @@ public class PlayerStats : MonoBehaviour
     }
 
     public bool ObjectIsInPointOfView(GameObject toCheck) {
+        // Gets the Axis-Aligned Bounding Box (AABB) of that collider in world space.
+        // An AABB is a 3D box (with width, height, and depth) that completely encloses the object's collider, aligned with the world axes
         Bounds bounds = toCheck.GetComponentInChildren<Collider>().bounds;
+        // Generates an array of 6 3D planes representing the camera's viewing pyramid (the frustum): Left, Right, Bottom, Top, Near, and Far clipping planes
         Plane[] cameraFrustum = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+        // Tests whether the target object's bounding box (bounds) overlaps or resides inside the 6 camera planes (cameraFrustum).
         if (GeometryUtility.TestPlanesAABB(cameraFrustum, bounds)) {
             return true;
         }

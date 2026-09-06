@@ -13,6 +13,15 @@ public abstract class Interactable: MonoBehaviour {
     [SerializeField]
     protected TextMeshPro pressInteractText;
 
+    [SerializeField]
+    protected bool isInteractionActive = false;
+    public LayerMask obstacleLayer; // the wall/obstacle layer to detect between the interactable and player
+    [SerializeField]
+    protected bool isBlockedByObstacle = false;
+    [SerializeField]
+    protected float distanceToPlayer;
+    public float distanceToPlayerTrigger = 4f;
+
     public void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         outlineScript = GetComponentInChildren<Outline>();
@@ -20,37 +29,44 @@ public abstract class Interactable: MonoBehaviour {
         DisableOutline();
     }
 
-    [SerializeField]
-    protected float distanceToPlayer;
-    public float distanceToPlayerTrigger = 5f;
-
     public void LateUpdate() {
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
             return;
         }
 
-        distanceToPlayer = Vector3.Distance(transform.position, playerStats.transform.position);
+        Vector3 directionToPlayer = playerStats.transform.position - transform.position;
+        distanceToPlayer = directionToPlayer.magnitude;
+
         if (distanceToPlayer > distanceToPlayerTrigger) {
+            isInteractionActive = false;
+            isBlockedByObstacle = false;
+        } else {
+            Vector3 directionToTarget = playerStats.transform.position - transform.position;
+
+            if (Physics.Raycast(transform.position, directionToTarget.normalized, distanceToPlayer, obstacleLayer)) {
+                isInteractionActive = false;
+                isBlockedByObstacle = true;
+            } else {
+                isInteractionActive = true;
+                isBlockedByObstacle = false;
+            }
+        }
+    
+        if (isInteractionActive) {
+            pressInteractText.gameObject.SetActive(true);
+            // show object outline
+            if (!isOutlineEnabled) {
+                EnableOutline();
+            }
+            if (Input.GetButtonDown("Interact")) {
+                Collect();
+                InteractionManager.Instance.PlayCollectAudio();
+                InteractionManager.Instance.RemoveInteractable(this);
+                Destroy(transform.gameObject);
+            }
+        } else {
             pressInteractText.gameObject.SetActive(false);
             DisableOutline();
-
-        } else {
-            pressInteractText.gameObject.SetActive(true);
-
-            if (transform.gameObject.TryGetComponent(out Interactable obj)) {
-                // show object outline
-                if (!obj.isOutlineEnabled) {
-                    obj.EnableOutline();
-                }
-
-                if (Input.GetButtonDown("Interact")) {
-                    obj.Collect();
-                    InteractionManager.Instance.PlayCollectAudio();
-                    InteractionManager.Instance.RemoveInteractable(obj);
-
-                    Destroy(transform.gameObject);
-                }
-            }
         }
     }
 

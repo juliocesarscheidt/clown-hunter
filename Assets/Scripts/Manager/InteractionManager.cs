@@ -40,12 +40,10 @@ public class InteractionManager : MonoBehaviour
 
             var isKeyboardAndMouse = lastDevice.name.Equals("Keyboard") || lastDevice.name.Equals("Mouse");
             // Debug.Log($"InputActionChangeCallback: {lastDevice.name} - {isKeyboardAndMouse}");
-
             if (isKeyboardAndMouse) {
                 SetPressInteractTextToMouseKeyboard();
             } else {
-                // XInputControllerWindows
-                SetPressInteractTextToXBoxJoystick();
+                SetPressInteractTextToXBoxJoystick(); // XInputControllerWindows
             }
         }
     }
