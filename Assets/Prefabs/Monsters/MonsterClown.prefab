@@ -78,7 +78,7 @@ MonoBehaviour:
   canReceiveDamage: 1
   isBeingDamaged: 0
   isLaughing: 0
-  distanceToTarget: 0
+  distanceToPositionToAttack: 0
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -185,7 +185,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.05
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -517,7 +517,7 @@ Transform:
   m_GameObject: {fileID: 7681786412161150265}
   serializedVersion: 2
   m_LocalRotation: {x: 0.00015567239, y: 0.00000014901161, z: -0.0000006258486, w: 1}
-  m_LocalPosition: {x: 0, y: 0.114, z: 0.012}
+  m_LocalPosition: {x: -0, y: 0.0754, z: 0.012}
   m_LocalScale: {x: 0.24507356, y: 0.19145977, z: 0.3267088}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -542,8 +542,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.45
-  m_Height: 1.8
+  m_Radius: 0.38
+  m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &7473875647717120356
