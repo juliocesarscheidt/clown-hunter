@@ -17,13 +17,14 @@ public class Monster : MonoBehaviour
     public int health = 100;
     public float defaultSpeed = 3.0f;
     public bool isDead = false;
+    public float timeToDestroyAfterDead = 15f;
     public int criticalHitDamage = 100;
     [SerializeField]
     private int currentHitDamage = 25;
     public int damageVariation = 10;
     public float distanceToAttack = 1.25f;
     public float attackDurationTime = 1.5f;
-
+    
     public bool isStopped = false;
 
     public bool isRunning = false;
@@ -50,6 +51,7 @@ public class Monster : MonoBehaviour
         ATTACKING,
         LAUGHING,
         TAKING_DAMAGE,
+        DEAD,
     };
     [SerializeField]
     private States currentState = States.IDLE;
@@ -57,7 +59,7 @@ public class Monster : MonoBehaviour
     public bool showCurrentState = false;
 
     public bool isHittingOtherMonster = false;
-    private Dictionary<int, Monster> hittingMonsterObjs = new();
+    private readonly Dictionary<int, Monster> hittingMonsterObjs = new();
 
     public bool isAttacking = false;
     private Coroutine setIsAttackingCoroutine;
@@ -75,12 +77,17 @@ public class Monster : MonoBehaviour
     private float distanceToPositionToAttack;
     public LayerMask obstacleLayer; // the wall/obstacle layer to detect between the interactable and player
 
+    public CapsuleCollider BodyCollider;
+    public CapsuleCollider HeadCollider;
+    public BoxCollider EnemyAreaTrigger;
+
     private readonly Dictionary<string, int> animationHashes = new() {
         { "Walking", Animator.StringToHash("Walking") },
         { "Running", Animator.StringToHash("Running") },
         { "Attack", Animator.StringToHash("Attack") },
         { "Damage", Animator.StringToHash("Damage") },
         { "Laugh", Animator.StringToHash("Laugh") },
+        { "Death", Animator.StringToHash("Death") },
     };
 
     void Start() {
@@ -96,6 +103,13 @@ public class Monster : MonoBehaviour
     }
 
     void FixedUpdate() {
+        if (showCurrentState) {
+            currentStateText.gameObject.SetActive(true);
+            currentStateText.text = currentState.ToString();
+        } else {
+            currentStateText.gameObject.SetActive(false);
+        }
+
         if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead || playerStats.isDead) {
             StopWalk();
             return;
@@ -103,13 +117,6 @@ public class Monster : MonoBehaviour
 
         targetPositionToAttack = playerStats.pointToMonsterAttack.transform.position;
         distanceToPositionToAttack = Vector3.Distance(transform.position, targetPositionToAttack);
-
-        if (showCurrentState) {
-            currentStateText.gameObject.SetActive(true);
-            currentStateText.text = currentState.ToString();
-        } else {
-            currentStateText.gameObject.SetActive(false);
-        }
 
         if (CanMove()) {
             agent.SetDestination(targetPositionToAttack);
@@ -175,7 +182,7 @@ public class Monster : MonoBehaviour
     }
 
     private bool CanMove() {
-        return !playerStats.isDead && !isBeingDamaged && !isAttacking && !isLaughing;
+        return !playerStats.isDead && !isDead && !isBeingDamaged && !isAttacking && !isLaughing;
     }
 
     public void ChangeRunProbabilityPercentage(float percentage) {
@@ -212,7 +219,7 @@ public class Monster : MonoBehaviour
     private void OnTriggerEnter(Collider collider) {
         if (collider.gameObject.CompareTag(TagsController.EnemyArea)) {
             Monster other = collider.gameObject.GetComponentInParent<Monster>();
-            if (other != null) {
+            if (other != null && !other.isDead) {
                 if (!hittingMonsterObjs.ContainsKey(other.monsterId)) {
                     hittingMonsterObjs.Add(other.monsterId, other);
                 }
@@ -311,22 +318,33 @@ public class Monster : MonoBehaviour
         currentState = States.TAKING_DAMAGE;
 
         if (health <= 0) {
-            health = 0;
-            isDead = true;
-            
-            ReleaseLock(); // release attack lock
-            RemoveHittingFromAllOtherMonsters();
-
-            MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
-            MonsterManager.Instance.AddMonsterDeadToTaskManager();
-            MonsterManager.Instance.SpawnEnemies();
-
-            Destroy(gameObject);
+            Die();
         }
 
         float recoveryTime = 1f;
         if (setIsBeingDamagedCoroutine != null) StopCoroutine(setIsBeingDamagedCoroutine);
         setIsBeingDamagedCoroutine = StartCoroutine(SetIsBeingDamagedFalsyAfterSeconds(recoveryTime));
+    }
+
+    private void Die() {
+        health = 0;
+        isDead = true;
+
+        ReleaseLock(); // release attack lock
+        RemoveHittingFromAllOtherMonsters();
+
+        MonsterManager.Instance.RemoveMonsterFromPool(monsterId);
+        MonsterManager.Instance.AddMonsterDeadToTaskManager();
+        MonsterManager.Instance.SpawnEnemies();
+
+        currentState = States.DEAD;
+        animator.SetTrigger(animationHashes["Death"]);
+
+        BodyCollider.enabled = false;
+        HeadCollider.enabled = false;
+        EnemyAreaTrigger.enabled = false;
+
+        Destroy(gameObject, timeToDestroyAfterDead);
     }
 
     private void SetIsStopped(bool isStopped) {
@@ -342,7 +360,7 @@ public class Monster : MonoBehaviour
         animator.SetBool(animationHashes["Walking"], false);
         animator.SetBool(animationHashes["Running"], false);
 
-        if (!isBeingDamaged && !isAttacking && !isLaughing) {
+        if (!isBeingDamaged && !isAttacking && !isLaughing && !isDead) {
             currentState = States.IDLE;
         }
     }

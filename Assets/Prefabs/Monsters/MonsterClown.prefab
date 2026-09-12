@@ -82,6 +82,9 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
+  BodyCollider: {fileID: 5848291519307548350}
+  HeadCollider: {fileID: 8293424657062978295}
+  EnemyAreaTrigger: {fileID: 8868748752767466116}
 --- !u!114 &3683353046662366449
 MonoBehaviour:
   m_ObjectHideFlags: 0

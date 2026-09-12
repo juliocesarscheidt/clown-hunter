@@ -1836,7 +1836,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5112967672864402907}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: 0.000000014901163, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 48.68319, y: 0, z: 56.55252}
   m_LocalScale: {x: 1, y: 1, z: 0.012771228}
   m_ConstrainProportionsScale: 0
@@ -1888,6 +1888,9 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
+  BodyCollider: {fileID: 5464789633643392498}
+  HeadCollider: {fileID: 7945216034652719533}
+  EnemyAreaTrigger: {fileID: 6878996659078845105}
 --- !u!114 &563949079678516251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3207,8 +3210,8 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7626906956892882110}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0.00009171781}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.037781186, y: 0.037781186, z: 2.958304}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3217,7 +3220,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -70691.28, y: -2136.6958}
+  m_AnchoredPosition: {x: 0, y: 2.45}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4188475577245985814
