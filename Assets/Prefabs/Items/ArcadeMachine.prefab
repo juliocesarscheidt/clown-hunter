@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 8467144071746759437}
   - component: {fileID: 1529822311098960971}
   - component: {fileID: 2399931524894478182}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: ghost4
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &8467144071746759437
 Transform:
@@ -94,12 +94,12 @@ GameObject:
   - component: {fileID: 1415708465826617531}
   - component: {fileID: 3197184461397087325}
   - component: {fileID: 4123318722736369940}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: mouth bott
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1415708465826617531
 Transform:
@@ -177,12 +177,12 @@ GameObject:
   - component: {fileID: 1091734896683775550}
   - component: {fileID: 4454392456120289088}
   - component: {fileID: 2224570077254737233}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: ghost2
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1091734896683775550
 Transform:
@@ -258,12 +258,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6176849957804869411}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: ArcadeMachine
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6176849957804869411
 Transform:
@@ -299,12 +299,12 @@ GameObject:
   - component: {fileID: 2283995468083925040}
   - component: {fileID: 2316611547382597141}
   - component: {fileID: 2377405873415390516}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: scheibe
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2283995468083925040
 Transform:
@@ -382,12 +382,12 @@ GameObject:
   - component: {fileID: 6012779424146661869}
   - component: {fileID: 6806478682151743823}
   - component: {fileID: 5349147443987921057}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: ghost3
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6012779424146661869
 Transform:
@@ -464,12 +464,12 @@ GameObject:
   m_Component:
   - component: {fileID: 5671373014667404511}
   - component: {fileID: 3042698157899624154}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Collider
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &5671373014667404511
 Transform:
@@ -518,12 +518,12 @@ GameObject:
   - component: {fileID: 197447659725600362}
   - component: {fileID: 7241884532455220876}
   - component: {fileID: 2052366032139391883}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: ghost1
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &197447659725600362
 Transform:
@@ -601,12 +601,12 @@ GameObject:
   - component: {fileID: 2187888990758464382}
   - component: {fileID: 6963714558956319601}
   - component: {fileID: 207167785628067769}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: pacman
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &2187888990758464382
 Transform:
@@ -686,12 +686,12 @@ GameObject:
   - component: {fileID: 4639359285890733093}
   - component: {fileID: 8060100310802658739}
   - component: {fileID: 1539468279185631436}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: pac man machine
-  m_TagString: Wall
+  m_TagString: ArcadeMachine
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4639359285890733093
 Transform:
@@ -769,12 +769,12 @@ GameObject:
   - component: {fileID: 6018550184165267316}
   - component: {fileID: 2532550741275442152}
   - component: {fileID: 5748602916672401054}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: mouth top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6018550184165267316
 Transform:

@@ -69,7 +69,8 @@ public class Shooting : MonoBehaviour
                         bulletHit.transform.CompareTag(TagsController.Ceiling) ||
                         bulletHit.transform.CompareTag(TagsController.Wall) ||
                         bulletHit.transform.CompareTag(TagsController.Barrel) ||
-                        bulletHit.transform.CompareTag(TagsController.Desk)) {
+                        bulletHit.transform.CompareTag(TagsController.Desk) ||
+                        bulletHit.transform.CompareTag(TagsController.ArcadeMachine)) {
                         GameObject bulletHole = Instantiate(
                             playerStats.SelectedGun.bulletHolePrefab,
                             bulletHit.point + bulletHit.normal * 0.001f,
