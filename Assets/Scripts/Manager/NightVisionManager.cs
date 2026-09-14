@@ -30,14 +30,13 @@ public class NightVisionManager : MonoBehaviour
                 if (nightVisionIsOn) {
                     nightVisionAudioSource.Play();
                 }
+                if (nightVisionIsOn) {
+                    PostProcessingManager.Instance.SetNightVisionProfile();
+                } else {
+                    PostProcessingManager.Instance.SetDefaultProfile();
+                }
                 timer = 0;
             }
-        }
-
-        if (nightVisionIsOn) {
-            PostProcessingManager.Instance.SetNightVisionProfile();
-        } else {
-            PostProcessingManager.Instance.SetDefaultProfile();
         }
     }
 }

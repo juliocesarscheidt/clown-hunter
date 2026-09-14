@@ -39,7 +39,7 @@ public class PlayerStats : MonoBehaviour
     public GameObject[] shotParticleEffectPos;
 
     private Animator gunAnimator;
-    private AudioSource gunAudioSource;
+    public AudioSource gunsAudioSource;
 
     private Dictionary<int, bool> gunsEnabled = new();
     public GameObject gunsGameObjectParent;
@@ -98,10 +98,10 @@ public class PlayerStats : MonoBehaviour
     void Update() {
         if (HudManager.Instance.IsRunningGame) {
             if (HudManager.Instance.IsPaused) {
-                GunAudioSource.Pause();
+                gunsAudioSource.Pause();
                 stepsAudioSource.Pause();
             } else {
-                GunAudioSource.UnPause();
+                gunsAudioSource.UnPause();
                 stepsAudioSource.UnPause();
             }
         }
@@ -204,7 +204,6 @@ public class PlayerStats : MonoBehaviour
         selectedGunObject.SetActive(true);
 
         gunAnimator = selectedGunObject.GetComponent<Animator>();
-        gunAudioSource = selectedGunObject.GetComponent<AudioSource>();
 
         playerShooting.ResetShootTimeAndTimingToggleAim();
         ExitAimingState();
@@ -334,6 +333,9 @@ public class PlayerStats : MonoBehaviour
             HudManager.Instance.ShowBloodImage();
         }
 
+        // set to black and white, and after a few seconds it will be set to the previous profile inside SetIsBeingDamagedFalsyAfterSeconds
+        PostProcessingManager.Instance.SetBlackWhiteProfile();
+
         if (setIsBeingDamagedCoroutine != null) StopCoroutine(setIsBeingDamagedCoroutine);
         setIsBeingDamagedCoroutine = StartCoroutine(SetIsBeingDamagedFalsyAfterSeconds(1.5f));
 
@@ -382,6 +384,8 @@ public class PlayerStats : MonoBehaviour
         // wait
         yield return new WaitForSeconds(seconds);
         isBeingDamaged = false;
+        // return to the previous profile
+        PostProcessingManager.Instance.SetPreviousProfile();
     }
 
     public void DisablePlayerMovementAndCamera() {
@@ -414,10 +418,6 @@ public class PlayerStats : MonoBehaviour
 
     public Animator GunAnimator {
         get { return gunAnimator; }
-    }
-
-    public AudioSource GunAudioSource {
-        get { return gunAudioSource; }
     }
 
     public int SelectedGunIndex {

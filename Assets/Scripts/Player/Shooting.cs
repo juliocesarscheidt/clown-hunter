@@ -49,7 +49,7 @@ public class Shooting : MonoBehaviour
                 Vector3 center = new(0.5F, 0.5F, 0);
                 Ray ray = Camera.main.ViewportPointToRay(center);
                 if (Physics.Raycast(ray, out RaycastHit bulletHit)) {
-                    playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunShotSound);
+                    playerStats.gunsAudioSource.PlayOneShot(playerStats.SelectedGun.gunShotSound);
 
                     playerStats.GunAnimator.Play("Shoot");
 
@@ -121,7 +121,7 @@ public class Shooting : MonoBehaviour
             } else {
                 // make sure it's triggered by the click each time
                 if (Input.GetButtonDown("Fire1")) {
-                    playerStats.GunAudioSource.PlayOneShot(playerStats.SelectedGun.gunEmptySound);
+                    playerStats.gunsAudioSource.PlayOneShot(playerStats.SelectedGun.gunEmptySound);
                 }
             }
         }
@@ -186,10 +186,9 @@ public class Shooting : MonoBehaviour
 
     void ReloadGun() {
         if (playerStats.isReloading) {
-            if (!playerStats.GunAudioSource.isPlaying
-                || playerStats.GunAudioSource.clip != playerStats.SelectedGun.gunReloadSound) {
-                playerStats.GunAudioSource.clip = playerStats.SelectedGun.gunReloadSound;
-                playerStats.GunAudioSource.Play();
+            if (!playerStats.gunsAudioSource.isPlaying || playerStats.gunsAudioSource.clip != playerStats.SelectedGun.gunReloadSound) {
+                playerStats.gunsAudioSource.clip = playerStats.SelectedGun.gunReloadSound;
+                playerStats.gunsAudioSource.Play();
             }
 
             playerStats.GunAnimator.SetBool("isAiming", false);
@@ -211,7 +210,7 @@ public class Shooting : MonoBehaviour
                 playerStats.isReloading = false;
                 playerStats.GunAnimator.SetBool("isReloading", false);
 
-                playerStats.GunAudioSource.clip = null;
+                playerStats.gunsAudioSource.clip = null;
             }
         }
     }
