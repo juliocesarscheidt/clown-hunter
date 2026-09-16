@@ -28,4 +28,6 @@ public class Weapon : ScriptableObject {
     public int hitDamage;
 
     public bool isEnabledByDefault;
+
+    public InteractableUIItem interactableUIItemPrefab;
 }

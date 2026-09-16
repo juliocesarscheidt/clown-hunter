@@ -55,6 +55,9 @@ public class PlayerStats : MonoBehaviour
     public float changeGunInterval = 0.2f;
     private bool isChangingGun = false;
 
+    public List<InteractableUIItem> InteractibleGunsUIPrefabs;
+    // public List<InteractableUIItem> InteractibleItemsUIPrefabs;
+
     public GameObject currentGunReticle;
     private bool isReticleRed = false;
     private float reticleRedTimer = 0f;
@@ -77,7 +80,6 @@ public class PlayerStats : MonoBehaviour
     private readonly Dictionary<string, int> animationHashes = new() {
         { "isReloading", Animator.StringToHash("isReloading") },
         { "isAiming", Animator.StringToHash("isAiming") },
-
     };
 
     void Awake() {
@@ -90,6 +92,10 @@ public class PlayerStats : MonoBehaviour
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
             availableBullets.Add(gun.availableBullets);
+
+            if (gun.interactableUIItemPrefab.TryGetComponent(out InteractableUIItem item)) {
+                InteractibleGunsUIPrefabs.Add(item);
+            }
         }
 
         EnableDefaultGuns();
@@ -237,6 +243,12 @@ public class PlayerStats : MonoBehaviour
 
     public void SetGunEnabled(int index, bool enabled) {
         gunsEnabled[index] = enabled;
+
+        if (enabled) {
+            if (InteractibleGunsUIPrefabs.Count-1 >= index) {
+                InventoryManager.Instance.AddInteractableItem(InteractibleGunsUIPrefabs[index]);
+            }
+        }
     }
 
     public void EnableDefaultGuns() {

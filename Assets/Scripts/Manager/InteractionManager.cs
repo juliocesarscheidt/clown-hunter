@@ -19,8 +19,13 @@ public class InteractionManager : MonoBehaviour
     [SerializeField]
     private List<Interactable> interactables = new();
 
-    [SerializeField]
-    private InputActionAsset inputActionAsset;
+    private void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+        } else {
+            Instance = this;
+        }
+    }
 
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
@@ -45,14 +50,6 @@ public class InteractionManager : MonoBehaviour
             } else {
                 SetPressInteractTextToXBoxJoystick(); // XInputControllerWindows
             }
-        }
-    }
-
-    private void Awake() {
-        if (Instance != null && Instance != this) {
-            Destroy(gameObject);
-        } else {
-            Instance = this;
         }
     }
 

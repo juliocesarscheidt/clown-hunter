@@ -10,7 +10,6 @@ public abstract class Interactable: MonoBehaviour {
 
     public bool isOutlineEnabled;
     protected Outline outlineScript;
-    [SerializeField]
     protected TextMeshPro pressInteractText;
 
     [SerializeField]
@@ -22,10 +21,13 @@ public abstract class Interactable: MonoBehaviour {
     protected float distanceToPlayer;
     public float distanceToPlayerTrigger = 4f;
 
+    // public bool ShowOnInventory;
+
     public void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         outlineScript = GetComponentInChildren<Outline>();
         pressInteractText = GetComponentInChildren<TextMeshPro>();
+
         DisableOutline();
     }
 

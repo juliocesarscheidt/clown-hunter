@@ -62,17 +62,26 @@ public class HudManager : MonoBehaviour
         isRunningGame = true;
         HidePauseGamePanel();
         AdjustBulletsCount();
+        HideInventoryPanel();
     }
 
     void Update() {
         if (!playerStats.isDead && isRunningGame) {
-            if (Input.GetButtonDown("Return")) {
+            if (!isShowingInventory && Input.GetButtonDown("Return")) {
                 if (!isPaused) {
                     ShowPauseGamePanel();
                 } else {
                     HidePauseGamePanel();
                 }
             }
+
+            if (!isPaused && !isShowingInventory && Input.GetButtonDown("Inventory")) {
+                ShowInventoryPanel();
+            }
+            if (isPaused && isShowingInventory && Input.GetButtonDown("Return")) {
+                HideInventoryPanel();
+            }
+
             if (showBloodImage) {
                 CheckBloodImage();
             }
@@ -177,6 +186,36 @@ public class HudManager : MonoBehaviour
 
         HideOptionsPanels();
         PauseGamePanel.SetActive(false);
+    }
+
+    public void ShowInventoryPanel() {
+        isPaused = true;
+
+        UnlockCursor();
+        uiInfoWraperObject.SetActive(false);
+
+        Time.timeScale = 0;
+
+        HideOptionsPanels();
+
+        InventoryManager.Instance.ShowInventoryPanel();
+    }
+
+    public void HideInventoryPanel() {
+        isPaused = false;
+
+        LockCursor();
+        uiInfoWraperObject.SetActive(true);
+
+        Time.timeScale = 1;
+
+        HideOptionsPanels();
+
+        InventoryManager.Instance.HideInventoryPanel();
+    }
+
+    private bool isShowingInventory {
+        get { return InventoryManager.Instance.IsShowingInventory; }
     }
 
     private void HideOptionsPanels() {

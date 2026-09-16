@@ -322,14 +322,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOutlineEnabled: 0
-  pressInteractText: {fileID: 0}
   isInteractionActive: 0
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
-  distanceToTarget: 0
+  isBlockedByObstacle: 0
+  distanceToPlayer: 0
   distanceToPlayerTrigger: 4
-  directionToTarget: {x: 0, y: 0, z: 0}
+  InteractableUIItemPrefab: {fileID: 4054788505166238386, guid: 32d65b40df2d5ba439bec3267f29e4b4,
+    type: 3}
   gunName: Rifle
   playerGunIndex: 0
 --- !u!1 &5900008010893861658

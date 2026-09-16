@@ -221,15 +221,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOutlineEnabled: 0
-  pressInteractText: {fileID: 0}
   isInteractionActive: 0
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
   isBlockedByObstacle: 0
-  distanceToTarget: 0
+  distanceToPlayer: 0
   distanceToPlayerTrigger: 4
-  directionToTarget: {x: 0, y: 0, z: 0}
+  interactleType: 1
   bulletsAmount: 60
 --- !u!65 &3224205850390393158
 BoxCollider:
