@@ -5,12 +5,13 @@ using UnityEngine;
 public class InteractableUIItem : MonoBehaviour {
 
     public int DefaultOrderItem;
-
-    public enum InteractibleType {
+    public enum InteractableType {
         Gun = 0,
         Item = 1,
     }
-    public InteractibleType interactibleType;
+    public InteractableType interactableType;
+    public string UIName;
+    public bool ShowOnInventory;
 
     private void Awake() {
     }

@@ -249,7 +249,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultOrderItem: 1
-  interactibleType: 0
+  interactableType: 0
+  UIName: Shotgun
+  ShowOnInventory: 1
 --- !u!1 &7509838466795325924
 GameObject:
   m_ObjectHideFlags: 0

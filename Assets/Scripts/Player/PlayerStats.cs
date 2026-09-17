@@ -97,13 +97,15 @@ public class PlayerStats : MonoBehaviour
                 InteractibleGunsUIPrefabs.Add(item);
             }
         }
+    }
 
+    private void Start() {
         EnableDefaultGuns();
     }
 
     void Update() {
         if (HudManager.Instance.IsRunningGame) {
-            if (HudManager.Instance.IsPaused) {
+            if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused) {
                 gunsAudioSource.Pause();
                 stepsAudioSource.Pause();
             } else {
@@ -112,7 +114,7 @@ public class PlayerStats : MonoBehaviour
             }
         }
 
-        if (!HudManager.Instance.IsPaused && HudManager.Instance.IsRunningGame && !isDead) {
+        if (!InventoryManager.Instance.IsShowingInventory && !HudManager.Instance.IsPaused && HudManager.Instance.IsRunningGame && !isDead) {
             if (!isBeingDamaged) {
                 EnablePlayerMovementAndCamera();
             } else {
@@ -242,13 +244,16 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void SetGunEnabled(int index, bool enabled) {
-        gunsEnabled[index] = enabled;
-
-        if (enabled) {
-            if (InteractibleGunsUIPrefabs.Count-1 >= index) {
-                InventoryManager.Instance.AddInteractableItem(InteractibleGunsUIPrefabs[index]);
+        var alreadyEnabled = gunsEnabled.Count > index && gunsEnabled[index];
+        if (!alreadyEnabled && enabled) {
+            if (InteractibleGunsUIPrefabs.Count > index) {
+                if (InventoryManager.Instance != null) {
+                    InventoryManager.Instance.AddInteractableItem(InteractibleGunsUIPrefabs[index]);
+                }
             }
         }
+
+        gunsEnabled[index] = enabled;
     }
 
     public void EnableDefaultGuns() {

@@ -67,7 +67,7 @@ public class HudManager : MonoBehaviour
 
     void Update() {
         if (!playerStats.isDead && isRunningGame) {
-            if (!isShowingInventory && Input.GetButtonDown("Return")) {
+            if (Input.GetButtonDown("Return")) {
                 if (!isPaused) {
                     ShowPauseGamePanel();
                 } else {
@@ -75,11 +75,12 @@ public class HudManager : MonoBehaviour
                 }
             }
 
-            if (!isPaused && !isShowingInventory && Input.GetButtonDown("Inventory")) {
-                ShowInventoryPanel();
-            }
-            if (isPaused && isShowingInventory && Input.GetButtonDown("Return")) {
-                HideInventoryPanel();
+            if (!isPaused && Input.GetButtonDown("Inventory")) {
+                if (!isShowingInventory) {
+                    ShowInventoryPanel();
+                } else {
+                    HideInventoryPanel();
+                }
             }
 
             if (showBloodImage) {
@@ -170,9 +171,10 @@ public class HudManager : MonoBehaviour
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
 
-        Time.timeScale = 0;
-
         HideOptionsPanels();
+        InventoryManager.Instance.HideInventoryPanel();
+
+        Time.timeScale = 0;
         PauseGamePanel.SetActive(true);
     }
 
@@ -181,36 +183,27 @@ public class HudManager : MonoBehaviour
 
         LockCursor();
         uiInfoWraperObject.SetActive(true);
+        HideOptionsPanels();
 
         Time.timeScale = 1;
-
-        HideOptionsPanels();
         PauseGamePanel.SetActive(false);
     }
 
     public void ShowInventoryPanel() {
-        isPaused = true;
-
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
-
-        Time.timeScale = 0;
-
         HideOptionsPanels();
 
+        Time.timeScale = 0;
         InventoryManager.Instance.ShowInventoryPanel();
     }
 
     public void HideInventoryPanel() {
-        isPaused = false;
-
         LockCursor();
         uiInfoWraperObject.SetActive(true);
-
-        Time.timeScale = 1;
-
         HideOptionsPanels();
 
+        Time.timeScale = 1;
         InventoryManager.Instance.HideInventoryPanel();
     }
 

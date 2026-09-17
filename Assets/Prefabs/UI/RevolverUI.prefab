@@ -1119,9 +1119,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62b39b340f1c9054592e82de52728508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultOrderItem: 0
-  currentOrderItem: 0
-  interactibleType: 0
+  DefaultOrderItem: 0
+  interactableType: 0
+  UIName: Revolver
+  ShowOnInventory: 1
 --- !u!1 &5197872325931094435
 GameObject:
   m_ObjectHideFlags: 0

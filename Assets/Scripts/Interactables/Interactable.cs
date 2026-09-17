@@ -21,8 +21,6 @@ public abstract class Interactable: MonoBehaviour {
     protected float distanceToPlayer;
     public float distanceToPlayerTrigger = 4f;
 
-    // public bool ShowOnInventory;
-
     public void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         outlineScript = GetComponentInChildren<Outline>();
@@ -32,7 +30,7 @@ public abstract class Interactable: MonoBehaviour {
     }
 
     public void LateUpdate() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
+        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
             return;
         }
 

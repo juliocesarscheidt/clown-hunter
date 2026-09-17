@@ -56,7 +56,7 @@ public class CheatManager : MonoBehaviour
     }
 
     private void Update() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
+        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
             return;
         }
         if (currentInput.Length > 0 && Time.time - lastKeyTime > resetTimeout) {

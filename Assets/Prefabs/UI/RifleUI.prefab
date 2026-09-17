@@ -165,7 +165,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultOrderItem: 2
-  interactibleType: 0
+  interactableType: 0
+  UIName: Rifle
+  ShowOnInventory: 1
 --- !u!1 &4477568245131552964
 GameObject:
   m_ObjectHideFlags: 0
