@@ -101,6 +101,9 @@ public class PlayerStats : MonoBehaviour
 
     private void Start() {
         EnableDefaultGuns();
+        if (HudManager.Instance != null) {
+            HudManager.Instance.AdjustBulletsCount();
+        }
     }
 
     void Update() {
@@ -245,6 +248,8 @@ public class PlayerStats : MonoBehaviour
 
     public void SetGunEnabled(int index, bool enabled) {
         var alreadyEnabled = gunsEnabled.Count > index && gunsEnabled[index];
+        gunsEnabled[index] = enabled;
+
         if (!alreadyEnabled && enabled) {
             if (InteractibleGunsUIPrefabs.Count > index) {
                 if (InventoryManager.Instance != null) {
@@ -252,8 +257,6 @@ public class PlayerStats : MonoBehaviour
                 }
             }
         }
-
-        gunsEnabled[index] = enabled;
     }
 
     public void EnableDefaultGuns() {

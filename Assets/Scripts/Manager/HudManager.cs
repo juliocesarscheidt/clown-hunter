@@ -61,8 +61,8 @@ public class HudManager : MonoBehaviour
         playerStats = FindObjectOfType<PlayerStats>();
         isRunningGame = true;
         HidePauseGamePanel();
-        AdjustBulletsCount();
         HideInventoryPanel();
+        // AdjustBulletsCount(); // calling this from playerStats
     }
 
     void Update() {
@@ -149,7 +149,6 @@ public class HudManager : MonoBehaviour
     private void FinishGameUi() {
         isRunningGame = false;
 
-        // HidePressInteractObject();
         uiInfoWraperObject.SetActive(false);
 
         UnlockCursor();
@@ -170,9 +169,9 @@ public class HudManager : MonoBehaviour
 
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
+        InventoryManager.Instance.HideInventoryPanel();
 
         HideOptionsPanels();
-        InventoryManager.Instance.HideInventoryPanel();
 
         Time.timeScale = 0;
         PauseGamePanel.SetActive(true);
@@ -284,9 +283,8 @@ public class HudManager : MonoBehaviour
     }
 
     public void AdjustBulletsCount() {
-        if (playerStats != null) {
-            bulletsCounterText.text =
-                $"{playerStats.CurrentBullets} [{playerStats.AvailableBullets}]";
+        if (playerStats != null && playerStats.SelectedGun != null) {
+            bulletsCounterText.text = $"{playerStats.CurrentBullets} [{playerStats.AvailableBullets}]";
             gunIconImage.sprite = playerStats.SelectedGun.gunIconImage;
         }
     }

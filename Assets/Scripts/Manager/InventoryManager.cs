@@ -58,6 +58,8 @@ public class InventoryManager : MonoBehaviour {
     }
 
     public void ChangeMenuType(int newType) {
+        Debug.Log($"newType {newType}");
+
         menuType = ((MenuType) newType);
         currentItemSlotIndex = 0;
         UpdateSlots();
@@ -100,13 +102,14 @@ public class InventoryManager : MonoBehaviour {
     }
 
     private void UpdateSlots(int scrollDirection = 0) {
-        if (currentInteractableItems == null || currentInteractableItems.Count <= 0) return;
-
         // 1. Deactivate all currently active items instead of Destroying them
         for (int i = 0; i < activeSpawnedItems.Count; i++) {
             activeSpawnedItems[i].SetActive(false);
         }
         activeSpawnedItems.Clear();
+        ClearItemNameDisplay();
+
+        if (currentInteractableItems == null || currentInteractableItems.Count <= 0) return;
 
         List<Transform> itemsToAnimate = new();
         List<Vector3> startPositions = new();
@@ -181,13 +184,16 @@ public class InventoryManager : MonoBehaviour {
 
     private void UpdateItemNameDisplay() {
         if (uiItemText == null) return;
-        if (currentInteractableItems != null && currentItemSlotIndex >= 0 &&
-            currentItemSlotIndex < currentInteractableItems.Count) {
+        if (currentInteractableItems != null && currentItemSlotIndex >= 0 && currentItemSlotIndex < currentInteractableItems.Count) {
             var activeItem = currentInteractableItems[currentItemSlotIndex];
             uiItemText.text = activeItem.UIName;
         } else {
-            uiItemText.text = string.Empty; // Clear text if no items exist
+            ClearItemNameDisplay();
         }
+    }
+
+    private void ClearItemNameDisplay() {
+        uiItemText.text = string.Empty; // Clear text if no items exist
     }
 
     private IEnumerator AnimateSlotSlide(List<Transform> items, List<Vector3> starts, List<Vector3> targets) {
@@ -262,14 +268,14 @@ public class InventoryManager : MonoBehaviour {
         if (item.ShowOnInventory) {
             if (item.interactableType == InteractableUIItem.InteractableType.Item) {
                 InteractableItems.Add(item);
-                InteractableItems = InteractableItems.OrderBy(o => o.DefaultOrderItem).ToList();
-
             } else if (item.interactableType == InteractableUIItem.InteractableType.Gun) {
                 InteractableGuns.Add(item);
-                InteractableGuns = InteractableGuns.OrderBy(o => o.DefaultOrderItem).ToList();
             }
-
-            UpdateSlots();
         }
+
+        InteractableItems = InteractableItems.OrderBy(o => o.DefaultOrderItem).ToList();
+        InteractableGuns = InteractableGuns.OrderBy(o => o.DefaultOrderItem).ToList();
+
+        UpdateSlots();
     }
 }

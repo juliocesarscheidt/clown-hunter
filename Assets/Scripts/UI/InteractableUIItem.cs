@@ -12,13 +12,4 @@ public class InteractableUIItem : MonoBehaviour {
     public InteractableType interactableType;
     public string UIName;
     public bool ShowOnInventory;
-
-    private void Awake() {
-    }
-
-    void Start() {
-    }
-
-    void Update() {
-    }
 }
