@@ -93,6 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1896423218106627544}
   - component: {fileID: 2905243486463282981}
+  - component: {fileID: 1382812634790351035}
   m_Layer: 7
   m_Name: Revolver
   m_TagString: Untagged
@@ -138,6 +139,24 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1382812634790351035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551343012250796918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62b39b340f1c9054592e82de52728508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultOrderItem: 0
+  interactableType: 0
+  displayOnInventory: 1
+  inventoryDisplayName: Revolver
+  baseInventoryItemPrefab: {fileID: 5163486721700299388, guid: 8fc3d434262b00d44a673381f4327d49,
+    type: 3}
 --- !u!1 &2271121814572298348
 GameObject:
   m_ObjectHideFlags: 0

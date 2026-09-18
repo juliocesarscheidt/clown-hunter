@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
@@ -15,8 +16,8 @@ public class InventoryManager : MonoBehaviour {
     public int CenterSlotIndex = 2;
     private int currentItemSlotIndex;
 
-    public List<InteractableUIItem> InteractableGuns = new();
-    public List<InteractableUIItem> InteractableItems = new();
+    public List<InventoryItem> InteractableGuns = new();
+    public List<InventoryItem> InteractableItems = new();
 
     public TextMeshProUGUI uiItemText;
 
@@ -24,15 +25,14 @@ public class InventoryManager : MonoBehaviour {
     [SerializeField]
     private bool isScrollingItems = false;
     [SerializeField]
-    private float scrollingItemsTimer = 0f;
-    private readonly float scrollingItemsInterval = 0.2f;
-
-    private Dictionary<InteractableUIItem, List<GameObject>> itemPool = new();
-    private List<GameObject> activeSpawnedItems = new();
-
-    private Coroutine scrollAnimationCoroutine;
+    private float scrollTimer = 0f;
     [SerializeField]
     private float scrollDuration = 0.2f; // Animation speed in seconds
+
+    private Dictionary<InventoryItem, List<GameObject>> itemPool = new();
+    private readonly List<GameObject> activeSpawnedItems = new();
+
+    private Coroutine scrollAnimationCoroutine;
 
     public enum MenuType {
         Gun = 0,
@@ -58,10 +58,10 @@ public class InventoryManager : MonoBehaviour {
     }
 
     public void ChangeMenuType(int newType) {
-        Debug.Log($"newType {newType}");
-
         menuType = ((MenuType) newType);
         currentItemSlotIndex = 0;
+
+        ClearPool();
         UpdateSlots();
     }
 
@@ -72,7 +72,6 @@ public class InventoryManager : MonoBehaviour {
         
         if (IsShowingInventory) {
             float x = Input.GetAxisRaw("Horizontal");
-
             if (x != 0 && !isScrollingItems) {
                 if (currentInteractableItems == null || currentInteractableItems.Count <= 0) return;
 
@@ -84,14 +83,6 @@ public class InventoryManager : MonoBehaviour {
                     currentItemSlotIndex = nextIndex;
                     isScrollingItems = true;
                     UpdateSlots(increment); // Pass increment direction
-                }
-            }
-
-            if (isScrollingItems) {
-                scrollingItemsTimer += Time.unscaledDeltaTime;
-                if (scrollingItemsTimer > scrollingItemsInterval) {
-                    isScrollingItems = false;
-                    scrollingItemsTimer = 0f;
                 }
             }
         }
@@ -153,23 +144,22 @@ public class InventoryManager : MonoBehaviour {
             }
 
             var currentItemData = currentInteractableItems[itemIndex];
-            GameObject uiItem = GetPooledItem(currentItemData, targetSlot.transform);
-
-            // update the text with item's name
-            UpdateItemNameDisplay();
+            GameObject uiItemObj = GetPooledItem(currentItemData, targetSlot.transform);
 
             // Apply starting position
-            uiItem.transform.SetParent(targetSlot.transform, false);
-            uiItem.transform.SetPositionAndRotation(targetSlot.transform.position, targetSlot.transform.rotation);
-            uiItem.transform.localPosition = startLocalPos;
-            uiItem.transform.localScale = Vector3.one;
-            uiItem.SetActive(true);
+            uiItemObj.transform.SetParent(targetSlot.transform, false);
+            uiItemObj.transform.SetPositionAndRotation(targetSlot.transform.position, targetSlot.transform.rotation);
+            uiItemObj.transform.localPosition = startLocalPos;
+            uiItemObj.transform.localScale = Vector3.one;
+            uiItemObj.SetActive(true);
 
-            activeSpawnedItems.Add(uiItem);
-            itemsToAnimate.Add(uiItem.transform);
+            activeSpawnedItems.Add(uiItemObj);
+            itemsToAnimate.Add(uiItemObj.transform);
             startPositions.Add(startLocalPos);
             targetPositions.Add(targetLocalPos);
         }
+
+        UpdateItemNameDisplay();
 
         // 3. Start smooth sliding animation
         if (scrollAnimationCoroutine != null) StopCoroutine(scrollAnimationCoroutine);
@@ -186,7 +176,7 @@ public class InventoryManager : MonoBehaviour {
         if (uiItemText == null) return;
         if (currentInteractableItems != null && currentItemSlotIndex >= 0 && currentItemSlotIndex < currentInteractableItems.Count) {
             var activeItem = currentInteractableItems[currentItemSlotIndex];
-            uiItemText.text = activeItem.UIName;
+            uiItemText.text = activeItem.InventoryDisplayName;
         } else {
             ClearItemNameDisplay();
         }
@@ -197,12 +187,10 @@ public class InventoryManager : MonoBehaviour {
     }
 
     private IEnumerator AnimateSlotSlide(List<Transform> items, List<Vector3> starts, List<Vector3> targets) {
-        float elapsedTime = 0f;
-        while (elapsedTime < scrollDuration) {
-            elapsedTime += Time.unscaledDeltaTime;
-            float progress = Mathf.Clamp01(elapsedTime / scrollDuration);
+        while (scrollTimer < scrollDuration) {
+            scrollTimer += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(scrollTimer / scrollDuration);
             float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
-
             for (int i = 0; i < items.Count; i++) {
                 if (items[i] != null) {
                     items[i].localPosition = Vector3.Lerp(starts[i], targets[i], smoothProgress);
@@ -213,10 +201,10 @@ public class InventoryManager : MonoBehaviour {
 
         // Snap to exact target position at the end
         for (int i = 0; i < items.Count; i++) {
-            if (items[i] != null) {
-                items[i].localPosition = targets[i];
-            }
+            if (items[i] != null) items[i].localPosition = targets[i];
         }
+
+        scrollTimer = 0f;
         isScrollingItems = false;
     }
 
@@ -233,24 +221,26 @@ public class InventoryManager : MonoBehaviour {
         activeSpawnedItems.Clear();
     }
 
-    private GameObject GetPooledItem(InteractableUIItem itemPrefab, Transform parent) {
-        if (!itemPool.ContainsKey(itemPrefab)) {
-            itemPool[itemPrefab] = new List<GameObject>();
+    private GameObject GetPooledItem(InventoryItem inventoryItem, Transform parent) {
+        if (!itemPool.ContainsKey(inventoryItem)) {
+            itemPool[inventoryItem] = new List<GameObject>();
         }
         // Search for an inactive object in the pool
-        List<GameObject> pool = itemPool[itemPrefab];
+        List<GameObject> pool = itemPool[inventoryItem];
         for (int i = 0; i < pool.Count; i++) {
             if (!pool[i].activeInHierarchy) {
                 return pool[i];
             }
         }
         // If none are inactive, instantiate a new one and add it to the pool
-        GameObject newInstance = Instantiate(itemPrefab.gameObject, parent);
+        // using the base prefab
+        GameObject newInstance = Instantiate(inventoryItem.baseInventoryItemPrefab.gameObject, parent);
+      
         pool.Add(newInstance);
         return newInstance;
     }
 
-    private List<InteractableUIItem> currentInteractableItems {
+    private List<InventoryItem> currentInteractableItems {
         get { return menuType == MenuType.Gun ? InteractableGuns : InteractableItems; }
     }
 
@@ -264,18 +254,39 @@ public class InventoryManager : MonoBehaviour {
         InventoryCanvas.gameObject.SetActive(IsShowingInventory);
     }
 
-    public void AddInteractableItem(InteractableUIItem item) {
-        if (item.ShowOnInventory) {
-            if (item.interactableType == InteractableUIItem.InteractableType.Item) {
+    public void AddInteractableItem(InventoryItem item) {
+        if (item.displayOnInventory) {
+            InventoryItem currentCenterItem = null;
+            if (currentInteractableItems != null && currentItemSlotIndex >= 0 && currentItemSlotIndex < currentInteractableItems.Count) {
+                currentCenterItem = currentInteractableItems[currentItemSlotIndex];
+            }
+
+            if (item.interactableType == InventoryItem.InteractableType.Item) {
                 InteractableItems.Add(item);
-            } else if (item.interactableType == InteractableUIItem.InteractableType.Gun) {
+            } else if (item.interactableType == InventoryItem.InteractableType.Gun) {
                 InteractableGuns.Add(item);
             }
+
+            // 2. Add and re-sort the list
+            InteractableItems = InteractableItems.OrderBy(o => o.DefaultOrderItem).ToList();
+            InteractableGuns = InteractableGuns.OrderBy(o => o.DefaultOrderItem).ToList();
+
+            // 3. Find where the centered item moved to after sorting
+            if (currentCenterItem != null) {
+                int newIndex = currentInteractableItems.IndexOf(currentCenterItem);
+                if (newIndex != -1) {
+                    currentItemSlotIndex = newIndex; // Keep the same item centered
+                }
+            } else {
+                // If list was empty before, start at index 0
+                currentItemSlotIndex = 0;
+            }
+
+            // 4. Clamp safety check
+            currentItemSlotIndex = Mathf.Clamp(currentItemSlotIndex, 0, currentInteractableItems.Count - 1);
+
+            // 5. Refresh UI layout with updated indices
+            UpdateSlots(0);
         }
-
-        InteractableItems = InteractableItems.OrderBy(o => o.DefaultOrderItem).ToList();
-        InteractableGuns = InteractableGuns.OrderBy(o => o.DefaultOrderItem).ToList();
-
-        UpdateSlots();
     }
 }

@@ -228,7 +228,6 @@ MonoBehaviour:
   isBlockedByObstacle: 0
   distanceToPlayer: 0
   distanceToPlayerTrigger: 4
-  interactleType: 1
   bulletsAmount: 60
 --- !u!65 &3224205850390393158
 BoxCollider:

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using static TaskManager;
 
@@ -18,7 +17,7 @@ public class PaperManager : MonoBehaviour
     private Dictionary<int, List<GameObject>> spawnPoints = new();
     public List<GameObject> spawnPointsAreas;
 
-    public int totalPapersToCollect = 5;
+    public int totalPapersToCollect = 4;
     public int monstersToAddOnPaperCollected = 2;
 
     private readonly int thisTaskIndex = (int) TaskType.CollectTheNewspapers;
@@ -80,20 +79,32 @@ public class PaperManager : MonoBehaviour
             GameObject paper = Instantiate(
                 paperPrefab,
                 spawnPoint.transform.position,
-                spawnPoint.transform.rotation
+                spawnPoint.transform.rotation,
+                spawnPoint.transform
             );
-            paper.transform.parent = spawnPoint.transform;
-            spawnedPapers.Add(paper);
 
+            if (paper.TryGetComponent<Paper>(out var p)) {
+                var name = $"Paper #{i + 1}";
+                p.SetInventoryItemData(i, name);
+            }
+
+            spawnedPapers.Add(paper);
             if (paper.TryGetComponent(out Interactable component)) {
                 InteractionManager.Instance.AddInteractable(component);
             }
         }
     }
 
-    public void CollectPaper() {
+    public void CollectPaper(Paper paper) {
         MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
         MonsterManager.Instance.SpawnEnemies();
+        // add the UI item to inventory manager
+        if (InventoryManager.Instance != null && paper != null) {
+            InventoryManager.Instance.AddInteractableItem(paper.inventoryItem);
+        }
+        // remove from spawnedPapers
+        spawnedPapers.Remove(paper.gameObject);
+        // increment task progress
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
     }
 

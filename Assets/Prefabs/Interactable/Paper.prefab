@@ -299,6 +299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5515759815586279369}
   - component: {fileID: 7390287122519129969}
+  - component: {fileID: 1807986344397715452}
   m_Layer: 0
   m_Name: Paper
   m_TagString: Untagged
@@ -344,7 +345,25 @@ MonoBehaviour:
   isBlockedByObstacle: 0
   distanceToPlayer: 0
   distanceToPlayerTrigger: 4
-  interactleType: 1
+  inventoryItem: {fileID: 0}
+--- !u!114 &1807986344397715452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2745878109546410035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62b39b340f1c9054592e82de52728508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultOrderItem: 0
+  interactableType: 1
+  displayOnInventory: 1
+  inventoryDisplayName: 
+  baseInventoryItemPrefab: {fileID: 2989106433003358675, guid: 6906194b8d2193c4b9d6076e65af29e3,
+    type: 3}
 --- !u!1 &3569688369103043359
 GameObject:
   m_ObjectHideFlags: 0

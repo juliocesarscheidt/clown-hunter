@@ -3,6 +3,7 @@ using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,8 +43,9 @@ public class PlayerStats : MonoBehaviour
     public AudioSource gunsAudioSource;
 
     private Dictionary<int, bool> gunsEnabled = new();
-    public GameObject gunsGameObjectParent;
     public List<Weapon> guns;
+    public List<GameObject> gunsGameObjects;
+    public List<InventoryItem> gunsInventoryItems;
     [SerializeField]
     private Weapon selectedGun;
     [SerializeField]
@@ -54,9 +56,6 @@ public class PlayerStats : MonoBehaviour
     private float changeGunTimer = 0f;
     public float changeGunInterval = 0.2f;
     private bool isChangingGun = false;
-
-    public List<InteractableUIItem> InteractibleGunsUIPrefabs;
-    // public List<InteractableUIItem> InteractibleItemsUIPrefabs;
 
     public GameObject currentGunReticle;
     private bool isReticleRed = false;
@@ -88,14 +87,16 @@ public class PlayerStats : MonoBehaviour
 
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
+            if (gunsGameObjects.Count > i) {
+                var inventoryItem = gunsGameObjects[i].GetComponent<InventoryItem>();
+                inventoryItem.DefaultOrderItem = i;
+                inventoryItem.InventoryDisplayName = gun.gunName;
+                gunsInventoryItems.Add(inventoryItem);
+            }
 
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
             availableBullets.Add(gun.availableBullets);
-
-            if (gun.interactableUIItemPrefab.TryGetComponent(out InteractableUIItem item)) {
-                InteractibleGunsUIPrefabs.Add(item);
-            }
         }
     }
 
@@ -205,13 +206,13 @@ public class PlayerStats : MonoBehaviour
         }
 
         // hide other guns
-        for (int i = 0; i < gunsGameObjectParent.transform.childCount; i++) {
-            gunsGameObjectParent.transform.GetChild(i).gameObject.SetActive(false);
+        for (int i = 0; i < gunsGameObjects.Count; i++) {
+            gunsGameObjects[i].SetActive(false);
         }
         selectedGunIndex = index;
         selectedGun = guns[selectedGunIndex];
 
-        selectedGunObject = gunsGameObjectParent.transform.GetChild(selectedGunIndex).gameObject;
+        selectedGunObject = gunsGameObjects[selectedGunIndex];
         selectedGunObject.SetActive(true);
 
         gunAnimator = selectedGunObject.GetComponent<Animator>();
@@ -251,10 +252,8 @@ public class PlayerStats : MonoBehaviour
         gunsEnabled[index] = enabled;
 
         if (!alreadyEnabled && enabled) {
-            if (InteractibleGunsUIPrefabs.Count > index) {
-                if (InventoryManager.Instance != null) {
-                    InventoryManager.Instance.AddInteractableItem(InteractibleGunsUIPrefabs[index]);
-                }
+            if (InventoryManager.Instance != null && gunsInventoryItems.Count > index) {
+                InventoryManager.Instance.AddInteractableItem(gunsInventoryItems[index]);
             }
         }
     }

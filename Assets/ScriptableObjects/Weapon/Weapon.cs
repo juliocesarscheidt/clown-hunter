@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Weapon")]
 public class Weapon : ScriptableObject {
@@ -28,6 +27,4 @@ public class Weapon : ScriptableObject {
     public int hitDamage;
 
     public bool isEnabledByDefault;
-
-    public InteractableUIItem interactableUIItemPrefab;
 }

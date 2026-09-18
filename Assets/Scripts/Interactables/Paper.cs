@@ -3,14 +3,22 @@ using UnityEngine;
 public class Paper : Interactable {
     private bool forcedOutlineEnabled = false;
     private GameObject paperObj;
+    public InventoryItem inventoryItem;
 
-    private new void Start() {
-        base.Start();
+    private void Awake() {
         paperObj = transform.GetChild(0).gameObject;
+        inventoryItem = GetComponent<InventoryItem>();
     }
 
     public override void Collect() {
-        PaperManager.Instance.CollectPaper();
+        PaperManager.Instance.CollectPaper(this);
+    }
+
+    public void SetInventoryItemData(int defaultOrderItem, string inventoryDisplayName) {
+        if (inventoryItem != null) {
+            inventoryItem.DefaultOrderItem = defaultOrderItem;
+            inventoryItem.InventoryDisplayName = inventoryDisplayName;
+        }
     }
 
     public void SetPaperObjLayer(int layer) {

@@ -127,7 +127,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5399921816657416328}
-  - component: {fileID: 6083185513040730115}
   m_Layer: 5
   m_Name: RifleUI
   m_TagString: Untagged
@@ -152,22 +151,6 @@ Transform:
   - {fileID: 6102901314982954654}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6083185513040730115
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4054788505166238386}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b39b340f1c9054592e82de52728508, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DefaultOrderItem: 2
-  interactableType: 0
-  UIName: Rifle
-  ShowOnInventory: 1
 --- !u!1 &4477568245131552964
 GameObject:
   m_ObjectHideFlags: 0

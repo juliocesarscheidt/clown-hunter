@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static InventoryManager;
 
 public abstract class Interactable: MonoBehaviour {
     public abstract void Collect();

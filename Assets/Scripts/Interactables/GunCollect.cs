@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GunCollect : Interactable {
     public string gunName; // the same as the scriptable weapon name
-    [SerializeField]
     private int playerGunIndex;
 
     public new void Start() {
