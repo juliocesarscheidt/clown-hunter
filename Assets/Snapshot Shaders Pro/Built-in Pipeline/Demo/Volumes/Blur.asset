@@ -32,10 +32,10 @@ MonoBehaviour:
     value: 1
   strength:
     overrideState: 1
-    value: 80
+    value: 150
   blurStepSize:
     overrideState: 1
-    value: 3
+    value: 6
   blurType:
     overrideState: 1
     value: 0
