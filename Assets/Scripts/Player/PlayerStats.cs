@@ -6,7 +6,6 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 [RequireComponent(typeof(FirstPersonController))]
 public class PlayerStats : MonoBehaviour

@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
