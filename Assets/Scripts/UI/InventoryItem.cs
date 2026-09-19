@@ -15,8 +15,6 @@ public class InventoryItem {
     public InteractableType interactableType;
     public bool displayOnInventory;
     
-    public InventoryItem() {}
-
     // enabled by default
     public InventoryItem(int orderItem, string displayName, InteractableType iType) {
         defaultOrderItem = orderItem;

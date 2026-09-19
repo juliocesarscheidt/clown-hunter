@@ -46,7 +46,6 @@ public class PlayerStats : MonoBehaviour
     private Dictionary<int, bool> gunsEnabled = new();
     public List<Weapon> guns;
     public List<GameObject> gunsGameObjects;
-    public List<InventoryItem> gunsInventoryItems;
     [SerializeField]
     private Weapon selectedGun;
     [SerializeField]
@@ -89,9 +88,8 @@ public class PlayerStats : MonoBehaviour
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
 
-            // dynamic inventory item from the gun
-            InventoryItem inventoryItem = new(i, gun.gunName, InventoryItem.InteractableType.Gun);
-            gunsInventoryItems.Add(inventoryItem);
+            // dynamics set inventory item in the gun
+            gun.SetInventoryItemData(i, gun.gunName);
 
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
@@ -251,8 +249,9 @@ public class PlayerStats : MonoBehaviour
         gunsEnabled[index] = enabled;
 
         if (!alreadyEnabled && enabled) {
-            if (InventoryManager.Instance != null && guns.Count > index && gunsInventoryItems.Count > index) {
-                InventoryManager.Instance.AddInteractableItem(gunsInventoryItems[index], guns[index].baseInventoryItemPrefab);
+            if (InventoryManager.Instance != null && guns.Count > index) {
+                var gun = guns[index];
+                InventoryManager.Instance.AddInteractableItem(gun.GetInventoryItem(), gun.baseInventoryItemPrefab);
             }
         }
     }

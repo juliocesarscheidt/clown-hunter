@@ -30,4 +30,19 @@ public class Weapon : ScriptableObject {
     // inventory
     [Header("UI Prefab Reference")]
     public GameObject baseInventoryItemPrefab;
+    [HideInInspector]
+    private InventoryItem inventoryItem;
+
+    public void SetInventoryItemData(int orderItem, string displayName) {
+        if (inventoryItem == null) {
+            inventoryItem = new(orderItem, displayName, InventoryItem.InteractableType.Gun);
+        } else {
+            inventoryItem.defaultOrderItem = orderItem;
+            inventoryItem.inventoryDisplayName = displayName;
+        }
+    }
+
+    public InventoryItem GetInventoryItem() {
+        return inventoryItem;
+    }
 }

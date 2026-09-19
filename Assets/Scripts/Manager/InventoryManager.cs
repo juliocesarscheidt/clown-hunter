@@ -26,10 +26,12 @@ public class InventoryManager : MonoBehaviour {
     [Header("Items Data List")]
     [HideInInspector]
     public List<InventoryItem> InteractableGuns = new();
+    [HideInInspector]
     private Dictionary<int, GameObject> InventoryGunsPrefabDict = new();
     [Header("Guns Data List")]
     [HideInInspector]
     public List<InventoryItem> InteractableItems = new();
+    [HideInInspector]
     private Dictionary<int, GameObject> InventoryItemsPrefabDict = new();
 
     public TextMeshProUGUI uiItemText;
@@ -280,7 +282,7 @@ public class InventoryManager : MonoBehaviour {
             }
         }
         // getting the base prefab
-        GameObject prefab = null;
+        GameObject prefab;
         if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
             prefab = InventoryItemsPrefabDict[inventoryItem.defaultOrderItem];
         } else {
@@ -314,7 +316,7 @@ public class InventoryManager : MonoBehaviour {
     }
 
     public void AddInteractableItem(InventoryItem item, GameObject baseInventoryItemPrefab) {
-        if (item.displayOnInventory) {
+        if (item != null && item.displayOnInventory) {
             if (item.interactableType == InventoryItem.InteractableType.Item) {
                 InteractableItems.Add(item);
                 InteractableItems.OrderBy(o => o.defaultOrderItem).ToList();

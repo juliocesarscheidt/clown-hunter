@@ -7,6 +7,7 @@ public class Paper : Interactable {
     // inventory
     [Header("UI Prefab Reference")]
     public GameObject baseInventoryItemPrefab;
+    [HideInInspector]
     private InventoryItem inventoryItem;
 
     private void Awake() {
