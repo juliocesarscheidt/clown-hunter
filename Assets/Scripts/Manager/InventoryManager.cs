@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
@@ -196,6 +197,14 @@ public class InventoryManager : MonoBehaviour {
 
             var currentItemData = CurrentInteractableItems[itemIndex];
             GameObject uiItemObj = GetPooledItem(currentItemData, targetSlot.transform);
+
+            var isCenterItem = (slotIndex == CenterSlotIndex);
+            // Update 3D blur state via property block
+            if (uiItemObj.TryGetComponent<Blur3DItem>(out var blurComponent)) {
+                Debug.Log($"slotIndex {slotIndex}");
+                Debug.Log($"currentItemData.inventoryDisplayName {currentItemData.inventoryDisplayName}");
+                blurComponent.SetBlur(!isCenterItem);
+            }
 
             // Apply starting position
             uiItemObj.transform.SetParent(targetSlot.transform, false);

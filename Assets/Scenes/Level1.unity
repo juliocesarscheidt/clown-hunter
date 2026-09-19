@@ -3704,8 +3704,6 @@ MonoBehaviour:
   - {fileID: 1120302546}
   CenterSlotIndex: 2
   currentItemSlotIndex: 0
-  InteractableGuns: []
-  InteractableItems: []
   uiItemText: {fileID: 196785937}
   IsShowingInventory: 0
   isScrollingItems: 0
@@ -12249,7 +12247,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 32
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
