@@ -24,6 +24,8 @@ public class Paper : Interactable {
         } else {
             inventoryItem.defaultOrderItem = orderItem;
             inventoryItem.inventoryDisplayName = displayName;
+            inventoryItem.interactableType = InventoryItem.InteractableType.Item;
+            inventoryItem.displayOnInventory = true;
         }
     }
 

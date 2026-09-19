@@ -39,6 +39,8 @@ public class Weapon : ScriptableObject {
         } else {
             inventoryItem.defaultOrderItem = orderItem;
             inventoryItem.inventoryDisplayName = displayName;
+            inventoryItem.interactableType = InventoryItem.InteractableType.Gun;
+            inventoryItem.displayOnInventory = true;
         }
     }
 
