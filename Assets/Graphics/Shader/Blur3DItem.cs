@@ -30,14 +30,4 @@ public class Blur3DItem : MonoBehaviour {
 
         objectRenderer.SetPropertyBlock(propertyBlock);
     }
-
-    [ContextMenu("Test Enable Blur")]
-    public void TestBlurOn() {
-        SetBlur(true);
-    }
-
-    [ContextMenu("Test Disable Blur")]
-    public void TestBlurOff() {
-        SetBlur(false);
-    }
 }

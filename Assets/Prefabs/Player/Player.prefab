@@ -725,7 +725,6 @@ MonoBehaviour:
   - {fileID: 5695191421655029471}
   - {fileID: 3613098329384452810}
   - {fileID: 6801966742423099968}
-  gunsInventoryItems: []
   selectedGun: {fileID: 11400000, guid: 0805304669691d44fb82de214c953a16, type: 2}
   selectedGunIndex: -1
   defaultGunIndex: 0
