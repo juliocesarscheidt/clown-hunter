@@ -189,7 +189,6 @@ public class HudManager : MonoBehaviour
     }
 
     public void ShowInventoryPanel() {
-        UnlockCursor();
         uiInfoWraperObject.SetActive(false);
         HideOptionsPanels();
 
@@ -198,7 +197,6 @@ public class HudManager : MonoBehaviour
     }
 
     public void HideInventoryPanel() {
-        LockCursor();
         uiInfoWraperObject.SetActive(true);
         HideOptionsPanels();
 

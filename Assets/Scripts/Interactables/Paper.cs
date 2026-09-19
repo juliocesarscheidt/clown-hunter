@@ -1,24 +1,33 @@
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class Paper : Interactable {
     private bool forcedOutlineEnabled = false;
     private GameObject paperObj;
-    public InventoryItem inventoryItem;
+    // inventory
+    [Header("UI Prefab Reference")]
+    public GameObject baseInventoryItemPrefab;
+    private InventoryItem inventoryItem;
 
     private void Awake() {
         paperObj = transform.GetChild(0).gameObject;
-        inventoryItem = GetComponent<InventoryItem>();
     }
 
     public override void Collect() {
         PaperManager.Instance.CollectPaper(this);
     }
-
-    public void SetInventoryItemData(int defaultOrderItem, string inventoryDisplayName) {
-        if (inventoryItem != null) {
-            inventoryItem.DefaultOrderItem = defaultOrderItem;
-            inventoryItem.InventoryDisplayName = inventoryDisplayName;
+  
+    public void SetInventoryItemData(int orderItem, string displayName) {
+        if (inventoryItem == null) {
+            inventoryItem = new(orderItem, displayName, InventoryItem.InteractableType.Item);
+        } else {
+            inventoryItem.defaultOrderItem = orderItem;
+            inventoryItem.inventoryDisplayName = displayName;
         }
+    }
+
+    public InventoryItem GetInventoryItem() {
+        return inventoryItem;
     }
 
     public void SetPaperObjLayer(int layer) {

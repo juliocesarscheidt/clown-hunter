@@ -210,7 +210,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5384780270388478130}
   - component: {fileID: 1704196604323166186}
-  - component: {fileID: 1639686222483324283}
   m_Layer: 7
   m_Name: Shotgun
   m_TagString: Untagged
@@ -256,24 +255,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1639686222483324283
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4751655552952162824}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b39b340f1c9054592e82de52728508, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultOrderItem: 1
-  interactableType: 0
-  displayOnInventory: 1
-  inventoryDisplayName: Shotgun
-  baseInventoryItemPrefab: {fileID: 5690417322444792449, guid: c55fddd72a18b3f49b14f2233efb5cd0,
-    type: 3}
 --- !u!1 &6848693259707410859
 GameObject:
   m_ObjectHideFlags: 0

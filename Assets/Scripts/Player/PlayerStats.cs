@@ -6,6 +6,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 [RequireComponent(typeof(FirstPersonController))]
 public class PlayerStats : MonoBehaviour
@@ -87,12 +88,10 @@ public class PlayerStats : MonoBehaviour
 
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
-            if (gunsGameObjects.Count > i) {
-                var inventoryItem = gunsGameObjects[i].GetComponent<InventoryItem>();
-                inventoryItem.DefaultOrderItem = i;
-                inventoryItem.InventoryDisplayName = gun.gunName;
-                gunsInventoryItems.Add(inventoryItem);
-            }
+
+            // dynamic inventory item from the gun
+            InventoryItem inventoryItem = new(i, gun.gunName, InventoryItem.InteractableType.Gun);
+            gunsInventoryItems.Add(inventoryItem);
 
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
@@ -252,8 +251,8 @@ public class PlayerStats : MonoBehaviour
         gunsEnabled[index] = enabled;
 
         if (!alreadyEnabled && enabled) {
-            if (InventoryManager.Instance != null && gunsInventoryItems.Count > index) {
-                InventoryManager.Instance.AddInteractableItem(gunsInventoryItems[index]);
+            if (InventoryManager.Instance != null && guns.Count > index && gunsInventoryItems.Count > index) {
+                InventoryManager.Instance.AddInteractableItem(gunsInventoryItems[index], guns[index].baseInventoryItemPrefab);
             }
         }
     }
@@ -312,7 +311,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerControllerWalk(bool isWalking) {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
+        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
         if (isWalking) {
@@ -327,7 +326,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerControllerRun(bool isRunning) {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
+        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
             return;
         }
         if (isRunning) {
@@ -372,7 +371,7 @@ public class PlayerStats : MonoBehaviour
         ChangeGun(index);
     }
 
-    public void CollectAmmo(int bulletsAmount) {
+    public void CollectAmmunition(int bulletsAmount) {
         if (spendAmmo) {
             // add bullets to the current gun
             availableBullets[selectedGunIndex] += bulletsAmount;
@@ -387,7 +386,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    public void FillAllAmmo() {
+    public void FillAllAmmunition() {
         for (int i = 0; i < guns.Count; i++) {
             currentBullets[i] = maxBullets[i];
         }

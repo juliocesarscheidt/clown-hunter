@@ -154,7 +154,7 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.INFINITE_AMMO:
                 if (playerStats != null) {
                     playerStats.spendAmmo = false;
-                    playerStats.FillAllAmmo();
+                    playerStats.FillAllAmmunition();
                 }
                 break;
             case CheatEnum.INFINITE_SPRINT:

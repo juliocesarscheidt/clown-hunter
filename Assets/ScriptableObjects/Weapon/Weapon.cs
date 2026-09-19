@@ -25,6 +25,9 @@ public class Weapon : ScriptableObject {
     public int availableBullets;
 
     public int hitDamage;
-
     public bool isEnabledByDefault;
+
+    // inventory
+    [Header("UI Prefab Reference")]
+    public GameObject baseInventoryItemPrefab;
 }

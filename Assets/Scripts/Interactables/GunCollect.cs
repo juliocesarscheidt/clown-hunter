@@ -10,7 +10,6 @@ public class GunCollect : Interactable {
     }
 
     public override void Collect() {
-        // Debug.Log($"playerGunIndex {playerGunIndex}");
         playerStats.CollectGunSetEnabled(playerGunIndex);
     }
 

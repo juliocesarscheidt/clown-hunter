@@ -126,7 +126,6 @@ GameObject:
   m_Component:
   - component: {fileID: 946172192702352230}
   - component: {fileID: 459632974526249300}
-  - component: {fileID: 358068449301567863}
   m_Layer: 7
   m_Name: Rifle
   m_TagString: Untagged
@@ -172,24 +171,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &358068449301567863
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4373842828661901899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b39b340f1c9054592e82de52728508, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultOrderItem: 2
-  interactableType: 0
-  displayOnInventory: 1
-  inventoryDisplayName: Rifle
-  baseInventoryItemPrefab: {fileID: 4054788505166238386, guid: 32d65b40df2d5ba439bec3267f29e4b4,
-    type: 3}
 --- !u!1 &5958050410541916479
 GameObject:
   m_ObjectHideFlags: 0

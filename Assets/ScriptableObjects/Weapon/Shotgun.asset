@@ -32,5 +32,5 @@ MonoBehaviour:
   availableBullets: 30
   hitDamage: 50
   isEnabledByDefault: 0
-  interactableUIItem: {fileID: 4858080767194129777, guid: c55fddd72a18b3f49b14f2233efb5cd0,
+  baseInventoryItemPrefab: {fileID: 5690417322444792449, guid: c55fddd72a18b3f49b14f2233efb5cd0,
     type: 3}

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
@@ -14,10 +17,17 @@ public class InventoryManager : MonoBehaviour {
     public List<GameObject> ItemSlots;
     private Dictionary<int, GameObject> SlotsMap = new();
     public int CenterSlotIndex = 2;
+    [SerializeField]
     private int currentItemSlotIndex;
+    [SerializeField]
+    private InventoryItem currentCenterItem;
 
+    [Header("Items Data List")]
     public List<InventoryItem> InteractableGuns = new();
+    private Dictionary<int, GameObject> InventoryGunsPrefabDict = new();
+    [Header("Guns Data List")]
     public List<InventoryItem> InteractableItems = new();
+    private Dictionary<int, GameObject> InventoryItemsPrefabDict = new();
 
     public TextMeshProUGUI uiItemText;
 
@@ -31,7 +41,6 @@ public class InventoryManager : MonoBehaviour {
 
     private Dictionary<InventoryItem, List<GameObject>> itemPool = new();
     private readonly List<GameObject> activeSpawnedItems = new();
-
     private Coroutine scrollAnimationCoroutine;
 
     public enum MenuType {
@@ -39,6 +48,8 @@ public class InventoryManager : MonoBehaviour {
         Item = 1,
     }
     public MenuType menuType;
+    public List<Button> menuButtons;
+    private Coroutine selectMenuButtonCoroutine;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -57,12 +68,27 @@ public class InventoryManager : MonoBehaviour {
         ChangeMenuType(((int)MenuType.Gun));
     }
 
-    public void ChangeMenuType(int newType) {
-        menuType = ((MenuType) newType);
+    public void ChangeMenuType(int newIndex) {
+        menuType = ((MenuType) newIndex);
+
+        // Stop existing routine if one is already running
+        if (selectMenuButtonCoroutine != null) {
+            StopCoroutine(selectMenuButtonCoroutine);
+        }
+        if (menuButtons.Count > newIndex) {
+            selectMenuButtonCoroutine = StartCoroutine(SelectMenuButtonDelayed(menuButtons[newIndex].gameObject));
+        }
+
         currentItemSlotIndex = 0;
 
         ClearPool();
         UpdateSlots();
+    }
+
+    private IEnumerator SelectMenuButtonDelayed(GameObject buttonObj) {
+        EventSystem.current.SetSelectedGameObject(null);
+        yield return null; // Wait one frame
+        EventSystem.current.SetSelectedGameObject(buttonObj);
     }
 
     void Update() {
@@ -72,17 +98,28 @@ public class InventoryManager : MonoBehaviour {
         
         if (IsShowingInventory) {
             float x = Input.GetAxisRaw("Horizontal");
-            if (x != 0 && !isScrollingItems) {
-                if (currentInteractableItems == null || currentInteractableItems.Count <= 0) return;
+            float y = Input.GetAxisRaw("Vertical");
 
-                int increment = (x > 0 ? 1 : -1);
-                int nextIndex = Mathf.Clamp(currentItemSlotIndex + increment, 0, currentInteractableItems.Count - 1);
+            if (x != 0 && !isScrollingItems) {
+                if (CurrentInteractableItems == null || CurrentInteractableItems.Count <= 0) return;
+
+                int direction = (x > 0 ? 1 : -1);
+                int nextIndex = Mathf.Clamp(currentItemSlotIndex + direction, 0, CurrentInteractableItems.Count - 1);
 
                 // Only animate if the index actually changed
                 if (nextIndex != currentItemSlotIndex) {
                     currentItemSlotIndex = nextIndex;
                     isScrollingItems = true;
-                    UpdateSlots(increment); // Pass increment direction
+                    UpdateSlots(direction); // Pass increment direction
+                }
+            }
+
+            if (y != 0) {
+                int direction = (y > 0 ? 1 : -1);
+                // decrement direction to navigate downwards
+                int nextIndex = Mathf.Clamp(MenuTypeInt - direction, 0, 1);
+                if (nextIndex != MenuTypeInt) {
+                    ChangeMenuType(nextIndex);
                 }
             }
         }
@@ -100,7 +137,14 @@ public class InventoryManager : MonoBehaviour {
         activeSpawnedItems.Clear();
         ClearItemNameDisplay();
 
-        if (currentInteractableItems == null || currentInteractableItems.Count <= 0) return;
+        // update current center item
+        if (CurrentInteractableItems.Count > currentItemSlotIndex) {
+            currentCenterItem = CurrentInteractableItems[currentItemSlotIndex];
+        } else {
+            currentCenterItem = null;
+        }
+
+        if (CurrentInteractableItems == null || CurrentInteractableItems.Count <= 0) return;
 
         List<Transform> itemsToAnimate = new();
         List<Vector3> startPositions = new();
@@ -119,7 +163,7 @@ public class InventoryManager : MonoBehaviour {
             int itemIndex = currentItemSlotIndex + offsetFromCenter;
 
             // Skip slots that fall outside the bounds of available items
-            if (itemIndex < 0 || itemIndex >= currentInteractableItems.Count) continue;
+            if (itemIndex < 0 || itemIndex >= CurrentInteractableItems.Count) continue;
             if (!SlotsMap.TryGetValue(slotIndex, out var targetSlot)) continue;
 
             // Target position is always the local center of its target slot (Vector3.zero)
@@ -143,7 +187,7 @@ public class InventoryManager : MonoBehaviour {
                 }
             }
 
-            var currentItemData = currentInteractableItems[itemIndex];
+            var currentItemData = CurrentInteractableItems[itemIndex];
             GameObject uiItemObj = GetPooledItem(currentItemData, targetSlot.transform);
 
             // Apply starting position
@@ -174,9 +218,8 @@ public class InventoryManager : MonoBehaviour {
 
     private void UpdateItemNameDisplay() {
         if (uiItemText == null) return;
-        if (currentInteractableItems != null && currentItemSlotIndex >= 0 && currentItemSlotIndex < currentInteractableItems.Count) {
-            var activeItem = currentInteractableItems[currentItemSlotIndex];
-            uiItemText.text = activeItem.InventoryDisplayName;
+        if (currentCenterItem != null) {
+            uiItemText.text = currentCenterItem.inventoryDisplayName;
         } else {
             ClearItemNameDisplay();
         }
@@ -232,16 +275,34 @@ public class InventoryManager : MonoBehaviour {
                 return pool[i];
             }
         }
+        // getting the base prefab
+        GameObject prefab = null;
+        if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
+            prefab = InventoryItemsPrefabDict[inventoryItem.defaultOrderItem];
+        } else {
+            prefab = InventoryGunsPrefabDict[inventoryItem.defaultOrderItem];
+        }
         // If none are inactive, instantiate a new one and add it to the pool
-        // using the base prefab
-        GameObject newInstance = Instantiate(inventoryItem.baseInventoryItemPrefab.gameObject, parent);
+        GameObject newInstance = Instantiate(prefab, parent);
       
         pool.Add(newInstance);
         return newInstance;
     }
 
-    private List<InventoryItem> currentInteractableItems {
-        get { return menuType == MenuType.Gun ? InteractableGuns : InteractableItems; }
+    private List<InventoryItem> CurrentInteractableItems {
+        get {
+            if (menuType == MenuType.Item) {
+                InteractableItems.Sort();
+                return InteractableItems;
+            } else {
+                InteractableGuns.Sort();
+                return InteractableGuns;
+            }
+        }
+    }
+
+    private int MenuTypeInt {
+        get { return (int) menuType; }
     }
 
     public void ShowInventoryPanel() {
@@ -254,26 +315,30 @@ public class InventoryManager : MonoBehaviour {
         InventoryCanvas.gameObject.SetActive(IsShowingInventory);
     }
 
-    public void AddInteractableItem(InventoryItem item) {
+    public void AddInteractableItem(InventoryItem item, GameObject baseInventoryItemPrefab) {
         if (item.displayOnInventory) {
-            InventoryItem currentCenterItem = null;
-            if (currentInteractableItems != null && currentItemSlotIndex >= 0 && currentItemSlotIndex < currentInteractableItems.Count) {
-                currentCenterItem = currentInteractableItems[currentItemSlotIndex];
-            }
-
             if (item.interactableType == InventoryItem.InteractableType.Item) {
                 InteractableItems.Add(item);
+                InventoryItemsPrefabDict.Add(item.defaultOrderItem, baseInventoryItemPrefab);
+                if (menuType == MenuType.Item) {
+                    if (currentItemSlotIndex >= 0 && InteractableItems.Count > currentItemSlotIndex) {
+                        currentCenterItem = InteractableItems[currentItemSlotIndex];
+                    }
+                }
+
             } else if (item.interactableType == InventoryItem.InteractableType.Gun) {
                 InteractableGuns.Add(item);
+                InventoryGunsPrefabDict.Add(item.defaultOrderItem, baseInventoryItemPrefab);
+                if (menuType == MenuType.Gun) {
+                    if (currentItemSlotIndex >= 0 && InteractableGuns.Count > currentItemSlotIndex) {
+                        currentCenterItem = InteractableGuns[currentItemSlotIndex];
+                    }
+                }
             }
 
-            // 2. Add and re-sort the list
-            InteractableItems = InteractableItems.OrderBy(o => o.DefaultOrderItem).ToList();
-            InteractableGuns = InteractableGuns.OrderBy(o => o.DefaultOrderItem).ToList();
-
-            // 3. Find where the centered item moved to after sorting
+            // Find where the centered item moved to after sorting
             if (currentCenterItem != null) {
-                int newIndex = currentInteractableItems.IndexOf(currentCenterItem);
+                int newIndex = CurrentInteractableItems.IndexOf(currentCenterItem);
                 if (newIndex != -1) {
                     currentItemSlotIndex = newIndex; // Keep the same item centered
                 }
@@ -282,10 +347,10 @@ public class InventoryManager : MonoBehaviour {
                 currentItemSlotIndex = 0;
             }
 
-            // 4. Clamp safety check
-            currentItemSlotIndex = Mathf.Clamp(currentItemSlotIndex, 0, currentInteractableItems.Count - 1);
+            // Clamp safety check
+            currentItemSlotIndex = Mathf.Clamp(currentItemSlotIndex, 0, CurrentInteractableItems.Count - 1);
 
-            // 5. Refresh UI layout with updated indices
+            // Refresh UI layout with updated indices
             UpdateSlots(0);
         }
     }

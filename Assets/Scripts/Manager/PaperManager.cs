@@ -85,6 +85,7 @@ public class PaperManager : MonoBehaviour
 
             if (paper.TryGetComponent<Paper>(out var p)) {
                 var name = $"Paper #{i + 1}";
+                p.name = name;
                 p.SetInventoryItemData(i, name);
             }
 
@@ -100,7 +101,7 @@ public class PaperManager : MonoBehaviour
         MonsterManager.Instance.SpawnEnemies();
         // add the UI item to inventory manager
         if (InventoryManager.Instance != null && paper != null) {
-            InventoryManager.Instance.AddInteractableItem(paper.inventoryItem);
+            InventoryManager.Instance.AddInteractableItem(paper.GetInventoryItem(), paper.baseInventoryItemPrefab);
         }
         // remove from spawnedPapers
         spawnedPapers.Remove(paper.gameObject);
