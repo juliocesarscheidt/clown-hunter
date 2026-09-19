@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectRenderer: {fileID: 1146898662287165383}
-  maxBlurAmount: 1
+  maxBlurAmount: 0.03
 --- !u!1 &7509838466795325924
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,19 +9,19 @@ public class Blur3DItem : MonoBehaviour {
     private MaterialPropertyBlock propertyBlock;
     private static readonly int BlurAmountID = Shader.PropertyToID("_BlurAmount");
 
-    private void Awake() {
-        if (objectRenderer == null) {
-            objectRenderer = GetComponentInChildren<Renderer>();
-        }
-        propertyBlock = new MaterialPropertyBlock();
+    private void EnsureInitialized() {
+        objectRenderer = objectRenderer != null ? objectRenderer : GetComponentInChildren<Renderer>();
+        propertyBlock ??= new MaterialPropertyBlock();
     }
 
-    /// <summary>
-    /// Sets blur state without generating Material instance garbage.
-    /// </summary>
-    public void SetBlur(bool isBlurred) {
-        if (objectRenderer == null) return;
+    private void Awake() {
+        EnsureInitialized();
+    }
 
+    public void SetBlur(bool isBlurred) {
+        EnsureInitialized();
+
+        if (objectRenderer == null) return;
         objectRenderer.GetPropertyBlock(propertyBlock);
 
         // Pass blur amount parameter directly to the Shader Graph property
@@ -29,5 +29,15 @@ public class Blur3DItem : MonoBehaviour {
         propertyBlock.SetFloat(BlurAmountID, blurVal);
 
         objectRenderer.SetPropertyBlock(propertyBlock);
+    }
+
+    [ContextMenu("Test Enable Blur")]
+    public void TestBlurOn() {
+        SetBlur(true);
+    }
+
+    [ContextMenu("Test Disable Blur")]
+    public void TestBlurOff() {
+        SetBlur(false);
     }
 }

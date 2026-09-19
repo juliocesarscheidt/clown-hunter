@@ -201,8 +201,6 @@ public class InventoryManager : MonoBehaviour {
             var isCenterItem = (slotIndex == CenterSlotIndex);
             // Update 3D blur state via property block
             if (uiItemObj.TryGetComponent<Blur3DItem>(out var blurComponent)) {
-                Debug.Log($"slotIndex {slotIndex}");
-                Debug.Log($"currentItemData.inventoryDisplayName {currentItemData.inventoryDisplayName}");
                 blurComponent.SetBlur(!isCenterItem);
             }
 
