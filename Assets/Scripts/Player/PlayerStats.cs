@@ -3,7 +3,6 @@ using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -250,7 +249,7 @@ public class PlayerStats : MonoBehaviour
         if (!alreadyEnabled && enabled) {
             if (InventoryManager.Instance != null && guns.Count > index) {
                 var gun = guns[index];
-                InventoryManager.Instance.AddInteractableItem(gun.GetInventoryItem(), gun.baseInventoryItemPrefab);
+                InventoryManager.Instance.AddInteractableItem(gun.inventoryItem, gun.baseInventoryItemPrefab);
             }
         }
     }

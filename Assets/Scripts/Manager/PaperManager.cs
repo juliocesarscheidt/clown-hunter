@@ -101,7 +101,7 @@ public class PaperManager : MonoBehaviour
         MonsterManager.Instance.SpawnEnemies();
         // add the UI item to inventory manager
         if (InventoryManager.Instance != null && paper != null) {
-            InventoryManager.Instance.AddInteractableItem(paper.GetInventoryItem(), paper.baseInventoryItemPrefab);
+            InventoryManager.Instance.AddInteractableItem(paper.inventoryItem, paper.baseInventoryItemPrefab);
         }
         // remove from spawnedPapers
         spawnedPapers.Remove(paper.gameObject);

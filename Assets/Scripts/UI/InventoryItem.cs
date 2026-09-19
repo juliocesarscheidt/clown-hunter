@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-// Data Class
 [System.Serializable]
-public class InventoryItem {
+public class InventoryItem : IComparable<InventoryItem> {
     public int defaultOrderItem;
     public string inventoryDisplayName;
     public enum InteractableType {
@@ -14,12 +10,17 @@ public class InventoryItem {
     }
     public InteractableType interactableType;
     public bool displayOnInventory;
-    
+
     // enabled by default
     public InventoryItem(int orderItem, string displayName, InteractableType iType) {
         defaultOrderItem = orderItem;
         inventoryDisplayName = displayName;
         interactableType = iType;
         displayOnInventory = true;
+    }
+
+    public int CompareTo(InventoryItem other) {
+        if (other == null) return 1;
+        return defaultOrderItem.CompareTo(other.defaultOrderItem);
     }
 }

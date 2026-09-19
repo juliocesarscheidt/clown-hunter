@@ -7,8 +7,9 @@ public class Paper : Interactable {
     // inventory
     [Header("UI Prefab Reference")]
     public GameObject baseInventoryItemPrefab;
-    [HideInInspector]
-    private InventoryItem inventoryItem;
+
+    [System.NonSerialized]
+    public InventoryItem inventoryItem;
 
     private void Awake() {
         paperObj = transform.GetChild(0).gameObject;
@@ -27,10 +28,6 @@ public class Paper : Interactable {
             inventoryItem.interactableType = InventoryItem.InteractableType.Item;
             inventoryItem.displayOnInventory = true;
         }
-    }
-
-    public InventoryItem GetInventoryItem() {
-        return inventoryItem;
     }
 
     public void SetPaperObjLayer(int layer) {
