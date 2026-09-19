@@ -12,20 +12,23 @@ public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
 
     private PlayerStats playerStats;
-
     public Canvas InventoryCanvas;
+
+    [Header("Slots")]
     public List<GameObject> ItemSlots;
     private Dictionary<int, GameObject> SlotsMap = new();
     public int CenterSlotIndex = 2;
     [SerializeField]
     private int currentItemSlotIndex;
-    [SerializeField]
+    [HideInInspector]
     private InventoryItem currentCenterItem;
 
     [Header("Items Data List")]
+    [HideInInspector]
     public List<InventoryItem> InteractableGuns = new();
     private Dictionary<int, GameObject> InventoryGunsPrefabDict = new();
     [Header("Guns Data List")]
+    [HideInInspector]
     public List<InventoryItem> InteractableItems = new();
     private Dictionary<int, GameObject> InventoryItemsPrefabDict = new();
 
@@ -39,6 +42,7 @@ public class InventoryManager : MonoBehaviour {
     [SerializeField]
     private float scrollDuration = 0.2f; // Animation speed in seconds
 
+    [HideInInspector]
     private Dictionary<InventoryItem, List<GameObject>> itemPool = new();
     private readonly List<GameObject> activeSpawnedItems = new();
     private Coroutine scrollAnimationCoroutine;
@@ -291,13 +295,7 @@ public class InventoryManager : MonoBehaviour {
 
     private List<InventoryItem> CurrentInteractableItems {
         get {
-            if (menuType == MenuType.Item) {
-                InteractableItems.Sort();
-                return InteractableItems;
-            } else {
-                InteractableGuns.Sort();
-                return InteractableGuns;
-            }
+            return menuType == MenuType.Item ? InteractableItems : InteractableGuns;
         }
     }
 
@@ -319,6 +317,8 @@ public class InventoryManager : MonoBehaviour {
         if (item.displayOnInventory) {
             if (item.interactableType == InventoryItem.InteractableType.Item) {
                 InteractableItems.Add(item);
+                InteractableItems.OrderBy(o => o.defaultOrderItem).ToList();
+
                 InventoryItemsPrefabDict.Add(item.defaultOrderItem, baseInventoryItemPrefab);
                 if (menuType == MenuType.Item) {
                     if (currentItemSlotIndex >= 0 && InteractableItems.Count > currentItemSlotIndex) {
@@ -328,6 +328,8 @@ public class InventoryManager : MonoBehaviour {
 
             } else if (item.interactableType == InventoryItem.InteractableType.Gun) {
                 InteractableGuns.Add(item);
+                InteractableGuns.OrderBy(o => o.defaultOrderItem).ToList();
+
                 InventoryGunsPrefabDict.Add(item.defaultOrderItem, baseInventoryItemPrefab);
                 if (menuType == MenuType.Gun) {
                     if (currentItemSlotIndex >= 0 && InteractableGuns.Count > currentItemSlotIndex) {
