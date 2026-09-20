@@ -1,5 +1,6 @@
 using Cinemachine;
 using StarterAssets;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,8 +87,12 @@ public class PlayerStats : MonoBehaviour
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
 
-            // dynamics set inventory item in the gun
-            gun.SetInventoryItemData(i, gun.gunName);
+            // dynamically set inventory item in the gun
+            void equipAction(InventoryItem item) {
+                HudManager.Instance.HideInventoryPanel();
+                ChangeGun(item.defaultItemIndex);
+            }
+            gun.SetInventoryItemData(i, gun.gunName, true, true, equipAction);
 
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);

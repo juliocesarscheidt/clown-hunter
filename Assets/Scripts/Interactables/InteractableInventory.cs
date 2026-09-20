@@ -1,33 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Weapon", menuName = "Weapon")]
-public class Weapon : ScriptableObject {
-    public string gunName;
-    public GameObject gunPrefabObject;
-    public GameObject particleShotEffect;
-    public GameObject bulletHolePrefab;
-
-    public Sprite gunReticleImage;
-
-    public AudioClip gunShotSound;
-    public AudioClip gunReloadSound;
-    public AudioClip gunEmptySound;
-
-    public Sprite gunIconImage;
-
-    public float timeToShootInterval;
-    public float timeToReloadInterval = 3f;
-
-    public bool isAutomaticGun;
-
-    public int currentBullets;
-    public int maxBullets;
-    public int availableBullets;
-
-    public int hitDamage;
-    public bool isEnabledByDefault;
-
+public abstract class InteractableInventory : Interactable {
     // inventory
     [Header("UI Prefab Reference")]
     public GameObject baseInventoryItemPrefab;
@@ -39,12 +13,12 @@ public class Weapon : ScriptableObject {
         bool equip = false, bool investigate = false,
         Action<InventoryItem> equipActionToInvoke = null, Action<InventoryItem> investigateActionToInvoke = null) {
         if (inventoryItem == null) {
-            inventoryItem = new(index, displayName, InventoryItem.InteractableType.Gun,
+            inventoryItem = new(index, displayName, InventoryItem.InteractableType.Item,
                 equip, investigate, equipActionToInvoke, investigateActionToInvoke);
         } else {
             inventoryItem.defaultItemIndex = index;
             inventoryItem.inventoryDisplayName = displayName;
-            inventoryItem.interactableType = InventoryItem.InteractableType.Gun;
+            inventoryItem.interactableType = InventoryItem.InteractableType.Item;
             inventoryItem.displayOnInventory = true;
             inventoryItem.canEquip = equip;
             inventoryItem.canInvestigate = investigate;

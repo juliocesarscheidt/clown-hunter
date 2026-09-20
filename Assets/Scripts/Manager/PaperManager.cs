@@ -84,9 +84,11 @@ public class PaperManager : MonoBehaviour
             );
 
             if (paper.TryGetComponent<Paper>(out var p)) {
-                var name = $"Paper #{i + 1}";
+                string name = $"Paper #{i + 1}";
                 p.name = name;
-                p.SetInventoryItemData(i, name);
+
+                // dynamically set inventory item in the paper
+                p.SetInventoryItemData(i, name, false, true);
             }
 
             spawnedPapers.Add(paper);

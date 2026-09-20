@@ -34,7 +34,9 @@ public class InventoryManager : MonoBehaviour {
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryItemsPrefabDict = new();
 
-    public TextMeshProUGUI uiItemText;
+    public TextMeshProUGUI uiItemNameText;
+    public TextMeshProUGUI uiItemEquipText;
+    public TextMeshProUGUI uiItemInvestigateText;
 
     public bool IsShowingInventory = false;
     [SerializeField]
@@ -129,6 +131,17 @@ public class InventoryManager : MonoBehaviour {
                     ChangeMenuType(nextIndex);
                 }
             }
+
+            if (Input.GetButtonDown("Interact") && currentCenterItem != null) {
+                if (currentCenterItem.canEquip && currentCenterItem.equipActionToInvoke != null) {
+                    currentCenterItem.equipActionToInvoke.Invoke(currentCenterItem);
+                }
+            }
+            if (Input.GetButtonDown("Jump") && currentCenterItem != null) {
+                if (currentCenterItem.canInvestigate && currentCenterItem.investigateActionToInvoke != null) {
+                    currentCenterItem.investigateActionToInvoke.Invoke(currentCenterItem);
+                }
+            }
         }
     }
 
@@ -142,7 +155,6 @@ public class InventoryManager : MonoBehaviour {
             activeSpawnedItems[i].SetActive(false);
         }
         activeSpawnedItems.Clear();
-        ClearItemNameDisplay();
 
         // update current center item
         if (CurrentInteractableItems.Count > currentItemSlotIndex) {
@@ -150,6 +162,10 @@ public class InventoryManager : MonoBehaviour {
         } else {
             currentCenterItem = null;
         }
+
+        ClearItemNameDisplay();
+        uiItemEquipText.gameObject.SetActive(false);
+        uiItemInvestigateText.gameObject.SetActive(false);
 
         if (CurrentInteractableItems == null || CurrentInteractableItems.Count <= 0) return;
 
@@ -194,20 +210,22 @@ public class InventoryManager : MonoBehaviour {
                 }
             }
 
-            var currentItemData = CurrentInteractableItems[itemIndex];
-            GameObject uiItemObj = GetPooledItem(currentItemData, targetSlot.transform);
+            InventoryItem currentInventoryItem = CurrentInteractableItems[itemIndex];
+            GameObject uiItemObj = GetPooledItem(currentInventoryItem, targetSlot.transform);
 
-            //var isCenterItem = (slotIndex == CenterSlotIndex);
-            //// Update 3D blur state via property block
-            //if (uiItemObj.TryGetComponent<Blur3DItem>(out var blurComponent)) {
-            //    blurComponent.SetBlur(!isCenterItem);
-            //}
+            bool isCenterItem = (slotIndex == CenterSlotIndex);
+            Vector3 desiredScale = Vector3.one;
+            if (isCenterItem) {
+                desiredScale = Vector3.one * 1.2f; // Scale up the center item
+                uiItemEquipText.gameObject.SetActive(currentInventoryItem.canEquip);
+                uiItemInvestigateText.gameObject.SetActive(currentInventoryItem.canInvestigate);
+            }
 
             // Apply starting position
             uiItemObj.transform.SetParent(targetSlot.transform, false);
             uiItemObj.transform.SetPositionAndRotation(targetSlot.transform.position, targetSlot.transform.rotation);
             uiItemObj.transform.localPosition = startLocalPos;
-            uiItemObj.transform.localScale = Vector3.one;
+            uiItemObj.transform.localScale = desiredScale;
             uiItemObj.SetActive(true);
 
             activeSpawnedItems.Add(uiItemObj);
@@ -228,20 +246,7 @@ public class InventoryManager : MonoBehaviour {
             isScrollingItems = false;
         }
     }
-
-    private void UpdateItemNameDisplay() {
-        if (uiItemText == null) return;
-        if (currentCenterItem != null) {
-            uiItemText.text = currentCenterItem.inventoryDisplayName;
-        } else {
-            ClearItemNameDisplay();
-        }
-    }
-
-    private void ClearItemNameDisplay() {
-        uiItemText.text = string.Empty; // Clear text if no items exist
-    }
-
+    
     private IEnumerator AnimateSlotSlide(List<Transform> items, List<Vector3> starts, List<Vector3> targets) {
         while (scrollTimer < scrollDuration) {
             scrollTimer += Time.unscaledDeltaTime;
@@ -264,71 +269,27 @@ public class InventoryManager : MonoBehaviour {
         isScrollingItems = false;
     }
 
-    public void ClearPool() {
-        // Destroy all pooled objects
-        foreach (var poolList in itemPool.Values) {
-            for (int i = 0; i < poolList.Count; i++) {
-                if (poolList[i] != null) {
-                    Destroy(poolList[i]);
-                }
-            }
-        }
-        itemPool.Clear();
-        activeSpawnedItems.Clear();
-    }
-
-    private GameObject GetPooledItem(InventoryItem inventoryItem, Transform parent) {
-        if (!itemPool.ContainsKey(inventoryItem)) {
-            itemPool[inventoryItem] = new List<GameObject>();
-        }
-        // Search for an inactive object in the pool
-        List<GameObject> pool = itemPool[inventoryItem];
-        for (int i = 0; i < pool.Count; i++) {
-            if (!pool[i].activeInHierarchy) {
-                return pool[i];
-            }
-        }
-        // getting the base prefab
-        GameObject prefab;
-        if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
-            prefab = InventoryItemsPrefabDict[inventoryItem.defaultOrderItem];
+    private void UpdateItemNameDisplay() {
+        if (uiItemNameText == null) return;
+        if (currentCenterItem != null) {
+            uiItemNameText.text = currentCenterItem.inventoryDisplayName;
         } else {
-            prefab = InventoryGunsPrefabDict[inventoryItem.defaultOrderItem];
-        }
-        // If none are inactive, instantiate a new one and add it to the pool
-        GameObject newInstance = Instantiate(prefab, parent);
-      
-        pool.Add(newInstance);
-        return newInstance;
-    }
-
-    private List<InventoryItem> CurrentInteractableItems {
-        get {
-            return menuType == MenuType.Item ? InteractableItems : InteractableGuns;
+            ClearItemNameDisplay();
         }
     }
 
-    private int MenuTypeInt {
-        get { return (int) menuType; }
-    }
-
-    public void ShowInventoryPanel() {
-        IsShowingInventory = true;
-        InventoryCanvas.gameObject.SetActive(IsShowingInventory);
-    }
-
-    public void HideInventoryPanel() {
-        IsShowingInventory = false;
-        InventoryCanvas.gameObject.SetActive(IsShowingInventory);
+    private void ClearItemNameDisplay() {
+        uiItemNameText.text = string.Empty; // Clear text if no items exist
     }
 
     public void AddInteractableItem(InventoryItem item, GameObject baseInventoryItemPrefab) {
         if (item != null && item.displayOnInventory) {
             if (item.interactableType == InventoryItem.InteractableType.Item) {
                 InteractableItems.Add(item);
-                InteractableItems.Sort((a, b) => a.defaultOrderItem.CompareTo(b.defaultOrderItem));
+                // not sorting items by design, to make them unordered
+                // InteractableItems.Sort((a, b) => a.defaultItemIndex.CompareTo(b.defaultItemIndex));
 
-                InventoryItemsPrefabDict.Add(item.defaultOrderItem, baseInventoryItemPrefab);
+                InventoryItemsPrefabDict.Add(item.defaultItemIndex, baseInventoryItemPrefab);
                 if (menuType == MenuType.Item) {
                     if (currentItemSlotIndex >= 0 && InteractableItems.Count > currentItemSlotIndex) {
                         currentCenterItem = InteractableItems[currentItemSlotIndex];
@@ -337,9 +298,9 @@ public class InventoryManager : MonoBehaviour {
 
             } else if (item.interactableType == InventoryItem.InteractableType.Gun) {
                 InteractableGuns.Add(item);
-                InteractableGuns.Sort((a, b) => a.defaultOrderItem.CompareTo(b.defaultOrderItem));
+                InteractableGuns.Sort((a, b) => a.defaultItemIndex.CompareTo(b.defaultItemIndex));
 
-                InventoryGunsPrefabDict.Add(item.defaultOrderItem, baseInventoryItemPrefab);
+                InventoryGunsPrefabDict.Add(item.defaultItemIndex, baseInventoryItemPrefab);
                 if (menuType == MenuType.Gun) {
                     if (currentItemSlotIndex >= 0 && InteractableGuns.Count > currentItemSlotIndex) {
                         currentCenterItem = InteractableGuns[currentItemSlotIndex];
@@ -364,5 +325,63 @@ public class InventoryManager : MonoBehaviour {
             // Refresh UI layout with updated indices
             UpdateSlots(0);
         }
+    }
+
+    private List<InventoryItem> CurrentInteractableItems {
+        get {
+            return menuType == MenuType.Item ? InteractableItems : InteractableGuns;
+        }
+    }
+    
+    private GameObject GetPooledItem(InventoryItem inventoryItem, Transform parent) {
+        if (!itemPool.ContainsKey(inventoryItem)) {
+            itemPool[inventoryItem] = new List<GameObject>();
+        }
+        // Search for an inactive object in the pool
+        List<GameObject> pool = itemPool[inventoryItem];
+        for (int i = 0; i < pool.Count; i++) {
+            if (!pool[i].activeInHierarchy) {
+                return pool[i];
+            }
+        }
+        // getting the base prefab
+        GameObject prefab;
+        if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
+            prefab = InventoryItemsPrefabDict[inventoryItem.defaultItemIndex];
+        } else {
+            prefab = InventoryGunsPrefabDict[inventoryItem.defaultItemIndex];
+        }
+        // If none are inactive, instantiate a new one and add it to the pool
+        GameObject newInstance = Instantiate(prefab, parent);
+      
+        pool.Add(newInstance);
+        return newInstance;
+    }
+    
+    public void ClearPool() {
+        // Destroy all pooled objects
+        foreach (var poolList in itemPool.Values) {
+            for (int i = 0; i < poolList.Count; i++) {
+                if (poolList[i] != null) {
+                    Destroy(poolList[i]);
+                }
+            }
+        }
+        itemPool.Clear();
+        activeSpawnedItems.Clear();
+    }
+
+    private int MenuTypeInt {
+        get { return (int) menuType; }
+    }
+
+    public void ShowInventoryPanel() {
+        IsShowingInventory = true;
+        InventoryCanvas.gameObject.SetActive(IsShowingInventory);
+    }
+
+    public void HideInventoryPanel() {
+        IsShowingInventory = false;
+        InventoryCanvas.gameObject.SetActive(IsShowingInventory);
     }
 }
