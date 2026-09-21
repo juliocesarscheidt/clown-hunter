@@ -2188,7 +2188,7 @@ GameObject:
   - component: {fileID: 4691556085034815763}
   - component: {fileID: 1811302314473054809}
   m_Layer: 5
-  m_Name: ExitInspect
+  m_Name: ExitInspectText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
