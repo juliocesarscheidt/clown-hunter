@@ -20,12 +20,10 @@ public class InventoryItem : IComparable<InventoryItem> {
 
     [System.NonSerialized]
     public Action<InventoryItem> equipActionToInvoke;
-    [System.NonSerialized]
-    public Action<InventoryItem> investigateActionToInvoke;
 
     public InventoryItem(int index, string displayName, InteractableType iType,
         bool equip = false, bool investigate = false,
-        Action<InventoryItem> equipActionToInvoke = null, Action<InventoryItem> investigateActionToInvoke = null) {
+        Action<InventoryItem> equipActionToInvoke = null) {
         defaultItemIndex = index;
         inventoryDisplayName = displayName;
         interactableType = iType;
@@ -33,7 +31,6 @@ public class InventoryItem : IComparable<InventoryItem> {
         canEquip = equip;
         canInvestigate = investigate;
         this.equipActionToInvoke = equipActionToInvoke;
-        this.investigateActionToInvoke = investigateActionToInvoke;
     }
 
     public int CompareTo(InventoryItem other) {

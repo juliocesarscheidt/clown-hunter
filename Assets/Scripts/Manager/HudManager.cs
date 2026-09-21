@@ -76,7 +76,7 @@ public class HudManager : MonoBehaviour
             }
 
             if (!isPaused && Input.GetButtonDown("Inventory")) {
-                if (!isShowingInventory) {
+                if (!InventoryManager.Instance.IsShowingInventory) {
                     ShowInventoryPanel();
                 } else {
                     HideInventoryPanel();
@@ -166,10 +166,14 @@ public class HudManager : MonoBehaviour
 
     public void ShowPauseGamePanel() {
         isPaused = true;
+        PostProcessingManager.Instance.EnableBlur();
+
+        if (InventoryManager.Instance.IsShowingInventory) {
+            InventoryManager.Instance.HideInventoryPanel();
+        }
 
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
-        InventoryManager.Instance.HideInventoryPanel();
 
         HideOptionsPanels();
 
@@ -179,6 +183,7 @@ public class HudManager : MonoBehaviour
 
     public void HidePauseGamePanel() {
         isPaused = false;
+        PostProcessingManager.Instance.DisableBlur();
 
         LockCursor();
         uiInfoWraperObject.SetActive(true);
@@ -189,6 +194,8 @@ public class HudManager : MonoBehaviour
     }
 
     public void ShowInventoryPanel() {
+        PostProcessingManager.Instance.EnableBlur();
+
         uiInfoWraperObject.SetActive(false);
         HideOptionsPanels();
 
@@ -197,6 +204,8 @@ public class HudManager : MonoBehaviour
     }
 
     public void HideInventoryPanel() {
+        PostProcessingManager.Instance.DisableBlur();
+
         uiInfoWraperObject.SetActive(true);
         HideOptionsPanels();
 
@@ -204,8 +213,12 @@ public class HudManager : MonoBehaviour
         InventoryManager.Instance.HideInventoryPanel();
     }
 
-    private bool isShowingInventory {
-        get { return InventoryManager.Instance.IsShowingInventory; }
+    public void InventoryEnterInspectMode() {
+        UnlockCursor();
+    }
+
+    public void InventoryExitInspectMode() {
+        LockCursor();
     }
 
     private void HideOptionsPanels() {

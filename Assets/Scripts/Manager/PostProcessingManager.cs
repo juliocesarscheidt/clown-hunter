@@ -5,13 +5,15 @@ public class PostProcessingManager : MonoBehaviour
 {
     public static PostProcessingManager Instance { get; private set; }
 
-    public Volume globalVolume;
+    public Volume globalVolumeGeneral;
 
     public VolumeProfile defaultProfile;
     public VolumeProfile nightVisionProfile;
     public VolumeProfile blackWhiteProfile;
     public VolumeProfile blackWhiteNightVisionProfile;
     private VolumeProfile previousProfile;
+
+    public Volume globalVolumeBlur;
 
     public float defaultFog = 0.175f;
     public float nightVisionFog = 0.125f;
@@ -30,20 +32,29 @@ public class PostProcessingManager : MonoBehaviour
     private void Start() {
         previousProfile = defaultProfile;
         previousFog = defaultFog;
+        DisableBlur();
+    }
+
+    public void EnableBlur()  {
+        globalVolumeBlur.enabled = true;
+    }
+
+    public void DisableBlur() {
+        globalVolumeBlur.enabled = false;
     }
 
     public void SetPreviousProfile() {
-        globalVolume.profile = previousProfile;
+        globalVolumeGeneral.profile = previousProfile;
         RenderSettings.fogDensity = previousFog;
     }
 
     public void SetBlackWhiteProfile() {
         // black and white is a temporary profile
         if (nightVisionIsOn) {
-            globalVolume.profile = blackWhiteNightVisionProfile;
+            globalVolumeGeneral.profile = blackWhiteNightVisionProfile;
             RenderSettings.fogDensity = nightVisionFog;
         } else {
-            globalVolume.profile = blackWhiteProfile;
+            globalVolumeGeneral.profile = blackWhiteProfile;
             RenderSettings.fogDensity = defaultFog;
         }
     }
@@ -52,7 +63,7 @@ public class PostProcessingManager : MonoBehaviour
         previousProfile = nightVisionProfile;
         nightVisionIsOn = true;
 
-        globalVolume.profile = nightVisionProfile;
+        globalVolumeGeneral.profile = nightVisionProfile;
         RenderSettings.fogDensity = nightVisionFog;
     }
   
@@ -60,7 +71,7 @@ public class PostProcessingManager : MonoBehaviour
         previousProfile = defaultProfile;
         nightVisionIsOn = false;
 
-        globalVolume.profile = defaultProfile;
+        globalVolumeGeneral.profile = defaultProfile;
         RenderSettings.fogDensity = defaultFog;
     }
 }

@@ -37,10 +37,10 @@ public class Weapon : ScriptableObject {
 
     public void SetInventoryItemData(int index, string displayName,
         bool equip = false, bool investigate = false,
-        Action<InventoryItem> equipActionToInvoke = null, Action<InventoryItem> investigateActionToInvoke = null) {
+        Action<InventoryItem> equipActionToInvoke = null) {
         if (inventoryItem == null) {
             inventoryItem = new(index, displayName, InventoryItem.InteractableType.Gun,
-                equip, investigate, equipActionToInvoke, investigateActionToInvoke);
+                equip, investigate, equipActionToInvoke);
         } else {
             inventoryItem.defaultItemIndex = index;
             inventoryItem.inventoryDisplayName = displayName;
@@ -49,7 +49,6 @@ public class Weapon : ScriptableObject {
             inventoryItem.canEquip = equip;
             inventoryItem.canInvestigate = investigate;
             inventoryItem.equipActionToInvoke = equipActionToInvoke;
-            inventoryItem.investigateActionToInvoke = investigateActionToInvoke;
         }
     }
 }

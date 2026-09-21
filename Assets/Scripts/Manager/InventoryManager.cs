@@ -9,12 +9,13 @@ public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
 
     private PlayerStats playerStats;
-    public Canvas InventoryCanvas;
+    public GameObject InventoryCanvas;
 
     [Header("Slots")]
     public List<GameObject> ItemSlots;
     private Dictionary<int, GameObject> SlotsMap = new();
     public int CenterSlotIndex = 2;
+    public GameObject ItemSlotsPanelWrapper;
 
     [SerializeField]
     private int currentItemSlotIndex;
@@ -52,6 +53,10 @@ public class InventoryManager : MonoBehaviour {
     private readonly List<GameObject> activeSpawnedItems = new();
     private Coroutine scrollAnimationCoroutine;
 
+    public ItemInspectController itemInspectorController;
+    [SerializeField]
+    private bool isInspectingItem;
+
     public enum MenuType {
         Gun = 0,
         Item = 1,
@@ -87,6 +92,9 @@ public class InventoryManager : MonoBehaviour {
         if (menuButtons.Count > newIndex) {
             selectMenuButtonCoroutine = StartCoroutine(SelectMenuButtonDelayed(menuButtons[newIndex].gameObject));
         }
+        if (isInspectingItem) {
+            ExitInspectItem();
+        }
 
         currentItemSlotIndex = 0;
 
@@ -109,7 +117,7 @@ public class InventoryManager : MonoBehaviour {
             float x = Input.GetAxisRaw("Horizontal");
             float y = Input.GetAxisRaw("Vertical");
 
-            if (x != 0 && !isScrollingItems) {
+            if (!isInspectingItem && x != 0 && !isScrollingItems) {
                 if (CurrentInteractableItems == null || CurrentInteractableItems.Count <= 0) return;
 
                 int direction = (x > 0 ? 1 : -1);
@@ -122,8 +130,7 @@ public class InventoryManager : MonoBehaviour {
                     UpdateSlots(direction); // Pass increment direction
                 }
             }
-
-            if (y != 0) {
+            if (!isInspectingItem && y != 0) {
                 int direction = (y > 0 ? 1 : -1);
                 // decrement direction to navigate downwards
                 int nextIndex = Mathf.Clamp(MenuTypeInt - direction, 0, 1);
@@ -132,14 +139,16 @@ public class InventoryManager : MonoBehaviour {
                 }
             }
 
-            if (Input.GetButtonDown("Interact") && currentCenterItem != null) {
-                if (currentCenterItem.canEquip && currentCenterItem.equipActionToInvoke != null) {
-                    currentCenterItem.equipActionToInvoke.Invoke(currentCenterItem);
+            if (currentCenterItem != null) {
+                if (!isInspectingItem && Input.GetButtonDown("Interact") && currentCenterItem.canEquip) {
+                    currentCenterItem.equipActionToInvoke?.Invoke(currentCenterItem);
                 }
-            }
-            if (Input.GetButtonDown("Jump") && currentCenterItem != null) {
-                if (currentCenterItem.canInvestigate && currentCenterItem.investigateActionToInvoke != null) {
-                    currentCenterItem.investigateActionToInvoke.Invoke(currentCenterItem);
+                if (Input.GetButtonDown("Jump") && currentCenterItem.canInvestigate) {
+                    if (!isInspectingItem) {
+                        EnterInspectItem(currentCenterItem);
+                    } else {
+                        ExitInspectItem();
+                    }
                 }
             }
         }
@@ -172,6 +181,7 @@ public class InventoryManager : MonoBehaviour {
         List<Transform> itemsToAnimate = new();
         List<Vector3> startPositions = new();
         List<Vector3> targetPositions = new();
+        // List<Vector3> targetScales = new();
 
         for (int slotIndex = 0; slotIndex < ItemSlots.Count; slotIndex++) {
             // --- VISIBILITY HARD BOUNDARY ---
@@ -214,9 +224,9 @@ public class InventoryManager : MonoBehaviour {
             GameObject uiItemObj = GetPooledItem(currentInventoryItem, targetSlot.transform);
 
             bool isCenterItem = (slotIndex == CenterSlotIndex);
-            Vector3 desiredScale = Vector3.one;
+            // Vector3 targetScale = Vector3.one;
             if (isCenterItem) {
-                desiredScale = Vector3.one * 1.2f; // Scale up the center item
+                // targetScale = Vector3.one * 1.5f; // Scale up the center item
                 uiItemEquipText.gameObject.SetActive(currentInventoryItem.canEquip);
                 uiItemInvestigateText.gameObject.SetActive(currentInventoryItem.canInvestigate);
             }
@@ -225,13 +235,14 @@ public class InventoryManager : MonoBehaviour {
             uiItemObj.transform.SetParent(targetSlot.transform, false);
             uiItemObj.transform.SetPositionAndRotation(targetSlot.transform.position, targetSlot.transform.rotation);
             uiItemObj.transform.localPosition = startLocalPos;
-            uiItemObj.transform.localScale = desiredScale;
+            uiItemObj.transform.localScale = Vector3.one;
             uiItemObj.SetActive(true);
 
             activeSpawnedItems.Add(uiItemObj);
             itemsToAnimate.Add(uiItemObj.transform);
             startPositions.Add(startLocalPos);
             targetPositions.Add(targetLocalPos);
+            // targetScales.Add(targetScale);
         }
 
         UpdateItemNameDisplay();
@@ -247,14 +258,14 @@ public class InventoryManager : MonoBehaviour {
         }
     }
     
-    private IEnumerator AnimateSlotSlide(List<Transform> items, List<Vector3> starts, List<Vector3> targets) {
+    private IEnumerator AnimateSlotSlide(List<Transform> items, List<Vector3> startPositions, List<Vector3> targetPositions) {
         while (scrollTimer < scrollDuration) {
             scrollTimer += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(scrollTimer / scrollDuration);
             float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
             for (int i = 0; i < items.Count; i++) {
                 if (items[i] != null) {
-                    items[i].localPosition = Vector3.Lerp(starts[i], targets[i], smoothProgress);
+                    items[i].localPosition = Vector3.Lerp(startPositions[i], targetPositions[i], smoothProgress);
                 }
             }
             yield return null;
@@ -262,7 +273,9 @@ public class InventoryManager : MonoBehaviour {
 
         // Snap to exact target position at the end
         for (int i = 0; i < items.Count; i++) {
-            if (items[i] != null) items[i].localPosition = targets[i];
+            if (items[i] != null) {
+                items[i].localPosition = targetPositions[i];
+            }
         }
 
         scrollTimer = 0f;
@@ -333,6 +346,33 @@ public class InventoryManager : MonoBehaviour {
         }
     }
     
+    public void EnterInspectItem(InventoryItem inventoryItem) {
+        isInspectingItem = true;
+        ItemSlotsPanelWrapper.SetActive(false);
+
+        GameObject prefab;
+        if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
+            prefab = InventoryItemsPrefabDict[inventoryItem.defaultItemIndex];
+        } else {
+            prefab = InventoryGunsPrefabDict[inventoryItem.defaultItemIndex];
+        }
+        if (prefab != null) {
+            // item inspector controller
+            itemInspectorController.InspectItem(prefab);
+            // unlocks cursor
+            HudManager.Instance.InventoryEnterInspectMode();
+        }
+    }
+
+    public void ExitInspectItem() {
+        isInspectingItem = false;
+        ItemSlotsPanelWrapper.SetActive(true);
+        // item inspector controller
+        itemInspectorController.CloseInspectView();
+        // locks cursor
+        HudManager.Instance.InventoryExitInspectMode();
+    }
+
     private GameObject GetPooledItem(InventoryItem inventoryItem, Transform parent) {
         if (!itemPool.ContainsKey(inventoryItem)) {
             itemPool[inventoryItem] = new List<GameObject>();
@@ -377,11 +417,15 @@ public class InventoryManager : MonoBehaviour {
 
     public void ShowInventoryPanel() {
         IsShowingInventory = true;
-        InventoryCanvas.gameObject.SetActive(IsShowingInventory);
+        InventoryCanvas.SetActive(IsShowingInventory);
     }
 
     public void HideInventoryPanel() {
+        if (isInspectingItem) {
+            ExitInspectItem();
+        }
+
         IsShowingInventory = false;
-        InventoryCanvas.gameObject.SetActive(IsShowingInventory);
+        InventoryCanvas.SetActive(IsShowingInventory);
     }
 }

@@ -57,7 +57,7 @@ public class PaperManager : MonoBehaviour
         int diffToSpawn = totalPapersToCollect;
 
         List<int> randomSpawnAreas = new();
-
+       
         for (int i = 0; i < diffToSpawn; i++) {
             // get a random spawn are, try to not get a repeated one
             int randomSpawnAreaIndex = Random.Range(0, spawnAreasQuantity);
@@ -88,7 +88,7 @@ public class PaperManager : MonoBehaviour
                 p.name = name;
 
                 // dynamically set inventory item in the paper
-                p.SetInventoryItemData(i, name, false, true);
+                p.SetInventoryItemData(i, name, false, true, null);
             }
 
             spawnedPapers.Add(paper);

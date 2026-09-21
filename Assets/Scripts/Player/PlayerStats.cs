@@ -84,14 +84,15 @@ public class PlayerStats : MonoBehaviour
         playerController = GetComponent<FirstPersonController>();
         playerShooting = GetComponent<Shooting>();
 
+        void equipAction(InventoryItem item) {
+            HudManager.Instance.HideInventoryPanel();
+            ChangeGun(item.defaultItemIndex);
+        }
+
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
 
             // dynamically set inventory item in the gun
-            void equipAction(InventoryItem item) {
-                HudManager.Instance.HideInventoryPanel();
-                ChangeGun(item.defaultItemIndex);
-            }
             gun.SetInventoryItemData(i, gun.gunName, true, true, equipAction);
 
             currentBullets.Add(gun.currentBullets);

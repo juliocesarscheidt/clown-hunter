@@ -11,10 +11,10 @@ public abstract class InteractableInventory : Interactable {
 
     public void SetInventoryItemData(int index, string displayName,
         bool equip = false, bool investigate = false,
-        Action<InventoryItem> equipActionToInvoke = null, Action<InventoryItem> investigateActionToInvoke = null) {
+        Action<InventoryItem> equipActionToInvoke = null) {
         if (inventoryItem == null) {
             inventoryItem = new(index, displayName, InventoryItem.InteractableType.Item,
-                equip, investigate, equipActionToInvoke, investigateActionToInvoke);
+                equip, investigate, equipActionToInvoke);
         } else {
             inventoryItem.defaultItemIndex = index;
             inventoryItem.inventoryDisplayName = displayName;
@@ -23,7 +23,6 @@ public abstract class InteractableInventory : Interactable {
             inventoryItem.canEquip = equip;
             inventoryItem.canInvestigate = investigate;
             inventoryItem.equipActionToInvoke = equipActionToInvoke;
-            inventoryItem.investigateActionToInvoke = investigateActionToInvoke;
         }
     }
 }
