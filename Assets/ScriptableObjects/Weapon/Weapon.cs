@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Weapon")]
@@ -36,19 +37,19 @@ public class Weapon : ScriptableObject {
     public InventoryItem inventoryItem;
 
     public void SetInventoryItemData(int index, string displayName,
-        bool equip = false, bool investigate = false,
-        Action<InventoryItem> equipActionToInvoke = null) {
+        bool equip = false, bool inspect = false,
+        Action<InventoryItem> onEquipAction = null) {
         if (inventoryItem == null) {
             inventoryItem = new(index, displayName, InventoryItem.InteractableType.Gun,
-                equip, investigate, equipActionToInvoke);
+                equip, inspect, onEquipAction);
         } else {
             inventoryItem.defaultItemIndex = index;
             inventoryItem.inventoryDisplayName = displayName;
             inventoryItem.interactableType = InventoryItem.InteractableType.Gun;
             inventoryItem.displayOnInventory = true;
             inventoryItem.canEquip = equip;
-            inventoryItem.canInvestigate = investigate;
-            inventoryItem.equipActionToInvoke = equipActionToInvoke;
+            inventoryItem.canInspect = inspect;
+            inventoryItem.onEquipAction = onEquipAction;
         }
     }
 }

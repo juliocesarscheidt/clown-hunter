@@ -18,7 +18,7 @@ public class InventoryManager : MonoBehaviour {
     public GameObject ItemSlotsPanelWrapper;
 
     [SerializeField]
-    private int currentItemSlotIndex;
+    private int currentItemSlotIndex = 0;
 
     [System.NonSerialized]
     private InventoryItem currentCenterItem;
@@ -61,9 +61,8 @@ public class InventoryManager : MonoBehaviour {
         Gun = 0,
         Item = 1,
     }
-    public MenuType menuType;
-    public List<Button> menuButtons;
-    private Coroutine selectMenuButtonCoroutine;
+    public MenuType menuType = MenuType.Gun;
+    public MenuNavigableController menuNavigableController;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -75,23 +74,28 @@ public class InventoryManager : MonoBehaviour {
         for (int i = 0; i < ItemSlots.Count; i++) {
             SlotsMap.Add(i, ItemSlots[i]);
         }
+
     }
 
-    void Start() {
+    private void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
-        ChangeMenuType(((int)MenuType.Gun));
+
+        void navigateAction(int index) {
+            ChangeMenuType(index);
+        }
+        menuNavigableController.onSelectButtonAction = navigateAction;
+
+        ClearPool();
+        UpdateSlots();
+    }
+
+    void OnDisable() {
+        ClearPool();
     }
 
     public void ChangeMenuType(int newIndex) {
         menuType = ((MenuType) newIndex);
 
-        // Stop existing routine if one is already running
-        if (selectMenuButtonCoroutine != null) {
-            StopCoroutine(selectMenuButtonCoroutine);
-        }
-        if (menuButtons.Count > newIndex) {
-            selectMenuButtonCoroutine = StartCoroutine(SelectMenuButtonDelayed(menuButtons[newIndex].gameObject));
-        }
         if (isInspectingItem) {
             ExitInspectItem();
         }
@@ -100,12 +104,6 @@ public class InventoryManager : MonoBehaviour {
 
         ClearPool();
         UpdateSlots();
-    }
-
-    private IEnumerator SelectMenuButtonDelayed(GameObject buttonObj) {
-        EventSystem.current.SetSelectedGameObject(null);
-        yield return null; // Wait one frame
-        EventSystem.current.SetSelectedGameObject(buttonObj);
     }
 
     void Update() {
@@ -141,9 +139,10 @@ public class InventoryManager : MonoBehaviour {
 
             if (currentCenterItem != null) {
                 if (!isInspectingItem && Input.GetButtonDown("Interact") && currentCenterItem.canEquip) {
-                    currentCenterItem.equipActionToInvoke?.Invoke(currentCenterItem);
+                    currentCenterItem.onEquipAction?.Invoke(currentCenterItem);
                 }
-                if (Input.GetButtonDown("Jump") && currentCenterItem.canInvestigate) {
+
+                if (Input.GetButtonDown("Jump") && currentCenterItem.canInspect) {
                     if (!isInspectingItem) {
                         EnterInspectItem(currentCenterItem);
                     } else {
@@ -154,12 +153,7 @@ public class InventoryManager : MonoBehaviour {
         }
     }
 
-    void OnDisable() {
-        ClearPool();
-    }
-
-    private void UpdateSlots(int scrollDirection = 0) {
-        // 1. Deactivate all currently active items instead of Destroying them
+    private void PreSetupSlots() {
         for (int i = 0; i < activeSpawnedItems.Count; i++) {
             activeSpawnedItems[i].SetActive(false);
         }
@@ -172,9 +166,13 @@ public class InventoryManager : MonoBehaviour {
             currentCenterItem = null;
         }
 
-        ClearItemNameDisplay();
+        UpdateItemNameDisplay();
         uiItemEquipText.gameObject.SetActive(false);
         uiItemInvestigateText.gameObject.SetActive(false);
+    }
+
+    private void UpdateSlots(int scrollDirection = 0) {
+        PreSetupSlots();
 
         if (CurrentInteractableItems == null || CurrentInteractableItems.Count <= 0) return;
 
@@ -228,7 +226,7 @@ public class InventoryManager : MonoBehaviour {
             if (isCenterItem) {
                 // targetScale = Vector3.one * 1.5f; // Scale up the center item
                 uiItemEquipText.gameObject.SetActive(currentInventoryItem.canEquip);
-                uiItemInvestigateText.gameObject.SetActive(currentInventoryItem.canInvestigate);
+                uiItemInvestigateText.gameObject.SetActive(currentInventoryItem.canInspect);
             }
 
             // Apply starting position
@@ -247,7 +245,6 @@ public class InventoryManager : MonoBehaviour {
 
         UpdateItemNameDisplay();
 
-        // 3. Start smooth sliding animation
         if (scrollAnimationCoroutine != null) StopCoroutine(scrollAnimationCoroutine);
 
         if (scrollDirection != 0) {
@@ -287,7 +284,12 @@ public class InventoryManager : MonoBehaviour {
         if (currentCenterItem != null) {
             uiItemNameText.text = currentCenterItem.inventoryDisplayName;
         } else {
-            ClearItemNameDisplay();
+            if (CurrentInteractableItems.Count == 0) {
+                uiItemNameText.text = "No Items";
+            } else {
+                // this should not happen
+                ClearItemNameDisplay();
+            }
         }
     }
 
@@ -358,12 +360,14 @@ public class InventoryManager : MonoBehaviour {
         }
         if (prefab != null) {
             // item inspector controller
-            itemInspectorController.InspectItem(prefab);
+            itemInspectorController.OpenInspectView(prefab);
             // unlocks cursor
             HudManager.Instance.InventoryEnterInspectMode();
+            // disable menu buttons
+            menuNavigableController.ToggleMenuButtons(false);
         }
     }
-
+ 
     public void ExitInspectItem() {
         isInspectingItem = false;
         ItemSlotsPanelWrapper.SetActive(true);
@@ -371,6 +375,10 @@ public class InventoryManager : MonoBehaviour {
         itemInspectorController.CloseInspectView();
         // locks cursor
         HudManager.Instance.InventoryExitInspectMode();
+        // enable menu buttons
+        menuNavigableController.ToggleMenuButtons(true);
+        // select the current menu button
+        menuNavigableController.SelectCurrentMenuButton();
     }
 
     private GameObject GetPooledItem(InventoryItem inventoryItem, Transform parent) {
@@ -424,7 +432,6 @@ public class InventoryManager : MonoBehaviour {
         if (isInspectingItem) {
             ExitInspectItem();
         }
-
         IsShowingInventory = false;
         InventoryCanvas.SetActive(IsShowingInventory);
     }

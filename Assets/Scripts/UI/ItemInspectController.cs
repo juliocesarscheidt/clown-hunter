@@ -24,25 +24,6 @@ public class ItemInspectController : MonoBehaviour, IDragHandler, IPointerDownHa
         initialInspectAnchorRot = inspectAnchor.transform.rotation;
     }
 
-    private void SetProps(bool enabled) {
-        dragAreaImage.enabled = enabled;
-        exitInspectText.gameObject.SetActive(enabled);
-        inspectLight.enabled = enabled;
-    }
-
-    public void InspectItem(GameObject itemPrefab) {
-        SetProps(true);
-
-        if (currentInspectedModel != null) {
-            Destroy(currentInspectedModel);
-        }
-
-        if (itemPrefab != null && inspectAnchor != null) {
-            currentInspectedModel = Instantiate(itemPrefab, inspectAnchor);
-            currentInspectedModel.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
-        }
-    }
-
     public void OnDrag(PointerEventData eventData) {
         if (inspectAnchor == null) return;
 
@@ -57,6 +38,25 @@ public class ItemInspectController : MonoBehaviour, IDragHandler, IPointerDownHa
 
     public void OnPointerDown(PointerEventData eventData) {
         // Required interface implementation to register drag events reliably
+    }
+    
+    private void SetProps(bool enabled) {
+        dragAreaImage.enabled = enabled;
+        exitInspectText.gameObject.SetActive(enabled);
+        inspectLight.enabled = enabled;
+    }
+
+    public void OpenInspectView(GameObject itemPrefab) {
+        SetProps(true);
+
+        if (currentInspectedModel != null) {
+            Destroy(currentInspectedModel);
+        }
+
+        if (itemPrefab != null && inspectAnchor != null) {
+            currentInspectedModel = Instantiate(itemPrefab, inspectAnchor);
+            currentInspectedModel.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.Euler(0f, 0f, 0f));
+        }
     }
 
     public void CloseInspectView() {

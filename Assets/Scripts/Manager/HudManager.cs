@@ -55,13 +55,14 @@ public class HudManager : MonoBehaviour
         } else {
             Instance = this;
         }
+        playerStats = FindObjectOfType<PlayerStats>();
     }
 
     void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
         isRunningGame = true;
         HidePauseGamePanel();
         HideInventoryPanel();
+        PostProcessingManager.Instance.DisableBlur();
         // AdjustBulletsCount(); // calling this from playerStats
     }
 
@@ -146,21 +147,20 @@ public class HudManager : MonoBehaviour
         Cursor.visible = true;
     }
 
-    private void FinishGameUi() {
+    private void SetFinishGameUi() {
         isRunningGame = false;
-
+        PostProcessingManager.Instance.EnableBlur();
         uiInfoWraperObject.SetActive(false);
-
         UnlockCursor();
     }
 
     public void ShowGameOverImage() {
-        FinishGameUi();
+        SetFinishGameUi();
         GameOverImage.SetActive(true);
     }
 
     public void ShowEndGameImage() {
-        FinishGameUi();
+        SetFinishGameUi();
         EndGameImage.SetActive(true);
     }
 

@@ -17,6 +17,10 @@ public class NightVisionManager : MonoBehaviour
 
     void Update() {
         if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+            if (!HudManager.Instance.IsRunningGame || playerStats.isDead) {
+                PostProcessingManager.Instance.SetDefaultProfile();
+            }
+            
             return;
         }
 

@@ -10,19 +10,19 @@ public abstract class InteractableInventory : Interactable {
     public InventoryItem inventoryItem;
 
     public void SetInventoryItemData(int index, string displayName,
-        bool equip = false, bool investigate = false,
-        Action<InventoryItem> equipActionToInvoke = null) {
+        bool equip = false, bool inspect = false,
+        Action<InventoryItem> onEquipAction = null) {
         if (inventoryItem == null) {
             inventoryItem = new(index, displayName, InventoryItem.InteractableType.Item,
-                equip, investigate, equipActionToInvoke);
+                equip, inspect, onEquipAction);
         } else {
             inventoryItem.defaultItemIndex = index;
             inventoryItem.inventoryDisplayName = displayName;
             inventoryItem.interactableType = InventoryItem.InteractableType.Item;
             inventoryItem.displayOnInventory = true;
             inventoryItem.canEquip = equip;
-            inventoryItem.canInvestigate = investigate;
-            inventoryItem.equipActionToInvoke = equipActionToInvoke;
+            inventoryItem.canInspect = inspect;
+            inventoryItem.onEquipAction = onEquipAction;
         }
     }
 }

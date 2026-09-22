@@ -16,21 +16,21 @@ public class InventoryItem : IComparable<InventoryItem> {
     public bool displayOnInventory;
 
     public bool canEquip;
-    public bool canInvestigate;
+    public bool canInspect;
 
     [System.NonSerialized]
-    public Action<InventoryItem> equipActionToInvoke;
+    public Action<InventoryItem> onEquipAction;
 
     public InventoryItem(int index, string displayName, InteractableType iType,
-        bool equip = false, bool investigate = false,
-        Action<InventoryItem> equipActionToInvoke = null) {
+        bool equip = false, bool inspect = false,
+        Action<InventoryItem> onEquipAction = null) {
         defaultItemIndex = index;
         inventoryDisplayName = displayName;
         interactableType = iType;
         displayOnInventory = true;
         canEquip = equip;
-        canInvestigate = investigate;
-        this.equipActionToInvoke = equipActionToInvoke;
+        canInspect = inspect;
+        this.onEquipAction = onEquipAction;
     }
 
     public int CompareTo(InventoryItem other) {
