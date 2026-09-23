@@ -1841,6 +1841,7 @@ MonoBehaviour:
   - {fileID: 8287248913715891406}
   - {fileID: 9140617204364585956}
   canNavigate: 1
+  selectFirstButtonOnEnable: 1
   selectedButtonIndex: 0
 --- !u!1 &7428059518314118593
 GameObject:

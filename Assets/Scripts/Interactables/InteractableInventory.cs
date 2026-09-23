@@ -11,10 +11,11 @@ public abstract class InteractableInventory : Interactable {
 
     public void SetInventoryItemData(int index, string displayName,
         bool equip = false, bool inspect = false,
-        Action<InventoryItem> onEquipAction = null) {
+        Action<InventoryItem> onEquipAction = null,
+        Action<InventoryItem, GameObject> onInstantiateAction = null) {
         if (inventoryItem == null) {
             inventoryItem = new(index, displayName, InventoryItem.InteractableType.Item,
-                equip, inspect, onEquipAction);
+                equip, inspect, onEquipAction, onInstantiateAction);
         } else {
             inventoryItem.defaultItemIndex = index;
             inventoryItem.inventoryDisplayName = displayName;
@@ -23,6 +24,7 @@ public abstract class InteractableInventory : Interactable {
             inventoryItem.canEquip = equip;
             inventoryItem.canInspect = inspect;
             inventoryItem.onEquipAction = onEquipAction;
+            inventoryItem.onInstantiateAction = onInstantiateAction;
         }
     }
 }

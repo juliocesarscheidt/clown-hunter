@@ -22,6 +22,12 @@ public class PaperManager : MonoBehaviour
 
     private readonly int thisTaskIndex = (int) TaskType.CollectTheNewspapers;
 
+    public List<int> sortedNumbers = new();
+    // front materials - 01 to 04
+    public List<Material> frontMaterials;
+    // back materials - 00 to 09
+    public List<Material> backMaterials;
+
     private void Awake() {
         if (Instance != null && Instance != this) {
             Destroy(gameObject);
@@ -48,6 +54,18 @@ public class PaperManager : MonoBehaviour
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, 0);
     }
 
+    private List<int> shuffleRandomNumbers() {
+        List<int> numbers = new();
+        for (int i = 0; i < 10; i++) {
+            numbers.Add(i);
+        }
+        for (int i = 0; i < numbers.Count; i++) {
+            int randomIndex = Random.Range(i, numbers.Count);
+            (numbers[randomIndex], numbers[i]) = (numbers[i], numbers[randomIndex]);
+        }
+        return numbers;
+    }
+
     public void SpawnPapers() {
         if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
             return;
@@ -56,8 +74,10 @@ public class PaperManager : MonoBehaviour
         int spawnAreasQuantity = spawnPointsAreas.Count;
         int diffToSpawn = totalPapersToCollect;
 
+        // shuffle the numbers from 0 to 9 to get random back materials for the papers
+        List<int> randomNumbers = shuffleRandomNumbers();
         List<int> randomSpawnAreas = new();
-       
+        
         for (int i = 0; i < diffToSpawn; i++) {
             // get a random spawn are, try to not get a repeated one
             int randomSpawnAreaIndex = Random.Range(0, spawnAreasQuantity);
@@ -83,12 +103,39 @@ public class PaperManager : MonoBehaviour
                 spawnPoint.transform
             );
 
+            int sortedNumber = randomNumbers[i];
+            sortedNumbers.Add(sortedNumber);
+
+            // copying the iterator to a new variable to use inside the lambda function
+            int innerIterator = i;
+
             if (paper.TryGetComponent<Paper>(out var p)) {
-                string name = $"Paper #{i + 1}";
+                string name = $"Paper #{innerIterator + 1}";
                 p.name = name;
 
+                p.assignedSortedNumber = sortedNumber;
+                if (frontMaterials.Count > innerIterator) {
+                    p.SetFrontMaterial(frontMaterials[innerIterator]);
+                }
+                if (backMaterials.Count > sortedNumber) {
+                    p.SetBackMaterial(backMaterials[sortedNumber]);
+                }
+
+                void instantiateAction(InventoryItem item, GameObject prefab) {
+                    Renderer rend = prefab.GetComponentInChildren<Renderer>(true);
+                    if (rend != null) {
+                        Material[] mats = rend.materials;
+                        if (mats.Length > 0 && frontMaterials.Count > innerIterator) {
+                            mats[0] = frontMaterials[innerIterator];
+                        }
+                        if (mats.Length > 2 && backMaterials.Count > sortedNumber) {
+                            mats[2] = backMaterials[sortedNumber];
+                        }
+                        rend.materials = mats;
+                    }
+                }
                 // dynamically set inventory item in the paper
-                p.SetInventoryItemData(i, name, false, true, null);
+                p.SetInventoryItemData(i, name, false, true, null, instantiateAction);
             }
 
             spawnedPapers.Add(paper);

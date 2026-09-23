@@ -7551,6 +7551,23 @@ MonoBehaviour:
   - {fileID: 1125364940}
   totalPapersToCollect: 4
   monstersToAddOnPaperCollected: 2
+  sortedNumbers: 
+  frontMaterials:
+  - {fileID: 2100000, guid: d29d566edc166f7419f4294683951865, type: 2}
+  - {fileID: 2100000, guid: 4dec5d4c765b3934887c43fb24ca9ef6, type: 2}
+  - {fileID: 2100000, guid: 588494ae4f5e1b34280368d0f8780640, type: 2}
+  - {fileID: 2100000, guid: d9b6d30d7b00799448e1880198ac8b02, type: 2}
+  backMaterials:
+  - {fileID: 2100000, guid: 08fd7dae86d740847bbeed3cfbfa6e02, type: 2}
+  - {fileID: 2100000, guid: 6d5f2d47e28bfff40b4b183eac561d93, type: 2}
+  - {fileID: 2100000, guid: 228bff8400b7e6f4ebd32bb6008dc99d, type: 2}
+  - {fileID: 2100000, guid: 01822606bbe37094ca79e2364212b28f, type: 2}
+  - {fileID: 2100000, guid: 1ef0829781cd2bd41947ee990faca7ba, type: 2}
+  - {fileID: 2100000, guid: 558eac68f6c480e4996d97057ef1c9b3, type: 2}
+  - {fileID: 2100000, guid: f336aa8eacff32547a9e2d5e820ea3dd, type: 2}
+  - {fileID: 2100000, guid: 6afc746eb20666f409300ed6d97de6ea, type: 2}
+  - {fileID: 2100000, guid: d2d2cc9d3da781c4c9f9939678f74765, type: 2}
+  - {fileID: 2100000, guid: ebb081d9bff73ec41acf6b1ff51f8f1d, type: 2}
 --- !u!1 &1276477781
 GameObject:
   m_ObjectHideFlags: 0
@@ -13060,7 +13077,7 @@ PrefabInstance:
     - target: {fileID: 1097337370530557738, guid: 3141f1ffe57916c478b096b3bd080ec0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.0626026
+      value: 1.039
       objectReference: {fileID: 0}
     - target: {fileID: 1097337370530557738, guid: 3141f1ffe57916c478b096b3bd080ec0,
         type: 3}
