@@ -25,15 +25,17 @@ public class InventoryManager : MonoBehaviour {
 
     [Header("Items Data List")]
     [System.NonSerialized]
-    private List<InventoryItem> InteractableGuns = new();
+    private readonly List<InventoryItem> InteractableGuns = new();
     [System.NonSerialized]
-    private Dictionary<int, GameObject> InventoryGunsPrefabDict = new();
+    private Dictionary<int, GameObject> InventoryGunsOriginalPrefabDict = new();
+    [System.NonSerialized]
+    private Dictionary<int, GameObject> InventoryGunsLivePrefabDict = new();
 
     [Header("Guns Data List")]
     [System.NonSerialized]
-    private List<InventoryItem> InteractableItems = new();
+    private readonly List<InventoryItem> InteractableItems = new();
     [System.NonSerialized]
-    private Dictionary<int, GameObject> InventoryItemsDefaultPrefabDict = new();
+    private Dictionary<int, GameObject> InventoryItemsOriginalPrefabDict = new();
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryItemsLivePrefabDict = new();
 
@@ -306,7 +308,7 @@ public class InventoryManager : MonoBehaviour {
                 // not sorting items by design, to make them unordered
                 // InteractableItems.Sort((a, b) => a.defaultItemIndex.CompareTo(b.defaultItemIndex));
 
-                InventoryItemsDefaultPrefabDict.Add(item.defaultItemIndex, baseInventoryItemPrefab);
+                InventoryItemsOriginalPrefabDict.Add(item.defaultItemIndex, baseInventoryItemPrefab);
                 if (menuType == MenuType.Item) {
                     if (currentItemSlotIndex >= 0 && InteractableItems.Count > currentItemSlotIndex) {
                         currentCenterItem = InteractableItems[currentItemSlotIndex];
@@ -317,7 +319,7 @@ public class InventoryManager : MonoBehaviour {
                 InteractableGuns.Add(item);
                 InteractableGuns.Sort((a, b) => a.defaultItemIndex.CompareTo(b.defaultItemIndex));
 
-                InventoryGunsPrefabDict.Add(item.defaultItemIndex, baseInventoryItemPrefab);
+                InventoryGunsOriginalPrefabDict.Add(item.defaultItemIndex, baseInventoryItemPrefab);
                 if (menuType == MenuType.Gun) {
                     if (currentItemSlotIndex >= 0 && InteractableGuns.Count > currentItemSlotIndex) {
                         currentCenterItem = InteractableGuns[currentItemSlotIndex];
@@ -358,9 +360,15 @@ public class InventoryManager : MonoBehaviour {
         if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
             if (InventoryItemsLivePrefabDict.ContainsKey(inventoryItem.defaultItemIndex)) {
                 prefab = InventoryItemsLivePrefabDict[inventoryItem.defaultItemIndex];
+            } else {
+                prefab = InventoryItemsOriginalPrefabDict[inventoryItem.defaultItemIndex];
             }
         } else {
-            prefab = InventoryGunsPrefabDict[inventoryItem.defaultItemIndex];
+            if (InventoryGunsLivePrefabDict.ContainsKey(inventoryItem.defaultItemIndex)) {
+                prefab = InventoryGunsLivePrefabDict[inventoryItem.defaultItemIndex];
+            } else {
+                prefab = InventoryGunsOriginalPrefabDict[inventoryItem.defaultItemIndex];
+            }
         }
         if (prefab != null) {
             // item inspector controller
@@ -399,21 +407,28 @@ public class InventoryManager : MonoBehaviour {
         // getting the base prefab
         GameObject prefab;
         if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
-            prefab = InventoryItemsDefaultPrefabDict[inventoryItem.defaultItemIndex];
+            prefab = InventoryItemsOriginalPrefabDict[inventoryItem.defaultItemIndex];
         } else {
-            prefab = InventoryGunsPrefabDict[inventoryItem.defaultItemIndex];
+            prefab = InventoryGunsOriginalPrefabDict[inventoryItem.defaultItemIndex];
         }
 
         // If none are inactive, instantiate a new one and add it to the pool
         GameObject newInstance = Instantiate(prefab, parent);
         // call the on instantiate action
         inventoryItem.onInstantiateAction?.Invoke(inventoryItem, newInstance);
+
         // add the prefab in the live dictionary with the new instance with changed materials - ONLY for items
         if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
             if (InventoryItemsLivePrefabDict.ContainsKey(inventoryItem.defaultItemIndex)) {
                 InventoryItemsLivePrefabDict[inventoryItem.defaultItemIndex] = newInstance;
             } else {
                 InventoryItemsLivePrefabDict.Add(inventoryItem.defaultItemIndex, newInstance);
+            }
+        } else {
+            if (InventoryGunsLivePrefabDict.ContainsKey(inventoryItem.defaultItemIndex)) {
+                InventoryGunsLivePrefabDict[inventoryItem.defaultItemIndex] = newInstance;
+            } else {
+                InventoryGunsLivePrefabDict.Add(inventoryItem.defaultItemIndex, newInstance);
             }
         }
 
