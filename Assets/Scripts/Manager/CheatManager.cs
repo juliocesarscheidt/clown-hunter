@@ -38,7 +38,7 @@ public class CheatManager : MonoBehaviour
         {"SUPERHUMAN", CheatEnum.INVENCIBLE_PLAYER},
         {"MADMONSTERS", CheatEnum.MAD_MONSTERS},
         {"SHOWPAPERS", CheatEnum.SHOW_PAPERS},
-        {"SUICIDE", CheatEnum.SUICIDE},
+        {"SEPPUKU", CheatEnum.SUICIDE}, // seppuku - Harakiri 
         {"DEVMODE", CheatEnum.DEVMODE},
     };
 
