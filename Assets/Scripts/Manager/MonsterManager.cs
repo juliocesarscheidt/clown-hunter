@@ -112,6 +112,11 @@ public class MonsterManager : MonoBehaviour
     public void AddMonsterToPool(int id, Monster monster) {
         monstersPool.Add(id, monster);
         UpdateMonstersAliveCounter();
+        if (SettingsManager.Instance != null) {
+             if (monster.TryGetComponent(out AudioSource monsterAudio)) {
+                SettingsManager.Instance.AddAudioSource(monsterAudio);
+            }
+        }
     }
 
     public void RemoveMonsterFromPool(int id) {
