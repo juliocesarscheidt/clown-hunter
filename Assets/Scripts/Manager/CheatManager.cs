@@ -25,9 +25,9 @@ public class CheatManager : MonoBehaviour
         INFINITE_AMMO,
         INFINITE_SPRINT,
         INVENCIBLE_PLAYER,
-        INVENCIBLE_MONSTERS,
         MAD_MONSTERS,
         SHOW_PAPERS,
+        SUICIDE,
         DEVMODE,
     }
 
@@ -36,9 +36,9 @@ public class CheatManager : MonoBehaviour
         {"AMMOGOD", CheatEnum.INFINITE_AMMO},
         {"RUNNER", CheatEnum.INFINITE_SPRINT},
         {"SUPERHUMAN", CheatEnum.INVENCIBLE_PLAYER},
-        {"OMNIMONSTERS", CheatEnum.INVENCIBLE_MONSTERS},
         {"MADMONSTERS", CheatEnum.MAD_MONSTERS},
         {"SHOWPAPERS", CheatEnum.SHOW_PAPERS},
+        {"SUICIDE", CheatEnum.SUICIDE},
         {"DEVMODE", CheatEnum.DEVMODE},
     };
 
@@ -98,44 +98,6 @@ public class CheatManager : MonoBehaviour
         HudManager.Instance.SetAndActivateCheatActivatedText("Cheats deactivated");
     }
 
-    public void DeactivateCheat(CheatEnum cheat) {
-        switch (cheat) {
-            case CheatEnum.ALL_WEAPONS:
-                if (playerStats != null) {
-                    playerStats.EnableDefaultGuns();
-                }
-                break;
-            case CheatEnum.INFINITE_AMMO:
-                if (playerStats != null) {
-                    playerStats.spendAmmo = true;
-                }
-                break;
-            case CheatEnum.INFINITE_SPRINT:
-                if (playerStats != null) {
-                    playerStats.SetSpendStamina(true);
-                }
-                break;
-            case CheatEnum.INVENCIBLE_PLAYER:
-                if (playerStats != null) {
-                    playerStats.canReceiveDamage = true;
-                }
-                break;
-            case CheatEnum.INVENCIBLE_MONSTERS:
-                MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(true);
-                break;
-            case CheatEnum.MAD_MONSTERS:
-                MonsterManager.Instance.ResetDefaultRunProbabilityPercentageToAllMonsters();
-                break;
-            case CheatEnum.SHOW_PAPERS:
-                PaperManager.Instance.ShowAllPapers(false);
-                break;
-            case CheatEnum.DEVMODE:
-                HudManager.Instance.showFps = false;
-                MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(false);
-            break;
-        }
-    }
-
     public void ActivateCheat(CheatEnum cheat) {
         if (SettingsManager.Instance.GetDifficulty() == SettingsManager.Instance.maxDifficulty) {
             HudManager.Instance.SetAndActivateCheatActivatedText("No cheats allowed");
@@ -168,9 +130,11 @@ public class CheatManager : MonoBehaviour
                     playerStats.FillHealth();
                 }
             break;
-            case CheatEnum.INVENCIBLE_MONSTERS:
-                MonsterManager.Instance.ChangeCanReceiveDamageToAllMonsters(false);
-            break;
+            case CheatEnum.SUICIDE:
+                if (playerStats != null) {
+                    playerStats.Die();
+                }
+                break;
             case CheatEnum.MAD_MONSTERS:
                 MonsterManager.Instance.ChangeRunProbabilityPercentageToAllMonsters(100f);
                 break;
@@ -180,6 +144,44 @@ public class CheatManager : MonoBehaviour
             case CheatEnum.DEVMODE:
                 HudManager.Instance.showFps = true;
                 MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(true);
+            break;
+        }
+    }
+    
+    public void DeactivateCheat(CheatEnum cheat) {
+        switch (cheat) {
+            case CheatEnum.ALL_WEAPONS:
+                if (playerStats != null) {
+                    playerStats.EnableDefaultGuns();
+                }
+                break;
+            case CheatEnum.INFINITE_AMMO:
+                if (playerStats != null) {
+                    playerStats.spendAmmo = true;
+                }
+                break;
+            case CheatEnum.INFINITE_SPRINT:
+                if (playerStats != null) {
+                    playerStats.SetSpendStamina(true);
+                }
+                break;
+            case CheatEnum.INVENCIBLE_PLAYER:
+                if (playerStats != null) {
+                    playerStats.canReceiveDamage = true;
+                }
+                break;
+            case CheatEnum.SUICIDE:
+                // noop
+                break;
+            case CheatEnum.MAD_MONSTERS:
+                MonsterManager.Instance.ResetDefaultRunProbabilityPercentageToAllMonsters();
+                break;
+            case CheatEnum.SHOW_PAPERS:
+                PaperManager.Instance.ShowAllPapers(false);
+                break;
+            case CheatEnum.DEVMODE:
+                HudManager.Instance.showFps = false;
+                MonsterManager.Instance.ChangeShowCurrentStateToAllMonsters(false);
             break;
         }
     }

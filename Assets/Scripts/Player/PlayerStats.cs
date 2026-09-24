@@ -389,10 +389,14 @@ public class PlayerStats : MonoBehaviour
         isBeingDamaged = true;
 
         if (health <= 0) {
-            health = 0;
-            isDead = true;
-            HudManager.Instance.ShowGameOverImage();
+            Die();
         }
+    }
+
+    public void Die() {
+        health = 0;
+        isDead = true;
+        HudManager.Instance.ShowGameOverImage();
     }
 
     public void CollectGunSetEnabled(int index) {
