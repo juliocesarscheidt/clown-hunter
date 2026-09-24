@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -75,6 +76,9 @@ public class PlayerStats : MonoBehaviour
 
     public GameObject pointToMonsterAttack;
 
+    public GameObject flashlightInventoryItemPrefab;
+    public GameObject nightvisionBinocularInventoryItemPrefab;
+
     private readonly Dictionary<string, int> animationHashes = new() {
         { "isReloading", Animator.StringToHash("isReloading") },
         { "isAiming", Animator.StringToHash("isAiming") },
@@ -105,6 +109,7 @@ public class PlayerStats : MonoBehaviour
         if (HudManager.Instance != null) {
             HudManager.Instance.AdjustBulletsCount();
         }
+        AddDefaultInventoryItems();
     }
 
     void Update() {
@@ -232,6 +237,10 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    void ChangeGunByHotkey(int hotkey) {
+        ChangeGun(hotkey - 1);
+    }
+
     public void ChangeReticleToColorWithTimer(Color color) {
         if (currentGunReticle.TryGetComponent(out Image img)) {
             img.color = color;
@@ -243,8 +252,26 @@ public class PlayerStats : MonoBehaviour
         reticleRedTimer = 0f;
     }
 
-    void ChangeGunByHotkey(int hotkey) {
-        ChangeGun(hotkey - 1);
+    private void AddDefaultInventoryItems() {
+        if (flashlightInventoryItemPrefab != null) {
+            void onEquipActionFlashlight(InventoryItem item) {
+                HudManager.Instance.HideInventoryPanel();
+                FlashlightManager.Instance.TurnOn();
+            }
+            InventoryItem flashlightInventory = new(0, "Flashlight", InventoryItem.InteractableType.Item,
+                true, true, onEquipActionFlashlight, null);
+            InventoryManager.Instance.AddInteractableItem(flashlightInventory, flashlightInventoryItemPrefab);
+        }
+
+        if (nightvisionBinocularInventoryItemPrefab != null) {
+            void onEquipActionBinocular(InventoryItem item) {
+                HudManager.Instance.HideInventoryPanel();
+                NightVisionManager.Instance.TurnOn();
+            }
+            InventoryItem binocularInventory = new(1, "Night Vision Binocular", InventoryItem.InteractableType.Item,
+                true, true, onEquipActionBinocular, null);
+            InventoryManager.Instance.AddInteractableItem(binocularInventory, nightvisionBinocularInventoryItemPrefab);
+        }
     }
 
     public void SetGunEnabled(int index, bool enabled) {

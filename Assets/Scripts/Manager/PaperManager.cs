@@ -134,8 +134,10 @@ public class PaperManager : MonoBehaviour
                         rend.materials = mats;
                     }
                 }
+                // increment using the default number of items to avoid overwriting existing inventory items
+                var currentIndex = InventoryManager.Instance.DefaultPlayerItems + i;
                 // dynamically set inventory item in the paper
-                p.SetInventoryItemData(i, name, false, true, null, instantiateAction);
+                p.SetInventoryItemData(currentIndex, name, false, true, null, instantiateAction);
             }
 
             spawnedPapers.Add(paper);

@@ -740,6 +740,10 @@ MonoBehaviour:
   gunsCamera: {fileID: 5671610046709554143}
   defaultFieldOfView: 50
   pointToMonsterAttack: {fileID: 2703518868526296583}
+  flashlightInventoryItemPrefab: {fileID: 2011897543213971647, guid: f2e9a5be5c90ff447a84e7ad06b92401,
+    type: 3}
+  nightvisionBinocularInventoryItemPrefab: {fileID: 3646064188426399124, guid: 39cd8254222c94545b3ae168e0a587e4,
+    type: 3}
 --- !u!114 &5255443607544417024
 MonoBehaviour:
   m_ObjectHideFlags: 0

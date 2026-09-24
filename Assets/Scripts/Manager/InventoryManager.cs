@@ -38,6 +38,7 @@ public class InventoryManager : MonoBehaviour {
     private Dictionary<int, GameObject> InventoryItemsOriginalPrefabDict = new();
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryItemsLivePrefabDict = new();
+    public int DefaultPlayerItems = 2; // flashlight and nightvision binocular
 
     public TextMeshProUGUI uiItemNameText;
     public TextMeshProUGUI uiItemEquipText;
@@ -356,7 +357,7 @@ public class InventoryManager : MonoBehaviour {
         isInspectingItem = true;
         ItemSlotsPanelWrapper.SetActive(false);
 
-        GameObject prefab = null;
+        GameObject prefab;
         if (inventoryItem.interactableType == InventoryItem.InteractableType.Item) {
             if (InventoryItemsLivePrefabDict.ContainsKey(inventoryItem.defaultItemIndex)) {
                 prefab = InventoryItemsLivePrefabDict[inventoryItem.defaultItemIndex];
