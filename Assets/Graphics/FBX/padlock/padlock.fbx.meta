@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cfba53bb18a488646996d3dc66e18726
+guid: f580d554103c1194f962cb4d7d9aa2e2
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -8,27 +8,22 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Box met
-    second: {fileID: 2100000, guid: 00c350e168bcf404b92af80fedd0cd0a, type: 2}
+    second: {fileID: 2100000, guid: 6ed16156edbbafa408e8b3445fb016fa, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Box met.001
-    second: {fileID: 2100000, guid: 8a55a29556aabbe41be18b8c03e459f3, type: 2}
+      name: DefaultMaterial
+    second: {fileID: 2100000, guid: 0ec0c3d50d0be9344a4bcd616fa678d8, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Wood
-    second: {fileID: 2100000, guid: 68ec75ef1ff6b8746b9d37e8fe382525, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Wood.001
-    second: {fileID: 2100000, guid: 58f318d92c7d97445b882a7e815f7043, type: 2}
+    second: {fileID: 2100000, guid: da80a1986506c0345b3681fda9bcefdb, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Zamok
-    second: {fileID: 2100000, guid: ae962231f7a220b4fbbab20f52438dc6, type: 2}
+    second: {fileID: 2100000, guid: 96f0cadd2fb534749b0622288152925b, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -110,7 +110,7 @@ public class PaperManager : MonoBehaviour
             int innerIterator = i;
 
             if (paper.TryGetComponent<Paper>(out var p)) {
-                string name = $"Paper #{innerIterator + 1}";
+                string name = $"Newspaper #{innerIterator + 1}";
                 p.name = name;
 
                 p.assignedSortedNumber = sortedNumber;
