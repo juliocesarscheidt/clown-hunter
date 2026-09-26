@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class NightVisionManager : MonoBehaviour
 {
+    public static NightVisionManager Instance { get; private set; }
+
     private PlayerStats playerStats;
     
     public AudioSource nightVisionAudioSource;
@@ -10,13 +12,26 @@ public class NightVisionManager : MonoBehaviour
     public float timeToSwitchOnOff = 0.25f;
     private float timer = 0f;
 
-    void Start() {
+    private void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+        } else {
+            Instance = this;
+        }
+
         playerStats = FindObjectOfType<PlayerStats>();
+    }
+
+    void Start() {
         timer = timeToSwitchOnOff;
     }
 
     void Update() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
+            if (!HudManager.Instance.IsRunningGame || playerStats.isDead) {
+                PostProcessingManager.Instance.SetDefaultProfile();
+            }
+            
             return;
         }
 
@@ -26,17 +41,29 @@ public class NightVisionManager : MonoBehaviour
             if (!nightVisionAudioSource.isPlaying && (
                 Input.GetAxis("JoystickHorizontalButtons") == 1 || Input.GetButtonDown("Nightvision")
             )) {
-                nightVisionIsOn = !nightVisionIsOn;
-                if (nightVisionIsOn) {
-                    nightVisionAudioSource.Play();
-                }
-                if (nightVisionIsOn) {
-                    PostProcessingManager.Instance.SetNightVisionProfile();
-                } else {
-                    PostProcessingManager.Instance.SetDefaultProfile();
-                }
+                Toggle(!nightVisionIsOn);
                 timer = 0;
             }
         }
+    }
+
+    public void Toggle(bool enabled) {
+        nightVisionIsOn = enabled;
+        if (nightVisionIsOn) {
+            nightVisionAudioSource.Play();
+        }
+        if (nightVisionIsOn) {
+            PostProcessingManager.Instance.SetNightVisionProfile();
+        } else {
+            PostProcessingManager.Instance.SetDefaultProfile();
+        }
+    }
+
+    public void TurnOn() {
+        Toggle(true);
+    }
+
+    public void TurnOff() {
+        Toggle(false);
     }
 }

@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public abstract class Interactable: MonoBehaviour {
-    public abstract void Collect();
+    public abstract void OnInteract();
     public abstract void EnableOutline();
     public abstract void DisableOutline();
 
@@ -10,7 +11,6 @@ public abstract class Interactable: MonoBehaviour {
 
     public bool isOutlineEnabled;
     protected Outline outlineScript;
-    [SerializeField]
     protected TextMeshPro pressInteractText;
 
     [SerializeField]
@@ -22,15 +22,19 @@ public abstract class Interactable: MonoBehaviour {
     protected float distanceToPlayer;
     public float distanceToPlayerTrigger = 4f;
 
+    public bool playSoundOnInteract = true;
+    public bool destroyOnInteract = true;
+
     public void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
         outlineScript = GetComponentInChildren<Outline>();
         pressInteractText = GetComponentInChildren<TextMeshPro>();
+
         DisableOutline();
     }
 
     public void LateUpdate() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActiveNotReloading) {
             return;
         }
 
@@ -59,10 +63,14 @@ public abstract class Interactable: MonoBehaviour {
                 EnableOutline();
             }
             if (Input.GetButtonDown("Interact")) {
-                Collect();
-                InteractionManager.Instance.PlayCollectAudio();
-                InteractionManager.Instance.RemoveInteractable(this);
-                Destroy(transform.gameObject);
+                OnInteract();
+                if (playSoundOnInteract) {
+                    InteractionManager.Instance.PlayCollectAudio();
+                }
+                if (destroyOnInteract) {
+                    InteractionManager.Instance.RemoveInteractable(this);
+                    Destroy(transform.gameObject);
+                }
             }
         } else {
             pressInteractText.gameObject.SetActive(false);

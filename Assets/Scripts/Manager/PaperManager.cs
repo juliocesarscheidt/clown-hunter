@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using static TaskManager;
 
@@ -13,15 +12,19 @@ public class PaperManager : MonoBehaviour
     public int defaultLayerIndex = 0;
     public int paperLayerIndex = 6;
 
-    private PlayerStats playerStats;
     // spawnPoints will be splited by areas
     private Dictionary<int, List<GameObject>> spawnPoints = new();
     public List<GameObject> spawnPointsAreas;
 
-    public int totalPapersToCollect = 5;
+    public int totalPapersToSpawn = 4;
     public int monstersToAddOnPaperCollected = 2;
 
-    private readonly int thisTaskIndex = (int) TaskType.CollectTheNewspapers;
+    private readonly int thisTaskIndex = (int) TaskType.InvestigateThePlace;
+
+    // front materials - 01 to 04
+    public List<Material> frontMaterials;
+    // back materials - 00 to 09
+    public List<Material> backMaterials;
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -32,8 +35,6 @@ public class PaperManager : MonoBehaviour
     }
 
     void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
-
         for (int i = 0; i < spawnPointsAreas.Count; i++) {
             GameObject spawnArea = spawnPointsAreas[i];
             List<GameObject> areaSpawnPoints = new();
@@ -45,20 +46,34 @@ public class PaperManager : MonoBehaviour
 
         SpawnPapers();
 
-        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, totalPapersToCollect);
+        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, 1);
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, 0);
     }
 
+    private List<int> shuffleRandomNumbers() {
+        List<int> numbers = new();
+        for (int i = 0; i < 10; i++) {
+            numbers.Add(i);
+        }
+        for (int i = 0; i < numbers.Count; i++) {
+            int randomIndex = Random.Range(i, numbers.Count);
+            (numbers[randomIndex], numbers[i]) = (numbers[i], numbers[randomIndex]);
+        }
+        return numbers;
+    }
+
     public void SpawnPapers() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }
 
         int spawnAreasQuantity = spawnPointsAreas.Count;
-        int diffToSpawn = totalPapersToCollect;
+        int diffToSpawn = totalPapersToSpawn;
 
+        // shuffle the numbers from 0 to 9 to get random back materials for the papers
+        List<int> randomNumbers = shuffleRandomNumbers();
         List<int> randomSpawnAreas = new();
-
+        
         for (int i = 0; i < diffToSpawn; i++) {
             // get a random spawn are, try to not get a repeated one
             int randomSpawnAreaIndex = Random.Range(0, spawnAreasQuantity);
@@ -80,21 +95,70 @@ public class PaperManager : MonoBehaviour
             GameObject paper = Instantiate(
                 paperPrefab,
                 spawnPoint.transform.position,
-                spawnPoint.transform.rotation
+                spawnPoint.transform.rotation,
+                spawnPoint.transform
             );
-            paper.transform.parent = spawnPoint.transform;
-            spawnedPapers.Add(paper);
 
+            int sortedNumber = randomNumbers[i];
+            TreasureChestManager.Instance.AddCombinationNumber(sortedNumber);
+
+            // copying the iterator to a new variable to use inside the lambda function
+            int innerIterator = i;
+
+            if (paper.TryGetComponent<Paper>(out var p)) {
+                string name = $"Newspaper #{innerIterator + 1}";
+                p.name = name;
+
+                p.assignedSortedNumber = sortedNumber;
+                if (frontMaterials.Count > innerIterator) {
+                    p.SetFrontMaterial(frontMaterials[innerIterator]);
+                }
+                if (backMaterials.Count > sortedNumber) {
+                    p.SetBackMaterial(backMaterials[sortedNumber]);
+                }
+
+                void instantiateAction(InventoryItem item, GameObject prefab) {
+                    Renderer rend = prefab.GetComponentInChildren<Renderer>(true);
+                    if (rend != null) {
+                        Material[] mats = rend.materials;
+                        if (mats.Length > 0 && frontMaterials.Count > innerIterator) {
+                            mats[0] = frontMaterials[innerIterator];
+                        }
+                        if (mats.Length > 2 && backMaterials.Count > sortedNumber) {
+                            mats[2] = backMaterials[sortedNumber];
+                        }
+                        rend.materials = mats;
+                    }
+                }
+                // increment using the default number of items to avoid overwriting existing inventory items
+                var currentIndex = InventoryManager.Instance.defaultPlayerItems + i;
+                // dynamically set inventory item in the paper
+                p.SetInventoryItemData(currentIndex, name, false, true, false, null, instantiateAction);
+            }
+
+            spawnedPapers.Add(paper);
             if (paper.TryGetComponent(out Interactable component)) {
                 InteractionManager.Instance.AddInteractable(component);
             }
         }
     }
 
-    public void CollectPaper() {
+    public void CollectPaper(Paper paper) {
         MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
         MonsterManager.Instance.SpawnEnemies();
-        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
+
+        // add the UI item to inventory manager
+        if (InventoryManager.Instance != null && paper != null) {
+            InventoryManager.Instance.AddInteractableItem(paper.inventoryItem, paper.baseInventoryItemPrefab);
+        }
+
+        // remove from spawnedPapers
+        spawnedPapers.Remove(paper.gameObject);
+
+        // increment task progress
+        if (spawnedPapers.Count == 0) {
+            TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
+        }
     }
 
     public void ShowAllPapers(bool showAllPapers) {

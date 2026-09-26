@@ -3,7 +3,7 @@ using UnityEngine;
 public class FirstAid : Interactable {
     public int healthAmount = 100;
 
-    public override void Collect() {
+    public override void OnInteract() {
         playerStats.CollectFirstAid(healthAmount);
     }
 
