@@ -15,7 +15,7 @@ public class Paper : InteractableInventory {
         materials = rend.materials;
     }
 
-    public override void Collect() {
+    public override void OnInteract() {
         PaperManager.Instance.CollectPaper(this);
     }
 

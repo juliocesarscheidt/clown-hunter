@@ -9,7 +9,7 @@ public class GunCollect : Interactable {
         playerGunIndex = playerStats.guns.FindIndex((w) => w.gunName == gunName);
     }
 
-    public override void Collect() {
+    public override void OnInteract() {
         playerStats.CollectGunSetEnabled(playerGunIndex);
     }
 

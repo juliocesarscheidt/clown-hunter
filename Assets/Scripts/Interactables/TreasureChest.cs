@@ -1,10 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class GunAmmo : Interactable {
-    public int bulletsAmount = 60;
-    
+public class TreasureChest : Interactable {
     public override void OnInteract() {
-        playerStats.CollectAmmunition(bulletsAmount);
+        TreasureChestManager.Instance.StartInteraction();
     }
 
     public override void EnableOutline() {

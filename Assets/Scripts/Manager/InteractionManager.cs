@@ -7,15 +7,9 @@ public class InteractionManager : MonoBehaviour
     public static InteractionManager Instance { get; private set; }
 
     private PlayerStats playerStats;
-    /*
-    public List<string> tagsToInteract = new() {
-        TagsController.Paper,
-        TagsController.GunAmmo,
-        TagsController.FirstAid,
-        TagsController.GunCollect
-    };
-    */
     private AudioSource interactionAudioSource;
+
+    [Header("Interactables")]
     [SerializeField]
     private List<Interactable> interactables = new();
 
@@ -25,12 +19,12 @@ public class InteractionManager : MonoBehaviour
         } else {
             Instance = this;
         }
+
+        playerStats = FindObjectOfType<PlayerStats>();
+        interactionAudioSource = GetComponent<AudioSource>();
     }
 
     void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
-        interactionAudioSource = GetComponent<AudioSource>();
-
         foreach (var obj in FindObjectsByType(typeof(Interactable), FindObjectsSortMode.None)) {
             interactables.Add(obj as Interactable);
         }
@@ -54,7 +48,7 @@ public class InteractionManager : MonoBehaviour
     }
 
     private void LateUpdate() {
-        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead || playerStats.isReloading) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActiveNotReloading) {
             return;
         }
 

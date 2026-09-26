@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour {
     public static InventoryManager Instance { get; private set; }
 
-    private PlayerStats playerStats;
     public GameObject InventoryCanvas;
 
     [Header("Slots")]
@@ -23,7 +22,7 @@ public class InventoryManager : MonoBehaviour {
     [System.NonSerialized]
     private InventoryItem currentCenterItem;
 
-    [Header("Items Data List")]
+    [Header("Guns Data List")]
     [System.NonSerialized]
     private readonly List<InventoryItem> InteractableGuns = new();
     [System.NonSerialized]
@@ -31,13 +30,14 @@ public class InventoryManager : MonoBehaviour {
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryGunsLivePrefabDict = new();
 
-    [Header("Guns Data List")]
+    [Header("Items Data List")]
     [System.NonSerialized]
     private readonly List<InventoryItem> InteractableItems = new();
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryItemsOriginalPrefabDict = new();
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryItemsLivePrefabDict = new();
+
     public int DefaultPlayerItems = 2; // flashlight and nightvision binocular
 
     public TextMeshProUGUI uiItemNameText;
@@ -79,12 +79,9 @@ public class InventoryManager : MonoBehaviour {
         for (int i = 0; i < ItemSlots.Count; i++) {
             SlotsMap.Add(i, ItemSlots[i]);
         }
-
     }
 
     private void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
-
         void navigateAction(int index) {
             ChangeMenuType(index);
         }
@@ -112,7 +109,7 @@ public class InventoryManager : MonoBehaviour {
     }
 
     void Update() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActiveForInventory) {
             return;
         }
         
@@ -456,7 +453,7 @@ public class InventoryManager : MonoBehaviour {
 
     public void ShowInventoryPanel() {
         IsShowingInventory = true;
-        InventoryCanvas.SetActive(IsShowingInventory);
+        InventoryCanvas.SetActive(true);
     }
 
     public void HideInventoryPanel() {
@@ -464,6 +461,6 @@ public class InventoryManager : MonoBehaviour {
             ExitInspectItem();
         }
         IsShowingInventory = false;
-        InventoryCanvas.SetActive(IsShowingInventory);
+        InventoryCanvas.SetActive(false);
     }
 }

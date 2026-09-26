@@ -1,10 +1,6 @@
 using System;
 using UnityEngine;
 
-public class InventoryItemDynamicData {
-    public int index;
-}
-
 [System.Serializable]
 public class InventoryItem : IComparable<InventoryItem> {
     public int defaultItemIndex;

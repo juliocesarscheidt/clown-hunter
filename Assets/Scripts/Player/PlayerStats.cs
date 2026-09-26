@@ -114,7 +114,7 @@ public class PlayerStats : MonoBehaviour
 
     void Update() {
         if (HudManager.Instance.IsRunningGame) {
-            if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
                 gunsAudioSource.Pause();
                 stepsAudioSource.Pause();
             } else {
@@ -123,7 +123,7 @@ public class PlayerStats : MonoBehaviour
             }
         }
 
-        if (!InventoryManager.Instance.IsShowingInventory && !HudManager.Instance.IsPaused && HudManager.Instance.IsRunningGame && !isDead) {
+        if (GlobalGameplayManager.Instance.IsGameplayActive) {
             if (!isBeingDamaged) {
                 EnablePlayerMovementAndCamera();
             } else {
@@ -340,7 +340,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerControllerWalk(bool isWalking) {
-        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }
         if (isWalking) {
@@ -355,7 +355,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerControllerRun(bool isRunning) {
-        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }
         if (isRunning) {

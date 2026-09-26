@@ -22,7 +22,6 @@ public class PaperManager : MonoBehaviour
 
     private readonly int thisTaskIndex = (int) TaskType.CollectTheNewspapers;
 
-    public List<int> sortedNumbers = new();
     // front materials - 01 to 04
     public List<Material> frontMaterials;
     // back materials - 00 to 09
@@ -34,11 +33,11 @@ public class PaperManager : MonoBehaviour
         } else {
             Instance = this;
         }
+
+        playerStats = FindObjectOfType<PlayerStats>();
     }
 
     void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
-
         for (int i = 0; i < spawnPointsAreas.Count; i++) {
             GameObject spawnArea = spawnPointsAreas[i];
             List<GameObject> areaSpawnPoints = new();
@@ -67,7 +66,7 @@ public class PaperManager : MonoBehaviour
     }
 
     public void SpawnPapers() {
-        if (InventoryManager.Instance.IsShowingInventory || HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }
 
@@ -104,7 +103,7 @@ public class PaperManager : MonoBehaviour
             );
 
             int sortedNumber = randomNumbers[i];
-            sortedNumbers.Add(sortedNumber);
+            TreasureChestManager.Instance.AddCombinationNumber(sortedNumber);
 
             // copying the iterator to a new variable to use inside the lambda function
             int innerIterator = i;
