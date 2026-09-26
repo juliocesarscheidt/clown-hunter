@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,17 +9,21 @@ class Task {
     public int totalProgress;
     public bool isInProgress;
     public bool isCompleted;
+    [System.NonSerialized]
+    public Action<int> onStartAction;
 
-    public Task (string description, int totalProgress) {
+    public Task (string description, int totalProgress, Action<int> onStartAction = null) {
         this.description = description;
         currentProgress = 0;
         this.totalProgress = totalProgress;
         isInProgress = false;
         isCompleted = false;
+        this.onStartAction = onStartAction;
     }
 
-    public void StartTask() {
+    public void StartTask(int globalTaskIndex) {
         isInProgress = true;
+        onStartAction?.Invoke(globalTaskIndex);
     }
 
     public void UpdateProgress(int progress) {
@@ -38,16 +43,26 @@ public class TaskManager : MonoBehaviour
     public TextMeshProUGUI taskInfoText;
 
     public enum TaskType : int {
-        CollectTheNewspapers = 0,
-        EliminateTheRemainingClowns = 1,
+        InvestigateThePlace = 0,
+        EliminateTheRemainingEnemies = 1,
+        EscapeFromThePlace = 2,
     }
 
     [SerializeField]
     private int currentTaskIndex = 0;
 
     private readonly Dictionary<int, Task> tasks = new() {
-        { (int)TaskType.CollectTheNewspapers, new Task("Collect the newspapers", 0) }, // the totalProgress is dynamic
-        { (int)TaskType.EliminateTheRemainingClowns, new Task("Eliminate the remaining clowns", 0) }, // the totalProgress is dynamic
+        { (int)TaskType.InvestigateThePlace, new Task("Investigate the place", 0, (int index) => {
+            Debug.Log($"started task {index}");
+        })},
+        { (int)TaskType.EliminateTheRemainingEnemies, new Task("Eliminate the remaining enemies", 0, (int index) => {
+            Debug.Log($"started task {index}");
+            MonsterManager.Instance.SetCanSpawnEnemies(false);
+        })},
+        { (int)TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
+            Debug.Log($"started task {index}");
+            TreasureChestManager.Instance.ToggleTreasureChest(true);
+        })},
     };
  
     private void Awake() {
@@ -59,7 +74,7 @@ public class TaskManager : MonoBehaviour
     }
 
     public void StartTask(int taskIndex) {
-        tasks[taskIndex].StartTask();
+        tasks[taskIndex].StartTask(taskIndex);
     }
 
     public bool IsCurrentTask(int taskIndex) {
@@ -101,7 +116,11 @@ public class TaskManager : MonoBehaviour
     }
 
     private string GenerateTaskInfoText() {
-        return $"- {tasks[currentTaskIndex].description} [{tasks[currentTaskIndex].currentProgress}/{tasks[currentTaskIndex].totalProgress}]";
+        if (tasks[currentTaskIndex].totalProgress > 1) {
+            return $"- {tasks[currentTaskIndex].description} [{tasks[currentTaskIndex].currentProgress}/{tasks[currentTaskIndex].totalProgress}]";
+        } else {
+            return $"- {tasks[currentTaskIndex].description}";
+        }
     }
 
     private void UpdateTaskInfoText(string text) {

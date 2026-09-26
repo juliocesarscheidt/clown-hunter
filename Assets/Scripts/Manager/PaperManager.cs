@@ -12,15 +12,14 @@ public class PaperManager : MonoBehaviour
     public int defaultLayerIndex = 0;
     public int paperLayerIndex = 6;
 
-    private PlayerStats playerStats;
     // spawnPoints will be splited by areas
     private Dictionary<int, List<GameObject>> spawnPoints = new();
     public List<GameObject> spawnPointsAreas;
 
-    public int totalPapersToCollect = 4;
+    public int totalPapersToSpawn = 4;
     public int monstersToAddOnPaperCollected = 2;
 
-    private readonly int thisTaskIndex = (int) TaskType.CollectTheNewspapers;
+    private readonly int thisTaskIndex = (int) TaskType.InvestigateThePlace;
 
     // front materials - 01 to 04
     public List<Material> frontMaterials;
@@ -33,8 +32,6 @@ public class PaperManager : MonoBehaviour
         } else {
             Instance = this;
         }
-
-        playerStats = FindObjectOfType<PlayerStats>();
     }
 
     void Start() {
@@ -49,7 +46,7 @@ public class PaperManager : MonoBehaviour
 
         SpawnPapers();
 
-        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, totalPapersToCollect);
+        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, 1);
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, 0);
     }
 
@@ -71,7 +68,7 @@ public class PaperManager : MonoBehaviour
         }
 
         int spawnAreasQuantity = spawnPointsAreas.Count;
-        int diffToSpawn = totalPapersToCollect;
+        int diffToSpawn = totalPapersToSpawn;
 
         // shuffle the numbers from 0 to 9 to get random back materials for the papers
         List<int> randomNumbers = shuffleRandomNumbers();
@@ -134,9 +131,9 @@ public class PaperManager : MonoBehaviour
                     }
                 }
                 // increment using the default number of items to avoid overwriting existing inventory items
-                var currentIndex = InventoryManager.Instance.DefaultPlayerItems + i;
+                var currentIndex = InventoryManager.Instance.defaultPlayerItems + i;
                 // dynamically set inventory item in the paper
-                p.SetInventoryItemData(currentIndex, name, false, true, null, instantiateAction);
+                p.SetInventoryItemData(currentIndex, name, false, true, false, null, instantiateAction);
             }
 
             spawnedPapers.Add(paper);
@@ -149,14 +146,19 @@ public class PaperManager : MonoBehaviour
     public void CollectPaper(Paper paper) {
         MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
         MonsterManager.Instance.SpawnEnemies();
+
         // add the UI item to inventory manager
         if (InventoryManager.Instance != null && paper != null) {
             InventoryManager.Instance.AddInteractableItem(paper.inventoryItem, paper.baseInventoryItemPrefab);
         }
+
         // remove from spawnedPapers
         spawnedPapers.Remove(paper.gameObject);
+
         // increment task progress
-        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
+        if (spawnedPapers.Count == 0) {
+            TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
+        }
     }
 
     public void ShowAllPapers(bool showAllPapers) {

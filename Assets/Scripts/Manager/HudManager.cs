@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -269,8 +268,14 @@ public class HudManager : MonoBehaviour
     }
 
     public void SpawnItemOnOverlayCanvasSlot(GameObject prefab) {
+        var overriding = currentOverlayCanvasSlotItem != null && currentOverlayCanvasSlotItem.name != prefab.name;
+        if (overriding) {
+            Destroy(currentOverlayCanvasSlotItem);
+            currentOverlayCanvasSlotItem = null;
+        }
         if (OverlayCanvasSlot != null && currentOverlayCanvasSlotItem == null) {
             currentOverlayCanvasSlotItem = Instantiate(prefab, OverlayCanvasSlot.transform);
+            currentOverlayCanvasSlotItem.name = prefab.name;
             currentOverlayCanvasSlotItem.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             currentOverlayCanvasSlotItem.transform.localScale = Vector3.one;
         }

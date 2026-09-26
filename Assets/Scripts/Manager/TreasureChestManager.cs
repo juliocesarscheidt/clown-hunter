@@ -5,9 +5,9 @@ using UnityEngine;
 public class TreasureChestManager : MonoBehaviour
 {
     public static TreasureChestManager Instance { get; private set; }
-    private PlayerStats playerStats;
-    public TreasureChest treasureChest;
+    public GameObject treasureChestObj;
     public GameObject padlockUIControllerPrefab;
+    public GameObject keyInventoryItemPrefab;
     [SerializeField]
     private bool locked = true;
     [SerializeField]
@@ -19,8 +19,10 @@ public class TreasureChestManager : MonoBehaviour
         } else {
             Instance = this;
         }
+    }
 
-        playerStats = FindObjectOfType<PlayerStats>();
+    public void Start() {
+        ToggleTreasureChest(false);
     }
 
     public void AddCombinationNumber(int number) {
@@ -32,7 +34,9 @@ public class TreasureChestManager : MonoBehaviour
             locked = true;
             return;
         }
+
         for (int i = 0; i < combinationNumbers.Count; i++) {
+            // not match
             if (combinationNumbers[i] != otherCombinationNumbers[i]) {
                 locked = true;
                 return;
@@ -40,26 +44,36 @@ public class TreasureChestManager : MonoBehaviour
         }
 
         locked = false;
+        Unlock();
+    }
+
+    public void Unlock() {
         // TODO: play a sound
-        // TODO: HideOverlayCanvas
-        // TODO: give a key to the player, add it to inventory
-        // TODO: hide the treasure chest gameObject
-        HudManager.Instance.HideOverlayCanvas();
+
+        // give a key to the player, adding it to the inventory
+        var currentIndex = InventoryManager.Instance.InteractableItemsCount;
+        InventoryItem keyInventory = new(currentIndex, "Secret Key", InventoryItem.InteractableType.Item,
+            false, true, true, null, null);
+        InventoryManager.Instance.AddInteractableItem(keyInventory, keyInventoryItemPrefab);
+
+        // show the canvas with the key
+        HudManager.Instance.SpawnItemOnOverlayCanvasSlot(keyInventoryItemPrefab);
+
+        // hide the treasure chest gameObject
+        ToggleTreasureChest(false);
     }
 
-    void Update() {
-        if (!GlobalGameplayManager.Instance.IsGameplayActiveForOverlayCanvas) {
-            return;
-        }
-    }
-
-    public void StartInteraction() {
+    public void StartTreasureChestInteraction() {
         if (!locked) {
             Debug.Log("Treasure chest is unlocked!");
             return;
         }
         HudManager.Instance.ShowOverlayCanvas();
         HudManager.Instance.SpawnItemOnOverlayCanvasSlot(padlockUIControllerPrefab);
+    }
+
+    public void ToggleTreasureChest(bool enabled) {
+        treasureChestObj.SetActive(enabled);
     }
 
     public bool IsLocked {

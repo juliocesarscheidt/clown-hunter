@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TreasureChest : Interactable {
     public override void OnInteract() {
-        TreasureChestManager.Instance.StartInteraction();
+        TreasureChestManager.Instance.StartTreasureChestInteraction();
     }
 
     public override void EnableOutline() {

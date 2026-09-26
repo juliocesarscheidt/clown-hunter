@@ -96,7 +96,7 @@ public class PlayerStats : MonoBehaviour
             var gun = guns[i];
 
             // dynamically set inventory item in the gun
-            gun.SetInventoryItemData(i, gun.gunName, true, true, equipAction, null);
+            gun.SetInventoryItemData(i, gun.gunName, true, true, false, equipAction, null);
 
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
@@ -259,7 +259,7 @@ public class PlayerStats : MonoBehaviour
                 FlashlightManager.Instance.TurnOn();
             }
             InventoryItem flashlightInventory = new(0, "Flashlight", InventoryItem.InteractableType.Item,
-                true, true, onEquipActionFlashlight, null);
+                true, true, false, onEquipActionFlashlight, null);
             InventoryManager.Instance.AddInteractableItem(flashlightInventory, flashlightInventoryItemPrefab);
         }
 
@@ -269,7 +269,7 @@ public class PlayerStats : MonoBehaviour
                 NightVisionManager.Instance.TurnOn();
             }
             InventoryItem binocularInventory = new(1, "Night Vision Binocular", InventoryItem.InteractableType.Item,
-                true, true, onEquipActionBinocular, null);
+                true, true, false, onEquipActionBinocular, null);
             InventoryManager.Instance.AddInteractableItem(binocularInventory, nightvisionBinocularInventoryItemPrefab);
         }
     }

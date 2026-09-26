@@ -38,7 +38,7 @@ public class InventoryManager : MonoBehaviour {
     [System.NonSerialized]
     private Dictionary<int, GameObject> InventoryItemsLivePrefabDict = new();
 
-    public int DefaultPlayerItems = 2; // flashlight and nightvision binocular
+    public int defaultPlayerItems = 2; // flashlight and nightvision binocular
 
     public TextMeshProUGUI uiItemNameText;
     public TextMeshProUGUI uiItemEquipText;
@@ -350,6 +350,12 @@ public class InventoryManager : MonoBehaviour {
         }
     }
     
+    public int InteractableItemsCount {
+        get {
+            return InteractableItems.Count;
+        }
+    }
+
     public void EnterInspectItem(InventoryItem inventoryItem) {
         isInspectingItem = true;
         ItemSlotsPanelWrapper.SetActive(false);
