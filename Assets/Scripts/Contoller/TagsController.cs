@@ -13,6 +13,7 @@ public class TagsController : MonoBehaviour
         Barrel,
         Desk,
         ArcadeMachine,
+        TreasureChest,
     }
 
     public static string GetTag(Tags tag) {
@@ -57,5 +58,9 @@ public class TagsController : MonoBehaviour
 
     public static string ArcadeMachine {
         get { return GetTag(Tags.ArcadeMachine); }
+    }
+
+    public static string TreasureChest {
+        get { return GetTag(Tags.TreasureChest); }
     }
 }

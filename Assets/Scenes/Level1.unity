@@ -38919,6 +38919,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TreasureChest
       objectReference: {fileID: 0}
+    - target: {fileID: 4200257584154763104, guid: 3fb1729315fa8884783b27c8232cb2c8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8560981950456019106, guid: 3fb1729315fa8884783b27c8232cb2c8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -38972,7 +38977,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 281623672402388720, guid: 3fb1729315fa8884783b27c8232cb2c8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 3fb1729315fa8884783b27c8232cb2c8, type: 3}
 --- !u!114 &7263339698891316849
 MonoBehaviour:
