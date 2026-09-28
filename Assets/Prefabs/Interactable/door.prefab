@@ -333,6 +333,10 @@ MonoBehaviour:
   canBeOpened: 0
   keyInventoryItemID: 
   doorLockedSound: {fileID: 8300000, guid: db6f62618ca9c944f868910bfa614d8b, type: 3}
+  doorLights:
+  - {fileID: 0}
+  - {fileID: 0}
+  canBeOpenedColor: {r: 0.48554152, g: 1, b: 0.41194963, a: 0}
 --- !u!82 &3453364334295071075
 AudioSource:
   m_ObjectHideFlags: 0

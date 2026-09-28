@@ -28,7 +28,7 @@ public class DoorsManager : MonoBehaviour {
     public void SetupDoors() {
         if (Doors.Count > sortedDoorIndex) {
             if (Doors[sortedDoorIndex].TryGetComponent<DoorInteractable>(out var door)) {
-                door.SetCanBeOpened(true);
+                door.SetCanBeOpenedLight(true);
                 if (TreasureChestManager.Instance != null) {
                     door.SetKeyInventoryItemID(TreasureChestManager.Instance.KeyInventoryItemID);
                 }
