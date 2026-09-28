@@ -336,7 +336,7 @@ MonoBehaviour:
   doorLights:
   - {fileID: 0}
   - {fileID: 0}
-  canBeOpenedColor: {r: 0.77254903, g: 1, b: 0.8, a: 0}
+  canBeOpenedColor: {r: 0.48554152, g: 1, b: 0.41194963, a: 0}
 --- !u!82 &3453364334295071075
 AudioSource:
   m_ObjectHideFlags: 0
