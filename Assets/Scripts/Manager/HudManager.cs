@@ -29,6 +29,7 @@ public class HudManager : MonoBehaviour
     private bool isShowingOverlayCanvas;
     public GameObject OverlayCanvasSlot;
     private GameObject currentOverlayCanvasSlotItem;
+    public TextMeshProUGUI overlayCanvasText;
 
     [Header("Damage UI")]
     public Image bloodImage;
@@ -48,13 +49,17 @@ public class HudManager : MonoBehaviour
     public TextMeshProUGUI bulletsCounterText;
     public Image gunIconImage;
 
-    public TextMeshProUGUI tempInfoText;
-    private bool showTempInfoText = false;
-    private float showTempInfoTextTimer = 0f;
+    public TextMeshProUGUI tempOptionsInfoText;
+    private bool showOptionsTempInfoText = false;
+    private float showOptionsTempInfoTextTimer = 0f;
 
     public TextMeshProUGUI cheatActivatedText;
     private bool showCheatActivatedText = false;
     private float showCheatActivatedTextTimer = 0f;
+
+    public TextMeshProUGUI generalInfoText;
+    private bool showGeneralInfoText = false;
+    private float showGeneralInfoTextTimer = 0f;
 
     [Header("FPS")]
     public bool showFps = false;
@@ -106,19 +111,27 @@ public class HudManager : MonoBehaviour
             }
         }
 
-        if (showTempInfoText) {
-            showTempInfoTextTimer += Time.unscaledDeltaTime;
-            if (showTempInfoTextTimer >= 1.5f) {
-                SetAndActivateTempInfoText("");
-                showTempInfoTextTimer = 0f;
+        if (showOptionsTempInfoText) {
+            showOptionsTempInfoTextTimer += Time.unscaledDeltaTime;
+            if (showOptionsTempInfoTextTimer >= 1.5f) {
+                ActivateOptionsTempInfoText("");
+                showOptionsTempInfoTextTimer = 0f;
             }
         }
 
         if (showCheatActivatedText) {
             showCheatActivatedTextTimer += Time.unscaledDeltaTime;
             if (showCheatActivatedTextTimer >= 1.5f) {
-                SetAndActivateCheatActivatedText("");
+                ActivateCheatCodeActivatedText("");
                 showCheatActivatedTextTimer = 0f;
+            }
+        }
+
+        if (showGeneralInfoText) {
+            showGeneralInfoTextTimer += Time.deltaTime;
+            if (showGeneralInfoTextTimer >= 1.5f) {
+                ActivateGeneralInfoText("");
+                showGeneralInfoTextTimer = 0f;
             }
         }
 
@@ -253,6 +266,7 @@ public class HudManager : MonoBehaviour
         HideOptionsPanels();
 
         Time.timeScale = 0;
+        overlayCanvasText.enabled = false;
         InteractOverlayCanvas.SetActive(true);
     }
 
@@ -264,10 +278,11 @@ public class HudManager : MonoBehaviour
         HideOptionsPanels();
 
         Time.timeScale = 1;
+        overlayCanvasText.enabled = false;
         InteractOverlayCanvas.SetActive(false);
     }
 
-    public void SpawnItemOnOverlayCanvasSlot(GameObject prefab) {
+    public void SpawnItemOnOverlayCanvasSlot(GameObject prefab, string text = "") {
         var overriding = currentOverlayCanvasSlotItem != null && currentOverlayCanvasSlotItem.name != prefab.name;
         if (overriding) {
             Destroy(currentOverlayCanvasSlotItem);
@@ -278,6 +293,14 @@ public class HudManager : MonoBehaviour
             currentOverlayCanvasSlotItem.name = prefab.name;
             currentOverlayCanvasSlotItem.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             currentOverlayCanvasSlotItem.transform.localScale = Vector3.one;
+
+            if (text != "") {
+                overlayCanvasText.enabled = true;
+                overlayCanvasText.text = text;
+            } else {
+                overlayCanvasText.enabled = false;
+                overlayCanvasText.text = string.Empty;
+            }
         }
     }
 
@@ -317,19 +340,25 @@ public class HudManager : MonoBehaviour
         SettingsManager.Instance.ApplyDifficultySettings();
         SettingsManager.Instance.ApplyResolutionSettings();
         SettingsManager.Instance.ApplyHoldToggleAimSettings();
-        SetAndActivateTempInfoText("Options saved");
+        ActivateOptionsTempInfoText("Options saved");
     }
 
-    public void SetAndActivateTempInfoText(string text) {
-        showTempInfoText = text.Length > 0;
-        tempInfoText.enabled = showTempInfoText;
-        tempInfoText.text = text;
+    public void ActivateOptionsTempInfoText(string text) {
+        showOptionsTempInfoText = text.Length > 0;
+        tempOptionsInfoText.enabled = showOptionsTempInfoText;
+        tempOptionsInfoText.text = text;
     }
 
-    public void SetAndActivateCheatActivatedText(string text) {
+    public void ActivateCheatCodeActivatedText(string text) {
         showCheatActivatedText = text.Length > 0;
         cheatActivatedText.gameObject.SetActive(showCheatActivatedText);
         cheatActivatedText.text = text;
+    }
+
+    public void ActivateGeneralInfoText(string text) {
+        showGeneralInfoText = text.Length > 0;
+        generalInfoText.gameObject.SetActive(showGeneralInfoText);
+        generalInfoText.text = text;
     }
 
     public void RestartGame() {

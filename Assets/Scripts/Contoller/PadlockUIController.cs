@@ -107,7 +107,10 @@ public class PadlockUIController : MonoBehaviour {
         }
         combinationNumbers[index] = nextNumber;
 
-        TreasureChestManager.Instance.CompareCombinationNumbers(combinationNumbers);
+        // check if the combination matches the expected numbers
+        if (TreasureChestManager.Instance != null) {
+            TreasureChestManager.Instance.CompareCombinationNumbers(combinationNumbers);
+        }
     }
 
     private void EnableOutlineAtIndex(int index) {

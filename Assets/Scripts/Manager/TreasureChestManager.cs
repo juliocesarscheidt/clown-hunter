@@ -12,6 +12,8 @@ public class TreasureChestManager : MonoBehaviour
     private bool locked = true;
     [SerializeField]
     private List<int> combinationNumbers = new();
+    // inventory global id for the key item that will be added to the inventory when the treasure chest is unlocked
+    public string KeyInventoryItemID = "item_secret_key_1";
 
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -55,9 +57,11 @@ public class TreasureChestManager : MonoBehaviour
         InventoryItem keyInventory = new(currentIndex, "Secret Key", InventoryItem.InteractableType.Item,
             false, true, true, null, null);
         InventoryManager.Instance.AddInteractableItem(keyInventory, keyInventoryItemPrefab);
+        keyInventory.SetGlobalInventoryItemID(KeyInventoryItemID);
 
         // show the canvas with the key
-        HudManager.Instance.SpawnItemOnOverlayCanvasSlot(keyInventoryItemPrefab);
+        var message = $"{keyInventory.inventoryDisplayName} was added to inventory";
+        HudManager.Instance.SpawnItemOnOverlayCanvasSlot(keyInventoryItemPrefab, message);
 
         // hide the treasure chest gameObject
         ToggleTreasureChest(false);

@@ -16,6 +16,8 @@ public class InventoryItem : IComparable<InventoryItem> {
     public bool canInspect;
     public bool isUsable;
 
+    private string globalInventoryItemID;
+
     [System.NonSerialized]
     public Action<InventoryItem> onEquipAction;
 
@@ -35,6 +37,23 @@ public class InventoryItem : IComparable<InventoryItem> {
         isUsable = usable;
         this.onEquipAction = onEquipAction;
         this.onInstantiateAction = onInstantiateAction;
+
+        if (isUsable) {
+            SetGlobalInventoryItemID();
+        }
+    }
+
+    public void SetGlobalInventoryItemID(string keyID = "") {
+        if (keyID == "") {
+            globalInventoryItemID = $"{interactableType}_{inventoryDisplayName}_{defaultItemIndex}".ToLower();
+        } else {
+            globalInventoryItemID = keyID;
+        }
+        Debug.Log($"SetGlobalInventoryItemID globalInventoryItemID {globalInventoryItemID}");
+    }
+
+    public string GlobalInventoryItemID {
+        get { return globalInventoryItemID; }
     }
 
     public int CompareTo(InventoryItem other) {

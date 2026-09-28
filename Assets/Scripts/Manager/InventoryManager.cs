@@ -356,6 +356,15 @@ public class InventoryManager : MonoBehaviour {
         }
     }
 
+    public bool HasInventoryItemByKey(string globalInventoryItemID) {
+        foreach (var item in InteractableItems) {
+            if (item.GlobalInventoryItemID == globalInventoryItemID) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void EnterInspectItem(InventoryItem inventoryItem) {
         isInspectingItem = true;
         ItemSlotsPanelWrapper.SetActive(false);

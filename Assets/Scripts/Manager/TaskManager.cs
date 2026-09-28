@@ -36,8 +36,7 @@ class Task {
     }
 }
 
-public class TaskManager : MonoBehaviour
-{
+public class TaskManager : MonoBehaviour {
     public static TaskManager Instance { get; private set; }
 
     public TextMeshProUGUI taskInfoText;
@@ -62,6 +61,7 @@ public class TaskManager : MonoBehaviour
         { (int)TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
             Debug.Log($"started task {index}");
             TreasureChestManager.Instance.ToggleTreasureChest(true);
+            DoorsManager.Instance.SetupDoors();
         })},
     };
  

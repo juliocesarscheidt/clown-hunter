@@ -95,16 +95,16 @@ public class CheatManager : MonoBehaviour
         foreach (CheatEnum cheat in cheatCodes.Values) {
             DeactivateCheat(cheat);
         }
-        HudManager.Instance.SetAndActivateCheatActivatedText("Cheats deactivated");
+        HudManager.Instance.ActivateCheatCodeActivatedText("Cheats deactivated");
     }
 
     public void ActivateCheat(CheatEnum cheat) {
         if (SettingsManager.Instance.GetDifficulty() == SettingsManager.Instance.maxDifficulty) {
-            HudManager.Instance.SetAndActivateCheatActivatedText("No cheats allowed");
+            HudManager.Instance.ActivateCheatCodeActivatedText("No cheats allowed");
             return;
         }
 
-        HudManager.Instance.SetAndActivateCheatActivatedText("Cheat activated");
+        HudManager.Instance.ActivateCheatCodeActivatedText("Cheat activated");
         cheatAudioSource.Play();
 
         switch (cheat) {

@@ -57,13 +57,16 @@ public abstract class Interactable: MonoBehaviour {
         }
     
         if (isInteractionActive) {
-            pressInteractText.gameObject.SetActive(true);
+            if (pressInteractText != null) {
+                pressInteractText.gameObject.SetActive(true);
+            }
             // show object outline
             if (!isOutlineEnabled) {
                 EnableOutline();
             }
             if (Input.GetButtonDown("Interact")) {
                 OnInteract();
+
                 if (playSoundOnInteract) {
                     InteractionManager.Instance.PlayCollectAudio();
                 }
@@ -73,7 +76,9 @@ public abstract class Interactable: MonoBehaviour {
                 }
             }
         } else {
-            pressInteractText.gameObject.SetActive(false);
+            if (pressInteractText != null) {
+                pressInteractText.gameObject.SetActive(false);
+            }
             DisableOutline();
         }
     }
