@@ -14,6 +14,9 @@ public class DoorInteractable : Interactable
     private AudioSource doorAudioSource;
     public AudioClip doorLockedSound;
 
+    public List<Light> doorLights;
+    public Color canBeOpenedColor;
+
     new void Start() {
         base.Start();
         doorAudioSource = GetComponent<AudioSource>();
@@ -54,8 +57,15 @@ public class DoorInteractable : Interactable
         // no outline
     }
 
-    public void SetCanBeOpened(bool can) {
+    public void SetCanBeOpenedLight(bool can) {
         canBeOpened = can;
+        SetDoorLightColor(canBeOpenedColor);
+    }
+
+    private void SetDoorLightColor(Color color) {
+        foreach (var light in doorLights) {
+            light.color = color;
+        }
     }
 
     public string GetKeyInventoryItemID {
