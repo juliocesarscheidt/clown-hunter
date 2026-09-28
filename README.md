@@ -8,8 +8,9 @@ You can download it and play through the [releases](https://github.com/juliocesa
 
 ![menu](./Images/Banner.png)
 
-![in game](./Images/in-game-001.png)
-![in game](./Images/in-game-002.png)
+![in game 1](./Images/game-001.png)
+![in game 2](./Images/game-002.png)
+![in game 3](./Images/game-003.png)
 
 ## License
 
