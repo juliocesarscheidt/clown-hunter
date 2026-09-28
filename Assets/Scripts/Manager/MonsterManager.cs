@@ -11,6 +11,8 @@ public class MonsterManager : MonoBehaviour
 
     public List<GameObject> spawnPoints;
     public List<GameObject> enemiesPrefabs;
+    [SerializeField]
+    private bool canSpawnEnemies = true;
 
     public int monstersToSpawn = 4;
     private int monstersAlive = 0;
@@ -33,7 +35,7 @@ public class MonsterManager : MonoBehaviour
     public bool canReceiveDamage = true;
     public bool showCurrentState = false;
 
-    private readonly int thisTaskIndex = (int) TaskType.EliminateTheRemainingClowns;
+    private readonly int thisTaskIndex = (int) TaskType.EliminateTheRemainingEnemies;
 
     void Awake() {
         if (Instance != null && Instance != this) {
@@ -112,6 +114,11 @@ public class MonsterManager : MonoBehaviour
     public void AddMonsterToPool(int id, Monster monster) {
         monstersPool.Add(id, monster);
         UpdateMonstersAliveCounter();
+        if (SettingsManager.Instance != null) {
+             if (monster.TryGetComponent(out AudioSource monsterAudio)) {
+                SettingsManager.Instance.AddAudioSource(monsterAudio);
+            }
+        }
     }
 
     public void RemoveMonsterFromPool(int id) {
@@ -139,8 +146,16 @@ public class MonsterManager : MonoBehaviour
         TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, monstersAlive);
     }
 
+    public void SetCanSpawnEnemies(bool canSpawn) {
+        canSpawnEnemies = canSpawn;
+    }
+
     public void SpawnEnemies() {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || playerStats.isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
+            return;
+        }
+
+        if (!canSpawnEnemies) {
             return;
         }
 

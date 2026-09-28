@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,8 +9,8 @@ public class SettingsManager : MonoBehaviour
     public static SettingsManager Instance { get; private set; }
 
     [SerializeField]
-    private AudioSource[] audioSources;
-    private float[] audioSourcesOriginalVolumes;
+    private List<AudioSource> audioSources = new();
+    private List<float> audioSourcesOriginalVolumes = new();
 
     public Slider audioSlider;
     public TextMeshProUGUI volumeInfoText;
@@ -55,12 +56,7 @@ public class SettingsManager : MonoBehaviour
             Instance = this;
         }
 
-        audioSources = FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        audioSourcesOriginalVolumes = new float[audioSources.Length];
-        for (int i = 0; i < audioSources.Length; i++) {
-            audioSourcesOriginalVolumes[i] = audioSources[i].volume;
-        }
+        InitAudioSources();
     }
 
     private void Start() {
@@ -148,21 +144,50 @@ public class SettingsManager : MonoBehaviour
 
     public int GetDifficulty() { return difficulty; }
 
+    private void InitAudioSources()  {
+        audioSources = FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
+        for (int i = 0; i < audioSources.Count; i++) {
+            audioSourcesOriginalVolumes.Add(audioSources[i].volume);
+        }
+    }
+
+    public void AddAudioSource(AudioSource audioSource) {
+        audioSources.Add(audioSource);
+        audioSourcesOriginalVolumes.Add(audioSource.volume);
+        SetSoundSettings(volume);
+    }
+
+    private void ClearMissingAudioSources() {
+        for (int i = audioSources.Count - 1; i >= 0; i--) {
+            if (audioSources[i] == null) {
+                audioSources.RemoveAt(i);
+                audioSourcesOriginalVolumes.RemoveAt(i);
+            }
+        }
+    }
+
     private void SetSoundSettings(float volume) {
-        for (int i = 0; i < audioSources.Length; i++) {
+        ClearMissingAudioSources();
+
+        for (int i = 0; i < audioSources.Count; i++) {
+            if (audioSources[i] == null) {
+                continue;
+            }
             float originalVolume = audioSourcesOriginalVolumes[i];
             audioSources[i].volume = originalVolume * volume;
         }
     }
 
     public void ApplySoundSettings() {
+        ClearMissingAudioSources();
+ 
         volume = audioSlider.value;
         PlayerPrefs.SetFloat("volume", volume);
         SetSoundSettings(volume);
     }
 
     private void SetResolutionSettings(int screenWidth, int screenHeight, bool fullScreen = true) {
-        Resolution resolution = Screen.currentResolution;
+        // Resolution resolution = Screen.currentResolution;
         // Debug.Log($"Current resolution: {resolution.width}x{resolution.height}");
         Screen.SetResolution(screenWidth, screenHeight, fullScreen);
         // Debug.Log($"Screen.width {Screen.width} | Screen.height {Screen.height}");

@@ -1,8 +1,10 @@
 using Cinemachine;
 using StarterAssets;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,8 +44,8 @@ public class PlayerStats : MonoBehaviour
     public AudioSource gunsAudioSource;
 
     private Dictionary<int, bool> gunsEnabled = new();
-    public GameObject gunsGameObjectParent;
     public List<Weapon> guns;
+    public List<GameObject> gunsGameObjects;
     [SerializeField]
     private Weapon selectedGun;
     [SerializeField]
@@ -74,30 +76,45 @@ public class PlayerStats : MonoBehaviour
 
     public GameObject pointToMonsterAttack;
 
+    public GameObject flashlightInventoryItemPrefab;
+    public GameObject nightvisionBinocularInventoryItemPrefab;
+
     private readonly Dictionary<string, int> animationHashes = new() {
         { "isReloading", Animator.StringToHash("isReloading") },
         { "isAiming", Animator.StringToHash("isAiming") },
-
     };
 
     void Awake() {
         playerController = GetComponent<FirstPersonController>();
         playerShooting = GetComponent<Shooting>();
 
+        void equipAction(InventoryItem item) {
+            HudManager.Instance.HideInventoryPanel();
+            ChangeGun(item.defaultItemIndex);
+        }
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
+
+            // dynamically set inventory item in the gun
+            gun.SetInventoryItemData(i, gun.gunName, true, true, false, equipAction, null);
 
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
             availableBullets.Add(gun.availableBullets);
         }
+    }
 
+    private void Start() {
         EnableDefaultGuns();
+        if (HudManager.Instance != null) {
+            HudManager.Instance.AdjustBulletsCount();
+        }
+        AddDefaultInventoryItems();
     }
 
     void Update() {
         if (HudManager.Instance.IsRunningGame) {
-            if (HudManager.Instance.IsPaused) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
                 gunsAudioSource.Pause();
                 stepsAudioSource.Pause();
             } else {
@@ -106,7 +123,7 @@ public class PlayerStats : MonoBehaviour
             }
         }
 
-        if (!HudManager.Instance.IsPaused && HudManager.Instance.IsRunningGame && !isDead) {
+        if (GlobalGameplayManager.Instance.IsGameplayActive) {
             if (!isBeingDamaged) {
                 EnablePlayerMovementAndCamera();
             } else {
@@ -194,13 +211,13 @@ public class PlayerStats : MonoBehaviour
         }
 
         // hide other guns
-        for (int i = 0; i < gunsGameObjectParent.transform.childCount; i++) {
-            gunsGameObjectParent.transform.GetChild(i).gameObject.SetActive(false);
+        for (int i = 0; i < gunsGameObjects.Count; i++) {
+            gunsGameObjects[i].SetActive(false);
         }
         selectedGunIndex = index;
         selectedGun = guns[selectedGunIndex];
 
-        selectedGunObject = gunsGameObjectParent.transform.GetChild(selectedGunIndex).gameObject;
+        selectedGunObject = gunsGameObjects[selectedGunIndex];
         selectedGunObject.SetActive(true);
 
         gunAnimator = selectedGunObject.GetComponent<Animator>();
@@ -220,6 +237,10 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    void ChangeGunByHotkey(int hotkey) {
+        ChangeGun(hotkey - 1);
+    }
+
     public void ChangeReticleToColorWithTimer(Color color) {
         if (currentGunReticle.TryGetComponent(out Image img)) {
             img.color = color;
@@ -231,12 +252,38 @@ public class PlayerStats : MonoBehaviour
         reticleRedTimer = 0f;
     }
 
-    void ChangeGunByHotkey(int hotkey) {
-        ChangeGun(hotkey - 1);
+    private void AddDefaultInventoryItems() {
+        if (flashlightInventoryItemPrefab != null) {
+            void onEquipActionFlashlight(InventoryItem item) {
+                HudManager.Instance.HideInventoryPanel();
+                FlashlightManager.Instance.TurnOn();
+            }
+            InventoryItem flashlightInventory = new(0, "Flashlight", InventoryItem.InteractableType.Item,
+                true, true, false, onEquipActionFlashlight, null);
+            InventoryManager.Instance.AddInteractableItem(flashlightInventory, flashlightInventoryItemPrefab);
+        }
+
+        if (nightvisionBinocularInventoryItemPrefab != null) {
+            void onEquipActionBinocular(InventoryItem item) {
+                HudManager.Instance.HideInventoryPanel();
+                NightVisionManager.Instance.TurnOn();
+            }
+            InventoryItem binocularInventory = new(1, "Night Vision Binocular", InventoryItem.InteractableType.Item,
+                true, true, false, onEquipActionBinocular, null);
+            InventoryManager.Instance.AddInteractableItem(binocularInventory, nightvisionBinocularInventoryItemPrefab);
+        }
     }
 
     public void SetGunEnabled(int index, bool enabled) {
+        var alreadyEnabled = gunsEnabled.Count > index && gunsEnabled[index];
         gunsEnabled[index] = enabled;
+
+        if (!alreadyEnabled && enabled) {
+            if (InventoryManager.Instance != null && guns.Count > index) {
+                var gun = guns[index];
+                InventoryManager.Instance.AddInteractableItem(gun.inventoryItem, gun.baseInventoryItemPrefab);
+            }
+        }
     }
 
     public void EnableDefaultGuns() {
@@ -293,7 +340,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerControllerWalk(bool isWalking) {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }
         if (isWalking) {
@@ -308,7 +355,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     public void PlayerControllerRun(bool isRunning) {
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }
         if (isRunning) {
@@ -342,10 +389,14 @@ public class PlayerStats : MonoBehaviour
         isBeingDamaged = true;
 
         if (health <= 0) {
-            health = 0;
-            isDead = true;
-            HudManager.Instance.ShowGameOverImage();
+            Die();
         }
+    }
+
+    public void Die() {
+        health = 0;
+        isDead = true;
+        HudManager.Instance.ShowGameOverImage();
     }
 
     public void CollectGunSetEnabled(int index) {
@@ -353,7 +404,7 @@ public class PlayerStats : MonoBehaviour
         ChangeGun(index);
     }
 
-    public void CollectAmmo(int bulletsAmount) {
+    public void CollectAmmunition(int bulletsAmount) {
         if (spendAmmo) {
             // add bullets to the current gun
             availableBullets[selectedGunIndex] += bulletsAmount;
@@ -368,7 +419,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    public void FillAllAmmo() {
+    public void FillAllAmmunition() {
         for (int i = 0; i < guns.Count; i++) {
             currentBullets[i] = maxBullets[i];
         }

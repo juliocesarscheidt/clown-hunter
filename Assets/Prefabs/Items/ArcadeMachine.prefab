@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2399931524894478182}
   m_Layer: 0
   m_Name: ghost4
-  m_TagString: ArcadeMachine
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -26,9 +26,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1680999035332552219}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.3961946, y: 0, z: -0, w: 0.9181666}
-  m_LocalPosition: {x: 0.09863683, y: 0.9572418, z: -0.041921385}
-  m_LocalScale: {x: 0.094988525, y: 0.094988525, z: 0.094988525}
+  m_LocalRotation: {x: 0.36908996, y: -0, z: -0, w: 0.92939377}
+  m_LocalPosition: {x: 0.09864125, y: 0.04192293, z: 0.9572419}
+  m_LocalScale: {x: 0.09498852, y: 0.09498852, z: 0.09498852}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6176849957804869411}
@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 2224570077254737233}
   m_Layer: 0
   m_Name: ghost2
-  m_TagString: ArcadeMachine
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -192,9 +192,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2334430823859230001}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.3961946, y: 0, z: -0, w: 0.9181666}
-  m_LocalPosition: {x: -0.17132433, y: 1.065004, z: -0.15619996}
-  m_LocalScale: {x: 0.094988525, y: 0.094988525, z: 0.094988525}
+  m_LocalRotation: {x: 0.36908996, y: -0, z: -0, w: 0.92939377}
+  m_LocalPosition: {x: -0.1713204, y: 0.15619923, z: 1.065004}
+  m_LocalScale: {x: 0.09498852, y: 0.09498852, z: 0.09498852}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6176849957804869411}
@@ -258,6 +258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6176849957804869411}
+  - component: {fileID: 2609747031849638111}
   m_Layer: 0
   m_Name: ArcadeMachine
   m_TagString: ArcadeMachine
@@ -273,104 +274,40 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2864425207204215729}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 60.689, y: 0.00000071525574, z: 67.766}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 23.004997, y: 0, z: -7.084999}
   m_LocalScale: {x: 1.1355, y: 1.1355, z: 1.1355}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5671373014667404511}
-  - {fileID: 197447659725600362}
-  - {fileID: 1091734896683775550}
-  - {fileID: 6012779424146661869}
-  - {fileID: 8467144071746759437}
-  - {fileID: 4639359285890733093}
   - {fileID: 2187888990758464382}
-  - {fileID: 2283995468083925040}
+  - {fileID: 4639359285890733093}
+  - {fileID: 8467144071746759437}
+  - {fileID: 6012779424146661869}
+  - {fileID: 1091734896683775550}
+  - {fileID: 197447659725600362}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!1 &4273514938994831115
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2283995468083925040}
-  - component: {fileID: 2316611547382597141}
-  - component: {fileID: 2377405873415390516}
-  m_Layer: 0
-  m_Name: scheibe
-  m_TagString: ArcadeMachine
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &2283995468083925040
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4273514938994831115}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6176849957804869411}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2316611547382597141
-MeshFilter:
+--- !u!65 &2609747031849638111
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4273514938994831115}
-  m_Mesh: {fileID: 6768717835237462038, guid: a9faf3f8bb036694d8dc8fc60d330736, type: 3}
---- !u!23 &2377405873415390516
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4273514938994831115}
+  m_GameObject: {fileID: 2864425207204215729}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 7aa1ccda46f07a245b9aff9d921219f8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
+  serializedVersion: 3
+  m_Size: {x: 0.7, y: 0.701, z: 1.8}
+  m_Center: {x: 0, y: -0.01, z: 0.9}
 --- !u!1 &4948469239861195164
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,7 +321,7 @@ GameObject:
   - component: {fileID: 5349147443987921057}
   m_Layer: 0
   m_Name: ghost3
-  m_TagString: ArcadeMachine
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -397,9 +334,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4948469239861195164}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.3961946, y: 0, z: -0, w: 0.9181666}
-  m_LocalPosition: {x: -0.023296483, y: 0.95618194, z: -0.040797427}
-  m_LocalScale: {x: 0.094988525, y: 0.094988525, z: 0.094988525}
+  m_LocalRotation: {x: 0.36908996, y: -0, z: -0, w: 0.92939377}
+  m_LocalPosition: {x: -0.023294682, y: 0.0407975, z: 0.95618194}
+  m_LocalScale: {x: 0.09498852, y: 0.09498852, z: 0.09498852}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6176849957804869411}
@@ -454,59 +391,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &5323409856713932529
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5671373014667404511}
-  - component: {fileID: 3042698157899624154}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: ArcadeMachine
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!4 &5671373014667404511
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5323409856713932529}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.91000015, z: 0}
-  m_LocalScale: {x: 0.7200001, y: 0.88000005, z: 1.8000002}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6176849957804869411}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3042698157899624154
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5323409856713932529}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7248118700863055775
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +404,7 @@ GameObject:
   - component: {fileID: 2052366032139391883}
   m_Layer: 0
   m_Name: ghost1
-  m_TagString: ArcadeMachine
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -533,9 +417,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7248118700863055775}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.3961946, y: 0, z: -0, w: 0.9181666}
-  m_LocalPosition: {x: 0.023592696, y: 0.9564102, z: -0.04103966}
-  m_LocalScale: {x: 0.094988525, y: 0.094988525, z: 0.094988525}
+  m_LocalRotation: {x: 0.36908996, y: -0, z: -0, w: 0.92939377}
+  m_LocalPosition: {x: 0.023590315, y: 0.041039385, z: 0.9564103}
+  m_LocalScale: {x: 0.09498852, y: 0.09498852, z: 0.09498852}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6176849957804869411}
@@ -603,7 +487,7 @@ GameObject:
   - component: {fileID: 207167785628067769}
   m_Layer: 0
   m_Name: pacman
-  m_TagString: ArcadeMachine
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -616,9 +500,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7344930308752362448}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.3961946, y: 0, z: -0, w: 0.9181666}
-  m_LocalPosition: {x: -0.18655878, y: 0.9587057, z: -0.04407005}
-  m_LocalScale: {x: 0.094988525, y: 0.094988525, z: 0.094988525}
+  m_LocalRotation: {x: 0.36908996, y: -0, z: -0, w: 0.92939377}
+  m_LocalPosition: {x: -0.18655902, y: 0.044069644, z: 0.9587058}
+  m_LocalScale: {x: 0.09498852, y: 0.09498852, z: 0.09498852}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1415708465826617531}
@@ -688,7 +572,7 @@ GameObject:
   - component: {fileID: 1539468279185631436}
   m_Layer: 0
   m_Name: pac man machine
-  m_TagString: ArcadeMachine
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
@@ -701,8 +585,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7441220029667309958}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -110,7 +110,7 @@ public class Monster : MonoBehaviour
             currentStateText.gameObject.SetActive(false);
         }
 
-        if (HudManager.Instance.IsPaused || !HudManager.Instance.IsRunningGame || isDead || playerStats.isDead) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive || isDead) {
             StopWalk();
             return;
         }

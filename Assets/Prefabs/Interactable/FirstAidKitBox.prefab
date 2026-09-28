@@ -1332,14 +1332,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOutlineEnabled: 0
-  pressInteractText: {fileID: 0}
   isInteractionActive: 0
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
-  distanceToTarget: 0
+  isBlockedByObstacle: 0
+  distanceToPlayer: 0
   distanceToPlayerTrigger: 4
-  directionToTarget: {x: 0, y: 0, z: 0}
+  interactleType: 1
   healthAmount: 100
 --- !u!65 &9139428982902679567
 BoxCollider:

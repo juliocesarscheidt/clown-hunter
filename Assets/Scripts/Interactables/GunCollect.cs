@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GunCollect : Interactable {
     public string gunName; // the same as the scriptable weapon name
-    [SerializeField]
     private int playerGunIndex;
 
     public new void Start() {
@@ -10,8 +9,7 @@ public class GunCollect : Interactable {
         playerGunIndex = playerStats.guns.FindIndex((w) => w.gunName == gunName);
     }
 
-    public override void Collect() {
-        // Debug.Log($"playerGunIndex {playerGunIndex}");
+    public override void OnInteract() {
         playerStats.CollectGunSetEnabled(playerGunIndex);
     }
 

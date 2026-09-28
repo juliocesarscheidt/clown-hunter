@@ -3,8 +3,8 @@ using UnityEngine;
 public class GunAmmo : Interactable {
     public int bulletsAmount = 60;
     
-    public override void Collect() {
-        playerStats.CollectAmmo(bulletsAmount);
+    public override void OnInteract() {
+        playerStats.CollectAmmunition(bulletsAmount);
     }
 
     public override void EnableOutline() {

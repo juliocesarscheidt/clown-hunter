@@ -6,44 +6,62 @@ using UnityEngine.UI;
 public class HudManager : MonoBehaviour
 {
     public static HudManager Instance { get; private set; }
+    private PlayerStats playerStats;
 
+    [Header("Stamina")]
     public Slider StaminaSlider;
     public Slider HealthSlider;
-
     public Color StaminaColorDefault;
     public Color StaminaColorLow;
 
+    [Header("State Panels")]
     public GameObject GameOverImage;
     public GameObject EndGameImage;
     public GameObject PauseGamePanel;
 
+    [Header("Options Panels")]
     public GameObject OptionsGamePanelBg;
     public List<GameObject> OptionsGamePanelLayers;
 
+    [Header("Interact Overlay")]
+    public GameObject InteractOverlayCanvas;
+    [SerializeField]
+    private bool isShowingOverlayCanvas;
+    public GameObject OverlayCanvasSlot;
+    private GameObject currentOverlayCanvasSlotItem;
+    public TextMeshProUGUI overlayCanvasText;
+
+    [Header("Damage UI")]
     public Image bloodImage;
     private bool showBloodImage = false;
     public float timeToShowBloodImage = 4f;
     private float showBloodImageTimer = 0f;
     public Color bloodImageColorDefault;
-
-    private PlayerStats playerStats;
+    
+    [Header("Game States")]
     [SerializeField]
     private bool isPaused = false;
     [SerializeField]
     private bool isRunningGame = false;
 
+    [Header("UI Info")]
     public GameObject uiInfoWraperObject;
     public TextMeshProUGUI bulletsCounterText;
     public Image gunIconImage;
 
-    public TextMeshProUGUI tempInfoText;
-    private bool showTempInfoText = false;
-    private float showTempInfoTextTimer = 0f;
+    public TextMeshProUGUI tempOptionsInfoText;
+    private bool showOptionsTempInfoText = false;
+    private float showOptionsTempInfoTextTimer = 0f;
 
     public TextMeshProUGUI cheatActivatedText;
     private bool showCheatActivatedText = false;
     private float showCheatActivatedTextTimer = 0f;
 
+    public TextMeshProUGUI generalInfoText;
+    private bool showGeneralInfoText = false;
+    private float showGeneralInfoTextTimer = 0f;
+
+    [Header("FPS")]
     public bool showFps = false;
     public float updateFpsFrequency = 0.2f;
     private float updateFpsTimer;
@@ -55,42 +73,65 @@ public class HudManager : MonoBehaviour
         } else {
             Instance = this;
         }
+        playerStats = FindObjectOfType<PlayerStats>();
     }
 
     void Start() {
-        playerStats = FindObjectOfType<PlayerStats>();
         isRunningGame = true;
         HidePauseGamePanel();
-        AdjustBulletsCount();
+        HideInventoryPanel();
+        PostProcessingManager.Instance.DisableBlur();
+        // AdjustBulletsCount(); // calling this from playerStats
     }
 
     void Update() {
         if (!playerStats.isDead && isRunningGame) {
             if (Input.GetButtonDown("Return")) {
-                if (!isPaused) {
-                    ShowPauseGamePanel();
+                if (!isShowingOverlayCanvas) {
+                    if (!isPaused) {
+                        ShowPauseGamePanel();
+                    } else {
+                        HidePauseGamePanel();
+                    }
                 } else {
-                    HidePauseGamePanel();
+                    HideOverlayCanvas();
                 }
             }
+
+            if (!isPaused && !isShowingOverlayCanvas && Input.GetButtonDown("Inventory")) {
+                if (!InventoryManager.Instance.IsShowingInventory) {
+                    ShowInventoryPanel();
+                } else {
+                    HideInventoryPanel();
+                }
+            }
+
             if (showBloodImage) {
                 CheckBloodImage();
             }
         }
 
-        if (showTempInfoText) {
-            showTempInfoTextTimer += Time.unscaledDeltaTime;
-            if (showTempInfoTextTimer >= 1.5f) {
-                SetAndActivateTempInfoText("");
-                showTempInfoTextTimer = 0f;
+        if (showOptionsTempInfoText) {
+            showOptionsTempInfoTextTimer += Time.unscaledDeltaTime;
+            if (showOptionsTempInfoTextTimer >= 1.5f) {
+                ActivateOptionsTempInfoText("");
+                showOptionsTempInfoTextTimer = 0f;
             }
         }
 
         if (showCheatActivatedText) {
             showCheatActivatedTextTimer += Time.unscaledDeltaTime;
             if (showCheatActivatedTextTimer >= 1.5f) {
-                SetAndActivateCheatActivatedText("");
+                ActivateCheatCodeActivatedText("");
                 showCheatActivatedTextTimer = 0f;
+            }
+        }
+
+        if (showGeneralInfoText) {
+            showGeneralInfoTextTimer += Time.deltaTime;
+            if (showGeneralInfoTextTimer >= 1.5f) {
+                ActivateGeneralInfoText("");
+                showGeneralInfoTextTimer = 0f;
             }
         }
 
@@ -136,54 +177,131 @@ public class HudManager : MonoBehaviour
         Cursor.visible = true;
     }
 
-    private void FinishGameUi() {
+    private void SetFinishGameUi() {
         isRunningGame = false;
+        isPaused = false;
+        isShowingOverlayCanvas = false;
 
-        // HidePressInteractObject();
+        PostProcessingManager.Instance.EnableBlur();
         uiInfoWraperObject.SetActive(false);
-
         UnlockCursor();
     }
 
     public void ShowGameOverImage() {
-        FinishGameUi();
+        SetFinishGameUi();
         GameOverImage.SetActive(true);
     }
 
     public void ShowEndGameImage() {
-        FinishGameUi();
+        SetFinishGameUi();
         EndGameImage.SetActive(true);
     }
 
     public void ShowPauseGamePanel() {
         isPaused = true;
+        PostProcessingManager.Instance.EnableBlur();
+
+        if (InventoryManager.Instance.IsShowingInventory) {
+            InventoryManager.Instance.HideInventoryPanel();
+        }
+        //if (isShowingOverlayCanvas) {
+        //    HideOverlayCanvas();
+        //}
 
         UnlockCursor();
+
         uiInfoWraperObject.SetActive(false);
+        HideOptionsPanels();
 
         Time.timeScale = 0;
-
-        HideOptionsPanels();
         PauseGamePanel.SetActive(true);
     }
 
     public void HidePauseGamePanel() {
         isPaused = false;
+        PostProcessingManager.Instance.DisableBlur();
 
         LockCursor();
+
         uiInfoWraperObject.SetActive(true);
+        HideOptionsPanels();
 
         Time.timeScale = 1;
-
-        HideOptionsPanels();
         PauseGamePanel.SetActive(false);
     }
 
-    private void HideOptionsPanels() {
-        for (int i = 0; i < OptionsGamePanelLayers.Count; i++) {
-            OptionsGamePanelLayers[i].SetActive(false);
+    public void ShowInventoryPanel() {
+        PostProcessingManager.Instance.EnableBlur();
+
+        uiInfoWraperObject.SetActive(false);
+        HideOptionsPanels();
+
+        Time.timeScale = 0;
+        InventoryManager.Instance.ShowInventoryPanel();
+    }
+
+    public void HideInventoryPanel() {
+        PostProcessingManager.Instance.DisableBlur();
+
+        uiInfoWraperObject.SetActive(true);
+        HideOptionsPanels();
+
+        Time.timeScale = 1;
+        InventoryManager.Instance.HideInventoryPanel();
+    }
+
+    public void InventoryEnterInspectMode() {
+        UnlockCursor();
+    }
+
+    public void InventoryExitInspectMode() {
+        LockCursor();
+    }
+    
+    public void ShowOverlayCanvas() {
+        isShowingOverlayCanvas = true;
+        PostProcessingManager.Instance.EnableBlur();
+
+        uiInfoWraperObject.SetActive(false);
+        HideOptionsPanels();
+
+        Time.timeScale = 0;
+        overlayCanvasText.enabled = false;
+        InteractOverlayCanvas.SetActive(true);
+    }
+
+    public void HideOverlayCanvas() {
+        isShowingOverlayCanvas = false;
+        PostProcessingManager.Instance.DisableBlur();
+
+        uiInfoWraperObject.SetActive(true);
+        HideOptionsPanels();
+
+        Time.timeScale = 1;
+        overlayCanvasText.enabled = false;
+        InteractOverlayCanvas.SetActive(false);
+    }
+
+    public void SpawnItemOnOverlayCanvasSlot(GameObject prefab, string text = "") {
+        var overriding = currentOverlayCanvasSlotItem != null && currentOverlayCanvasSlotItem.name != prefab.name;
+        if (overriding) {
+            Destroy(currentOverlayCanvasSlotItem);
+            currentOverlayCanvasSlotItem = null;
         }
-        OptionsGamePanelBg.SetActive(false);
+        if (OverlayCanvasSlot != null && currentOverlayCanvasSlotItem == null) {
+            currentOverlayCanvasSlotItem = Instantiate(prefab, OverlayCanvasSlot.transform);
+            currentOverlayCanvasSlotItem.name = prefab.name;
+            currentOverlayCanvasSlotItem.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            currentOverlayCanvasSlotItem.transform.localScale = Vector3.one;
+
+            if (text != "") {
+                overlayCanvasText.enabled = true;
+                overlayCanvasText.text = text;
+            } else {
+                overlayCanvasText.enabled = false;
+                overlayCanvasText.text = string.Empty;
+            }
+        }
     }
 
     public void EnterOptionsPanel(PanelObject panel) {
@@ -210,29 +328,44 @@ public class HudManager : MonoBehaviour
         }
     }
 
+    private void HideOptionsPanels() {
+        for (int i = 0; i < OptionsGamePanelLayers.Count; i++) {
+            OptionsGamePanelLayers[i].SetActive(false);
+        }
+        OptionsGamePanelBg.SetActive(false);
+    }
+
     public void ApplyOptions() {
         SettingsManager.Instance.ApplySoundSettings();
         SettingsManager.Instance.ApplyDifficultySettings();
         SettingsManager.Instance.ApplyResolutionSettings();
         SettingsManager.Instance.ApplyHoldToggleAimSettings();
-        SetAndActivateTempInfoText("Options saved");
+        ActivateOptionsTempInfoText("Options saved");
     }
 
-    public void SetAndActivateTempInfoText(string text) {
-        showTempInfoText = text.Length > 0;
-        tempInfoText.enabled = showTempInfoText;
-        tempInfoText.text = text;
+    public void ActivateOptionsTempInfoText(string text) {
+        showOptionsTempInfoText = text.Length > 0;
+        tempOptionsInfoText.enabled = showOptionsTempInfoText;
+        tempOptionsInfoText.text = text;
     }
 
-    public void SetAndActivateCheatActivatedText(string text) {
+    public void ActivateCheatCodeActivatedText(string text) {
         showCheatActivatedText = text.Length > 0;
         cheatActivatedText.gameObject.SetActive(showCheatActivatedText);
         cheatActivatedText.text = text;
     }
 
+    public void ActivateGeneralInfoText(string text) {
+        showGeneralInfoText = text.Length > 0;
+        generalInfoText.gameObject.SetActive(showGeneralInfoText);
+        generalInfoText.text = text;
+    }
+
     public void RestartGame() {
         isRunningGame = false;
         isPaused = false;
+        isShowingOverlayCanvas = false;
+        
         Time.timeScale = 1;
         StartCoroutine(LevelLoaderManager.Instance.LoadLevel(1));
     }
@@ -240,6 +373,7 @@ public class HudManager : MonoBehaviour
     public void GoToMenu() {
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
+
         Time.timeScale = 1;
         StartCoroutine(LevelLoaderManager.Instance.LoadLevel(0));
     }
@@ -247,14 +381,14 @@ public class HudManager : MonoBehaviour
     public void Quit() {
         UnlockCursor();
         uiInfoWraperObject.SetActive(false);
+
         Time.timeScale = 1;
         LevelLoaderManager.Instance.Quit();
     }
 
     public void AdjustBulletsCount() {
-        if (playerStats != null) {
-            bulletsCounterText.text =
-                $"{playerStats.CurrentBullets} [{playerStats.AvailableBullets}]";
+        if (playerStats != null && playerStats.SelectedGun != null) {
+            bulletsCounterText.text = $"{playerStats.CurrentBullets} [{playerStats.AvailableBullets}]";
             gunIconImage.sprite = playerStats.SelectedGun.gunIconImage;
         }
     }
@@ -302,5 +436,9 @@ public class HudManager : MonoBehaviour
 
     public bool IsPaused {
         get { return isPaused; }
+    }
+
+    public bool IsShowingOverlayCanvas {
+        get { return isShowingOverlayCanvas; }
     }
 }
