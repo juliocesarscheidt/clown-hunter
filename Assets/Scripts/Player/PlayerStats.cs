@@ -56,6 +56,7 @@ public class PlayerStats : MonoBehaviour
     private float changeGunTimer = 0f;
     public float changeGunInterval = 0.2f;
     private bool isChangingGun = false;
+    public AudioClip gunEquipSound;
 
     public GameObject currentGunReticle;
     private bool isReticleRed = false;
@@ -202,7 +203,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    void ChangeGun(int index) {
+    void ChangeGun(int index, bool playSound = true) {
         if (!gunsEnabled[index]) {
             return;
         }
@@ -224,6 +225,10 @@ public class PlayerStats : MonoBehaviour
 
         playerShooting.ResetShootTimeAndTimingToggleAim();
         ExitAimingState();
+
+        if (playSound) {
+            gunsAudioSource.PlayOneShot(gunEquipSound);
+        }
 
         if (currentGunReticle.TryGetComponent(out Image img)) {
             img.sprite = selectedGun.gunReticleImage;
@@ -292,7 +297,7 @@ public class PlayerStats : MonoBehaviour
             SetGunEnabled(i, gun.isEnabledByDefault);
         }
         if (selectedGunIndex != defaultGunIndex) {
-            ChangeGun(defaultGunIndex);
+            ChangeGun(defaultGunIndex, false);
         }
     }
 
