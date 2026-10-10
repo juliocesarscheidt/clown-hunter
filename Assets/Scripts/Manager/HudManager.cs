@@ -23,7 +23,7 @@ public class HudManager : MonoBehaviour
     public GameObject OptionsGamePanelBg;
     public List<GameObject> OptionsGamePanelLayers;
 
-    [Header("Interact Overlay")]
+    [Header("Interact Overlay Canvas")]
     public GameObject InteractOverlayCanvas;
     [SerializeField]
     private bool isShowingOverlayCanvas;
@@ -43,12 +43,15 @@ public class HudManager : MonoBehaviour
     private bool isPaused = false;
     [SerializeField]
     private bool isRunningGame = false;
+    [SerializeField]
+    private bool wasShowingInventory = false;
 
     [Header("UI Info")]
     public GameObject uiInfoWraperObject;
     public TextMeshProUGUI bulletsCounterText;
     public Image gunIconImage;
 
+    [Header("UI Info Texts")]
     public TextMeshProUGUI tempOptionsInfoText;
     private bool showOptionsTempInfoText = false;
     private float showOptionsTempInfoTextTimer = 0f;
@@ -60,6 +63,14 @@ public class HudManager : MonoBehaviour
     public TextMeshProUGUI generalInfoText;
     private bool showGeneralInfoText = false;
     private float showGeneralInfoTextTimer = 0f;
+
+    [Header("Guns View Canvas")]
+    public GameObject GunsViewCanvas;
+    public List<Image> gunsViewImageTiles = new();
+    public List<Image> gunsViewImageSlots = new();
+    private bool showGunsViewCanvas = false;
+    public float timeToShowwGunsViewCanvas = 4f;
+    private float showGunsViewCanvasTimer = 0f;
 
     [Header("FPS")]
     public bool showFps = false;
@@ -78,8 +89,8 @@ public class HudManager : MonoBehaviour
 
     void Start() {
         isRunningGame = true;
-        HidePauseGamePanel();
-        HideInventoryPanel();
+        HUDHidePauseGamePanel();
+        HUDHideInventoryPanel();
         PostProcessingManager.Instance.DisableBlur();
         // AdjustBulletsCount(); // calling this from playerStats
     }
@@ -87,22 +98,35 @@ public class HudManager : MonoBehaviour
     void Update() {
         if (!playerStats.isDead && isRunningGame) {
             if (Input.GetButtonDown("Return")) {
-                if (!isShowingOverlayCanvas) {
-                    if (!isPaused) {
-                        ShowPauseGamePanel();
-                    } else {
-                        HidePauseGamePanel();
-                    }
+                if (isShowingOverlayCanvas) {
+                    HUDHideOverlayCanvas();
                 } else {
-                    HideOverlayCanvas();
+                    if (!isPaused) {
+                        HUDShowPauseGamePanel();
+                    } else {
+                        HUDHidePauseGamePanel();
+                    }
                 }
             }
 
-            if (!isPaused && !isShowingOverlayCanvas && Input.GetButtonDown("Inventory")) {
-                if (!InventoryManager.Instance.IsShowingInventory) {
-                    ShowInventoryPanel();
-                } else {
-                    HideInventoryPanel();
+            if (!isPaused && !isShowingOverlayCanvas) {
+                if (Input.GetButtonDown("Inventory")) {
+                    if (!InventoryManager.Instance.IsShowingInventory) {
+                        HUDShowInventoryPanel();
+                    } else {
+                        HUDHideInventoryPanel();
+                    }
+                }
+            }
+
+            // close panels
+            if (Input.GetButton("Fire2")) {
+                if (isPaused) {
+                    HUDHidePauseGamePanel();
+                } else  if (InventoryManager.Instance.IsShowingInventory) {
+                    HUDHideInventoryPanel();
+                } else if (isShowingOverlayCanvas) {
+                    HUDHideOverlayCanvas();
                 }
             }
 
@@ -119,6 +143,7 @@ public class HudManager : MonoBehaviour
             }
         }
 
+        // timers
         if (showCheatActivatedText) {
             showCheatActivatedTextTimer += Time.unscaledDeltaTime;
             if (showCheatActivatedTextTimer >= 1.5f) {
@@ -135,6 +160,14 @@ public class HudManager : MonoBehaviour
             }
         }
 
+        if (showGunsViewCanvas) {
+            showGunsViewCanvasTimer += Time.deltaTime;
+            if (showGunsViewCanvasTimer >= timeToShowwGunsViewCanvas) {
+                HUDHideGunsViewCanvas();
+                showGunsViewCanvasTimer = 0f;
+            }
+        }
+
         if (showFps) {
             fpsText.gameObject.SetActive(true);
             UpdateFpsDisplay();
@@ -148,7 +181,7 @@ public class HudManager : MonoBehaviour
     private void OnApplicationFocus(bool hasFocus) {
         if (!hasFocus) {
             if (isRunningGame && !IsPaused) {
-                ShowPauseGamePanel();
+                HUDShowPauseGamePanel();
             }
         } else {
             if ((isRunningGame && IsPaused) || !isRunningGame) {
@@ -197,16 +230,14 @@ public class HudManager : MonoBehaviour
         EndGameImage.SetActive(true);
     }
 
-    public void ShowPauseGamePanel() {
+    public void HUDShowPauseGamePanel() {
+        if (InventoryManager.Instance.IsShowingInventory) {
+            wasShowingInventory = true;
+            HUDHideInventoryPanel();
+        }
+
         isPaused = true;
         PostProcessingManager.Instance.EnableBlur();
-
-        if (InventoryManager.Instance.IsShowingInventory) {
-            InventoryManager.Instance.HideInventoryPanel();
-        }
-        //if (isShowingOverlayCanvas) {
-        //    HideOverlayCanvas();
-        //}
 
         UnlockCursor();
 
@@ -217,7 +248,7 @@ public class HudManager : MonoBehaviour
         PauseGamePanel.SetActive(true);
     }
 
-    public void HidePauseGamePanel() {
+    public void HUDHidePauseGamePanel() {
         isPaused = false;
         PostProcessingManager.Instance.DisableBlur();
 
@@ -228,9 +259,15 @@ public class HudManager : MonoBehaviour
 
         Time.timeScale = 1;
         PauseGamePanel.SetActive(false);
+
+        // display inventory again if it was showing before pausing the game
+        if (wasShowingInventory) {
+            wasShowingInventory = false;
+            HUDShowInventoryPanel();
+        }
     }
 
-    public void ShowInventoryPanel() {
+    public void HUDShowInventoryPanel() {
         PostProcessingManager.Instance.EnableBlur();
 
         uiInfoWraperObject.SetActive(false);
@@ -240,7 +277,7 @@ public class HudManager : MonoBehaviour
         InventoryManager.Instance.ShowInventoryPanel();
     }
 
-    public void HideInventoryPanel() {
+    public void HUDHideInventoryPanel() {
         PostProcessingManager.Instance.DisableBlur();
 
         uiInfoWraperObject.SetActive(true);
@@ -258,7 +295,7 @@ public class HudManager : MonoBehaviour
         LockCursor();
     }
     
-    public void ShowOverlayCanvas() {
+    public void HUDShowOverlayCanvas() {
         isShowingOverlayCanvas = true;
         PostProcessingManager.Instance.EnableBlur();
 
@@ -270,7 +307,7 @@ public class HudManager : MonoBehaviour
         InteractOverlayCanvas.SetActive(true);
     }
 
-    public void HideOverlayCanvas() {
+    public void HUDHideOverlayCanvas() {
         isShowingOverlayCanvas = false;
         PostProcessingManager.Instance.DisableBlur();
 
@@ -302,6 +339,33 @@ public class HudManager : MonoBehaviour
                 overlayCanvasText.text = string.Empty;
             }
         }
+    }
+
+    public void HUDShowGunsViewCanvas(int highlightSlotIndex) {
+        GunsViewCanvas.SetActive(true);
+        showGunsViewCanvas = true;
+        for (int i = 0; i < gunsViewImageTiles.Count; i++) {
+            if (i == highlightSlotIndex) {
+                gunsViewImageTiles[i].color = Color.red;
+            } else {
+                gunsViewImageTiles[i].color = Color.white;
+            }
+        }
+        // reset the counter
+        showGunsViewCanvasTimer = 0f;
+    }
+
+    public void HUDHideGunsViewCanvas() {
+        GunsViewCanvas.SetActive(false);
+        showGunsViewCanvas = false;
+    }
+
+    public void AddGunsViewImageToSlot(int slotIndex, Sprite gunSprite) {
+        if (slotIndex < 0 || slotIndex >= gunsViewImageSlots.Count) {
+            return;
+        }
+        gunsViewImageSlots[slotIndex].sprite = gunSprite;
+        gunsViewImageSlots[slotIndex].enabled = true;
     }
 
     public void EnterOptionsPanel(PanelObject panel) {
@@ -389,8 +453,11 @@ public class HudManager : MonoBehaviour
     public void AdjustBulletsCount() {
         if (playerStats != null && playerStats.SelectedGun != null) {
             bulletsCounterText.text = $"{playerStats.CurrentBullets} [{playerStats.AvailableBullets}]";
-            gunIconImage.sprite = playerStats.SelectedGun.gunIconImage;
         }
+    }
+
+    public void AdjustGunImageSprite(Sprite gunSprite) {
+        gunIconImage.sprite = gunSprite;
     }
 
     public void AdjustHealthBar(int currentHealth, int maxHealth) {
