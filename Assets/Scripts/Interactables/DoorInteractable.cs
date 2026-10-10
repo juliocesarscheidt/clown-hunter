@@ -37,8 +37,8 @@ public class DoorInteractable : Interactable
             return;
         }
         if (keyInventoryItemID != "") {
-            var hasKey = InventoryManager.Instance.HasInventoryItemByKey(keyInventoryItemID);
-            if (!hasKey) {
+            var playerHasTheKey = InventoryManager.Instance.HasInventoryItemByKey(keyInventoryItemID);
+            if (!playerHasTheKey) {
                 HudManager.Instance.ActivateGeneralInfoText("You don't have the key");
                 if (doorAudioSource != null) {
                     doorAudioSource.PlayOneShot(doorLockedSound);

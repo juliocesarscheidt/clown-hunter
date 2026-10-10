@@ -90,8 +90,8 @@ public class PlayerStats : MonoBehaviour
         playerShooting = GetComponent<Shooting>();
 
         void equipAction(InventoryItem item) {
-            HudManager.Instance.HideInventoryPanel();
-            ChangeGun(item.defaultItemIndex);
+            HudManager.Instance.HUDHideInventoryPanel();
+            ChangeGun(item.defaultItemIndex, true, true);
         }
         for (int i = 0; i < guns.Count; i++) {
             var gun = guns[i];
@@ -168,7 +168,7 @@ public class PlayerStats : MonoBehaviour
                         nextGunIndex += (mouseScroll > 0 ? 1 : -1);
                     }
                     isChangingGun = true;
-                    ChangeGun(nextGunIndex);
+                    ChangeGun(nextGunIndex, true, true);
                 }
 
                 float verticalJoystick = Input.GetAxis("JoystickVerticalButtons");
@@ -187,7 +187,7 @@ public class PlayerStats : MonoBehaviour
                         nextGunIndex += (verticalJoystick > 0 ? 1 : -1);
                     }
                     isChangingGun = true;
-                    ChangeGun(nextGunIndex);
+                    ChangeGun(nextGunIndex, true, true);
                 }
 
                 if (isChangingGun) {
@@ -203,7 +203,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    void ChangeGun(int index, bool playSound = true) {
+    void ChangeGun(int index, bool playSound = true, bool showGunsViewCanvas = false) {
         if (!gunsEnabled[index]) {
             return;
         }
@@ -230,6 +230,7 @@ public class PlayerStats : MonoBehaviour
             gunsAudioSource.PlayOneShot(gunEquipSound);
         }
 
+        // currentGunReticle is the reticle game object to hold the reticles
         if (currentGunReticle.TryGetComponent(out Image img)) {
             img.sprite = selectedGun.gunReticleImage;
         }
@@ -238,12 +239,18 @@ public class PlayerStats : MonoBehaviour
         UpdateCurrentHitDamage();
 
         if (HudManager.Instance != null) {
+            // these steps will set the bullets count and the gun image sprite in the HUD
             HudManager.Instance.AdjustBulletsCount();
+            HudManager.Instance.AdjustGunImageSprite(selectedGun.gunIconImage);
+
+            if (showGunsViewCanvas) {
+                HudManager.Instance.HUDShowGunsViewCanvas(selectedGunIndex);
+            }
         }
     }
 
     void ChangeGunByHotkey(int hotkey) {
-        ChangeGun(hotkey - 1);
+        ChangeGun(hotkey - 1, true, true);
     }
 
     public void ChangeReticleToColorWithTimer(Color color) {
@@ -260,7 +267,7 @@ public class PlayerStats : MonoBehaviour
     private void AddDefaultInventoryItems() {
         if (flashlightInventoryItemPrefab != null) {
             void onEquipActionFlashlight(InventoryItem item) {
-                HudManager.Instance.HideInventoryPanel();
+                HudManager.Instance.HUDHideInventoryPanel();
                 FlashlightManager.Instance.TurnOn();
             }
             InventoryItem flashlightInventory = new(0, "Flashlight", InventoryItem.InteractableType.Item,
@@ -270,7 +277,7 @@ public class PlayerStats : MonoBehaviour
 
         if (nightvisionBinocularInventoryItemPrefab != null) {
             void onEquipActionBinocular(InventoryItem item) {
-                HudManager.Instance.HideInventoryPanel();
+                HudManager.Instance.HUDHideInventoryPanel();
                 NightVisionManager.Instance.TurnOn();
             }
             InventoryItem binocularInventory = new(1, "Night Vision Binocular", InventoryItem.InteractableType.Item,
@@ -284,9 +291,14 @@ public class PlayerStats : MonoBehaviour
         gunsEnabled[index] = enabled;
 
         if (!alreadyEnabled && enabled) {
-            if (InventoryManager.Instance != null && guns.Count > index) {
+            if (guns.Count > index) {
                 var gun = guns[index];
-                InventoryManager.Instance.AddInteractableItem(gun.inventoryItem, gun.baseInventoryItemPrefab);
+                if (InventoryManager.Instance != null) {
+                    InventoryManager.Instance.AddInteractableItem(gun.inventoryItem, gun.baseInventoryItemPrefab);
+                }
+                if (HudManager.Instance != null) {
+                    HudManager.Instance.AddGunsViewImageToSlot(index, gun.gunIconImage);
+                }
             }
         }
     }
@@ -297,7 +309,7 @@ public class PlayerStats : MonoBehaviour
             SetGunEnabled(i, gun.isEnabledByDefault);
         }
         if (selectedGunIndex != defaultGunIndex) {
-            ChangeGun(defaultGunIndex, false);
+            ChangeGun(defaultGunIndex, false, false);
         }
     }
 
@@ -406,7 +418,7 @@ public class PlayerStats : MonoBehaviour
 
     public void CollectGunSetEnabled(int index) {
         SetGunEnabled(index, true);
-        ChangeGun(index);
+        ChangeGun(index, false, false);
     }
 
     public void CollectAmmunition(int bulletsAmount) {

@@ -144,12 +144,20 @@ public class PaperManager : MonoBehaviour
     }
 
     public void CollectPaper(Paper paper) {
+        if (paper == null) {
+            return;
+        }
+
         MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
         MonsterManager.Instance.SpawnEnemies();
 
         // add the UI item to inventory manager
-        if (InventoryManager.Instance != null && paper != null) {
+        if (InventoryManager.Instance != null) {
             InventoryManager.Instance.AddInteractableItem(paper.inventoryItem, paper.baseInventoryItemPrefab);
+        }
+        // show a message in the UI
+        if (HudManager.Instance != null) {
+            HudManager.Instance.ActivateGeneralInfoText($"{paper.name} was collected");
         }
 
         // remove from spawnedPapers

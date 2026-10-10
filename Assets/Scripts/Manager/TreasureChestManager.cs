@@ -50,8 +50,6 @@ public class TreasureChestManager : MonoBehaviour
     }
 
     public void Unlock() {
-        // TODO: play a sound
-
         // give a key to the player, adding it to the inventory
         var currentIndex = InventoryManager.Instance.InteractableItemsCount;
         InventoryItem keyInventory = new(currentIndex, "Secret Key", InventoryItem.InteractableType.Item,
@@ -72,7 +70,7 @@ public class TreasureChestManager : MonoBehaviour
             Debug.Log("Treasure chest is unlocked!");
             return;
         }
-        HudManager.Instance.ShowOverlayCanvas();
+        HudManager.Instance.HUDShowOverlayCanvas();
         HudManager.Instance.SpawnItemOnOverlayCanvasSlot(padlockUIControllerPrefab);
     }
 

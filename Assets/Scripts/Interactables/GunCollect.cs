@@ -11,6 +11,10 @@ public class GunCollect : Interactable {
 
     public override void OnInteract() {
         playerStats.CollectGunSetEnabled(playerGunIndex);
+        // show a message in the UI
+        if (HudManager.Instance != null) {
+            HudManager.Instance.ActivateGeneralInfoText($"{gunName} was collected");
+        }
     }
 
     public override void EnableOutline() {
