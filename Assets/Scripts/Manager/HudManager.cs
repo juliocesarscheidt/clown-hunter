@@ -69,7 +69,7 @@ public class HudManager : MonoBehaviour
     public List<Image> gunsViewImageTiles = new();
     public List<Image> gunsViewImageSlots = new();
     private bool showGunsViewCanvas = false;
-    public float timeToShowwGunsViewCanvas = 4f;
+    public float timeToShowGunsViewCanvas = 2f;
     private float showGunsViewCanvasTimer = 0f;
 
     [Header("FPS")]
@@ -162,9 +162,8 @@ public class HudManager : MonoBehaviour
 
         if (showGunsViewCanvas) {
             showGunsViewCanvasTimer += Time.deltaTime;
-            if (showGunsViewCanvasTimer >= timeToShowwGunsViewCanvas) {
+            if (showGunsViewCanvasTimer >= timeToShowGunsViewCanvas) {
                 HUDHideGunsViewCanvas();
-                showGunsViewCanvasTimer = 0f;
             }
         }
 
@@ -358,6 +357,8 @@ public class HudManager : MonoBehaviour
     public void HUDHideGunsViewCanvas() {
         GunsViewCanvas.SetActive(false);
         showGunsViewCanvas = false;
+        // reset the counter
+        showGunsViewCanvasTimer = 0f;
     }
 
     public void AddGunsViewImageToSlot(int slotIndex, Sprite gunSprite) {

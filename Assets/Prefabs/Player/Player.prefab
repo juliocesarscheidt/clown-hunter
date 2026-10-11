@@ -736,6 +736,8 @@ MonoBehaviour:
   changeGunInterval: 0.2
   gunEquipSound: {fileID: 8300000, guid: b5ed03fac6cf5044895955c0481ffd28, type: 3}
   currentGunReticle: {fileID: 0}
+  defaultGunReticleSprite: {fileID: 21300000, guid: 10c8b1e470228ad4e9ec74d2d050648a,
+    type: 3}
   reticleRedInterval: 0.5
   spendAmmo: 1
   currentBullets: 
