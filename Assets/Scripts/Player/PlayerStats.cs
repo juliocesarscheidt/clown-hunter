@@ -59,6 +59,8 @@ public class PlayerStats : MonoBehaviour
     public AudioClip gunEquipSound;
 
     public GameObject currentGunReticle;
+    public Sprite defaultGunReticleSprite;
+    private Image currentGunReticleImage;
     private bool isReticleRed = false;
     private float reticleRedTimer = 0f;
     public float reticleRedInterval = 0.5f;
@@ -102,6 +104,10 @@ public class PlayerStats : MonoBehaviour
             currentBullets.Add(gun.currentBullets);
             maxBullets.Add(gun.maxBullets);
             availableBullets.Add(gun.availableBullets);
+        }
+
+        if (currentGunReticle.TryGetComponent(out Image img)) {
+            currentGunReticleImage = img;
         }
     }
 
@@ -230,11 +236,6 @@ public class PlayerStats : MonoBehaviour
             gunsAudioSource.PlayOneShot(gunEquipSound);
         }
 
-        // currentGunReticle is the reticle game object to hold the reticles
-        if (currentGunReticle.TryGetComponent(out Image img)) {
-            img.sprite = selectedGun.gunReticleImage;
-        }
-
         defaultHitDamage = selectedGun.hitDamage;
         UpdateCurrentHitDamage();
 
@@ -253,10 +254,18 @@ public class PlayerStats : MonoBehaviour
         ChangeGun(hotkey - 1, true, true);
     }
 
-    public void ChangeReticleToColorWithTimer(Color color) {
-        if (currentGunReticle.TryGetComponent(out Image img)) {
-            img.color = color;
+    public void ChangeReticleImage(Sprite reticleImage) {
+        if (currentGunReticleImage == null) {
+            return;
         }
+        currentGunReticleImage.sprite = reticleImage;
+    }
+
+    public void ChangeReticleToColorWithTimer(Color color) {
+        if (currentGunReticleImage == null) {
+            return;
+        }
+        currentGunReticleImage.color = color;
     }
 
     public void SetIsReticleRed(bool isReticleRed) {
@@ -340,6 +349,12 @@ public class PlayerStats : MonoBehaviour
             GunAnimator.SetBool(animationHashes["isAiming"], true);
         }
 
+        ChangeReticleImage(selectedGun.gunReticleImage);
+
+        if (HudManager.Instance != null) {
+            HudManager.Instance.HUDHideGunsViewCanvas();
+        }
+
         virtualCamera.m_Lens.FieldOfView = 35;
         gunsCamera.fieldOfView = 35;
     }
@@ -351,6 +366,8 @@ public class PlayerStats : MonoBehaviour
         if (GunAnimator != null) {
             GunAnimator.SetBool(animationHashes["isAiming"], false);
         }
+
+        ChangeReticleImage(defaultGunReticleSprite);
 
         virtualCamera.m_Lens.FieldOfView = defaultFieldOfView;
         gunsCamera.fieldOfView = defaultFieldOfView;
