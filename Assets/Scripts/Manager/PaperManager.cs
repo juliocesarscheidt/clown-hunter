@@ -46,7 +46,7 @@ public class PaperManager : MonoBehaviour
 
         SpawnPapers();
 
-        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, 1);
+        TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, totalPapersToSpawn);
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, 0);
     }
 
@@ -164,9 +164,7 @@ public class PaperManager : MonoBehaviour
         spawnedPapers.Remove(paper.gameObject);
 
         // increment task progress
-        if (spawnedPapers.Count == 0) {
-            TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
-        }
+        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
     }
 
     public void ShowAllPapers(bool showAllPapers) {

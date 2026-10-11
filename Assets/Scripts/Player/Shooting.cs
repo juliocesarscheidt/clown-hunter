@@ -22,8 +22,6 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        Aim();
-
         if (CanManageGun() && Input.GetButtonDown("Reload") &&
             playerStats.spendAmmo &&
             playerStats.CurrentBullets != playerStats.MaxBullets &&
@@ -34,6 +32,13 @@ public class Shooting : MonoBehaviour
         }
 
         ReloadGun();
+    }
+
+    void LateUpdate() {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
+            return;
+        }
+        Aim();
     }
 
     private bool CanManageGun() {
@@ -54,15 +59,30 @@ public class Shooting : MonoBehaviour
                     playerStats.GunAnimator.Play("Shoot");
 
                     Transform gunBarrelShotTransform = playerStats.shotParticleEffectPos[playerStats.SelectedGunIndex].transform;
+                    Vector3 shotPosition = gunBarrelShotTransform.position;
+                    Quaternion shotRotation = gunBarrelShotTransform.rotation;
 
                     // shot fire effect particle
                     GameObject particleEffectInstance = Instantiate(
                         particleShotEffect,
-                        gunBarrelShotTransform.position,
-                        gunBarrelShotTransform.rotation
+                        shotPosition,
+                        shotRotation
                     );
                     particleEffectInstance.transform.parent = playerStats.SelectedGunObject.transform;
                     Destroy(particleEffectInstance, 0.1f);
+
+                    if (playerStats.SelectedGun.trailPrefab != null) {
+                        TrailRenderer bulletTrail = Instantiate(
+                            playerStats.SelectedGun.trailPrefab,
+                            shotPosition,
+                            shotRotation
+                        );
+                        if (bulletTrail.TryGetComponent<Rigidbody>(out var rb)) {
+                            Vector3 direction = (bulletHit.point - shotPosition).normalized;
+                            rb.AddForce(direction * 20.0f, ForceMode.Impulse);
+                        }
+                        Destroy(bulletTrail.gameObject, 1f);
+                    }
 
                     // bullet hole
                     if (bulletHit.transform.CompareTag(TagsController.Ground) ||
