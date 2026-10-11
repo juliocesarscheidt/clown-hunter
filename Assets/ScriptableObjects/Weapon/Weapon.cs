@@ -5,23 +5,30 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Weapon")]
 public class Weapon : ScriptableObject {
     public string gunName;
+
     public GameObject gunPrefabObject;
     public GameObject particleShotEffect;
+
+    [Header("Prefabs")]
     public GameObject bulletHolePrefab;
+    public TrailRenderer trailPrefab;
 
-    public Sprite gunReticleImage;
-
+    [Header("Sound")]
     public AudioClip gunShotSound;
     public AudioClip gunReloadSound;
     public AudioClip gunEmptySound;
 
+    [Header("UI Image")]
     public Sprite gunIconImage;
+    public Sprite gunReticleImage;
 
+    [Header("Timers")]
     public float timeToShootInterval;
     public float timeToReloadInterval = 3f;
 
     public bool isAutomaticGun;
 
+    [Header("Ammo")]
     public int currentBullets;
     public int maxBullets;
     public int availableBullets;

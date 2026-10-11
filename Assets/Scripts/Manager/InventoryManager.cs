@@ -62,6 +62,8 @@ public class InventoryManager : MonoBehaviour {
     [SerializeField]
     private bool isInspectingItem;
 
+    public GameObject specialWeaponObject;
+
     public enum MenuType {
         Gun = 0,
         Item = 1,
@@ -460,6 +462,10 @@ public class InventoryManager : MonoBehaviour {
         }
         itemPool.Clear();
         activeSpawnedItems.Clear();
+    }
+
+    public void EnableSpecialWeapon() {
+        specialWeaponObject.SetActive(true);
     }
 
     private int MenuTypeInt {

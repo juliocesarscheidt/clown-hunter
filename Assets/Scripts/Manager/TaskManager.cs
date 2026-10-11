@@ -38,7 +38,6 @@ class Task {
 
 public class TaskManager : MonoBehaviour {
     public static TaskManager Instance { get; private set; }
-
     public TextMeshProUGUI taskInfoText;
 
     public enum TaskType : int {
@@ -51,12 +50,15 @@ public class TaskManager : MonoBehaviour {
     private int currentTaskIndex = 0;
 
     private readonly Dictionary<int, Task> tasks = new() {
-        { (int)TaskType.InvestigateThePlace, new Task("Investigate the place", 0, (int index) => {
+        { (int)TaskType.InvestigateThePlace, new Task("Investigate the place\n  collect evidences", 0, (int index) => {
             Debug.Log($"started task {index}");
         })},
         { (int)TaskType.EliminateTheRemainingEnemies, new Task("Eliminate the remaining enemies", 0, (int index) => {
             Debug.Log($"started task {index}");
+            // stop spawning enemies
             MonsterManager.Instance.SetCanSpawnEnemies(false);
+            // spawn the special weapon
+            InventoryManager.Instance.EnableSpecialWeapon();
         })},
         { (int)TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
             Debug.Log($"started task {index}");

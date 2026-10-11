@@ -60,6 +60,9 @@ public class SettingsManager : MonoBehaviour
     }
 
     private void Start() {
+        // cap the framerate to 60 fps
+        Application.targetFrameRate = 60;
+
         volume = PlayerPrefs.GetFloat("volume", defaultVolume);
         audioSlider.value = volume;
         SetSoundSettings(volume);
