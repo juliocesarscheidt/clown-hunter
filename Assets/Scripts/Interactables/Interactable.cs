@@ -35,6 +35,10 @@ public abstract class Interactable: MonoBehaviour {
 
     public void LateUpdate() {
         if (!GlobalGameplayManager.Instance.IsGameplayActiveNotReloading) {
+            if (playerStats.isReloading) {
+                TogglePressInteractText(false);
+                DisableOutline();
+            }
             return;
         }
 
@@ -57,9 +61,7 @@ public abstract class Interactable: MonoBehaviour {
         }
     
         if (isInteractionActive) {
-            if (pressInteractText != null) {
-                pressInteractText.gameObject.SetActive(true);
-            }
+            TogglePressInteractText(true);
             // show object outline
             if (!isOutlineEnabled) {
                 EnableOutline();
@@ -76,10 +78,14 @@ public abstract class Interactable: MonoBehaviour {
                 }
             }
         } else {
-            if (pressInteractText != null) {
-                pressInteractText.gameObject.SetActive(false);
-            }
+            TogglePressInteractText(false);
             DisableOutline();
+        }
+    }
+
+    private void TogglePressInteractText(bool enabled) {
+        if (pressInteractText != null) {
+            pressInteractText.gameObject.SetActive(enabled);
         }
     }
 
