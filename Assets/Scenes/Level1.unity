@@ -11263,7 +11263,7 @@ MonoBehaviour:
   - {fileID: 900782622}
   - {fileID: 618796367}
   - {fileID: 554556271}
-  timeToShowGunsViewCanvas: 2
+  timeToShowGunsViewCanvas: 1.5
   showFps: 0
   updateFpsFrequency: 0.2
   fpsText: {fileID: 1236095678}
@@ -29602,6 +29602,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   taskInfoText: {fileID: 1347963142}
+  firstTaskTalkAudioClip: {fileID: 8300000, guid: 312b59d4a6a31e44a83319fe9cb99c16,
+    type: 3}
+  thirdTaskTalkAudioClip: {fileID: 8300000, guid: 22a301ff87fe3f44fa99522f5952fcc2,
+    type: 3}
   currentTaskIndex: 0
 --- !u!108 &1720435800 stripped
 Light:
@@ -40350,11 +40354,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 508952736245119727, guid: c3d5add0dbef0ca41992ac600543b074,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3d5add0dbef0ca41992ac600543b074, type: 3}
 --- !u!1 &5831929011732539165 stripped
 GameObject:

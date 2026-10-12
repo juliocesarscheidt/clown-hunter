@@ -40,6 +40,11 @@ public class TaskManager : MonoBehaviour {
     public static TaskManager Instance { get; private set; }
     public TextMeshProUGUI taskInfoText;
 
+    public AudioClip firstTaskTalkAudioClip;
+    public AudioClip thirdTaskTalkAudioClip;
+
+    private PlayerStats playerStats;
+
     public enum TaskType : int {
         InvestigateThePlace = 0,
         EliminateTheRemainingEnemies = 1,
@@ -49,23 +54,7 @@ public class TaskManager : MonoBehaviour {
     [SerializeField]
     private int currentTaskIndex = 0;
 
-    private readonly Dictionary<int, Task> tasks = new() {
-        { (int)TaskType.InvestigateThePlace, new Task("Investigate the place\n  collect evidences", 0, (int index) => {
-            Debug.Log($"started task {index}");
-        })},
-        { (int)TaskType.EliminateTheRemainingEnemies, new Task("Eliminate the remaining enemies", 0, (int index) => {
-            Debug.Log($"started task {index}");
-            // stop spawning enemies
-            MonsterManager.Instance.SetCanSpawnEnemies(false);
-            // spawn the special weapon
-            InventoryManager.Instance.EnableSpecialWeapon();
-        })},
-        { (int)TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
-            Debug.Log($"started task {index}");
-            TreasureChestManager.Instance.ToggleTreasureChest(true);
-            DoorsManager.Instance.SetupDoors();
-        })},
-    };
+    private Dictionary<int, Task> tasks = new();
  
     private void Awake() {
         if (Instance != null && Instance != this) {
@@ -73,6 +62,39 @@ public class TaskManager : MonoBehaviour {
         } else {
             Instance = this;
         }
+
+        playerStats = FindObjectOfType<PlayerStats>();
+
+        tasks = new() {
+            { (int)TaskType.InvestigateThePlace, new Task("Investigate the place\n  collect evidences", 0, (int index) => {
+                Debug.Log($"started task {index}");
+                if (playerStats != null) {
+                   playerStats.ReproduceTalk(firstTaskTalkAudioClip);
+                }
+                if (HudManager.Instance != null) {
+                    HudManager.Instance.ActivateGeneralInfoText("I'm trapped here with these monsters, I need to find a way out.", 5.0f);
+                }
+            })},
+            { (int)TaskType.EliminateTheRemainingEnemies, new Task("Eliminate the remaining enemies", 0, (int index) => {
+                Debug.Log($"started task {index}");
+                // stop spawning enemies
+                MonsterManager.Instance.SetCanSpawnEnemies(false);
+                // spawn the special weapon
+                InventoryManager.Instance.EnableSpecialWeapon();
+            })},
+            { (int)TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
+                Debug.Log($"started task {index}");
+                if (playerStats != null) {
+                   playerStats.ReproduceTalk(thirdTaskTalkAudioClip);
+                }
+                if (HudManager.Instance != null) {
+                    HudManager.Instance.ActivateGeneralInfoText("Ok, now I need to find a key.", 5.0f);
+                }
+
+                TreasureChestManager.Instance.ToggleTreasureChest(true);
+                DoorsManager.Instance.SetupDoors();
+            })},
+        };
     }
 
     public void StartTask(int taskIndex) {

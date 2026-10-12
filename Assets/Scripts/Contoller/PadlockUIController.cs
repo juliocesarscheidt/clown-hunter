@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PadlockUIController : MonoBehaviour {
-    private PlayerStats playerStats;
-
     [Header("Roulettes")]
     public List<GameObject> combinationRoulettes = new();
     private List<Outline> combinationRouletteOutlines = new();
@@ -30,8 +28,6 @@ public class PadlockUIController : MonoBehaviour {
     private float scrollingTimer = 0f;
 
     private void Awake() {
-        playerStats = FindObjectOfType<PlayerStats>();
-
         for (int i = 0; i < combinationRoulettes.Count; i++) {
             if (combinationRoulettes[i].TryGetComponent<Outline>(out var outlineScript)) {
                 combinationRouletteOutlines.Add(outlineScript);

@@ -63,13 +63,14 @@ public class HudManager : MonoBehaviour
     public TextMeshProUGUI generalInfoText;
     private bool showGeneralInfoText = false;
     private float showGeneralInfoTextTimer = 0f;
+    private float timeToShowGeneralInfoText = 1.5f;
 
     [Header("Guns View Canvas")]
     public GameObject GunsViewCanvas;
     public List<Image> gunsViewImageTiles = new();
     public List<Image> gunsViewImageSlots = new();
     private bool showGunsViewCanvas = false;
-    public float timeToShowGunsViewCanvas = 2f;
+    public float timeToShowGunsViewCanvas = 1.5f;
     private float showGunsViewCanvasTimer = 0f;
 
     [Header("FPS")]
@@ -154,8 +155,8 @@ public class HudManager : MonoBehaviour
 
         if (showGeneralInfoText) {
             showGeneralInfoTextTimer += Time.deltaTime;
-            if (showGeneralInfoTextTimer >= 1.5f) {
-                ActivateGeneralInfoText("");
+            if (showGeneralInfoTextTimer >= timeToShowGeneralInfoText) {
+                ActivateGeneralInfoText("", 0f);
                 showGeneralInfoTextTimer = 0f;
             }
         }
@@ -420,7 +421,9 @@ public class HudManager : MonoBehaviour
         cheatActivatedText.text = text;
     }
 
-    public void ActivateGeneralInfoText(string text) {
+    public void ActivateGeneralInfoText(string text, float timeToShow = 1.5f) {
+        timeToShowGeneralInfoText = timeToShow;
+
         showGeneralInfoText = text.Length > 0;
         generalInfoText.gameObject.SetActive(showGeneralInfoText);
         generalInfoText.text = text;
