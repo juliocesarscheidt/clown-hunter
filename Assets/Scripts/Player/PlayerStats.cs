@@ -24,6 +24,8 @@ public class PlayerStats : MonoBehaviour
     private FirstPersonController playerController;
     private Shooting playerShooting;
 
+    public AudioSource talksAudioSource;
+
     public AudioSource stepsAudioSource;
     public AudioClip stepsWalkingAudioClip;
     public AudioClip stepsRunningAudioClip;
@@ -371,6 +373,17 @@ public class PlayerStats : MonoBehaviour
 
         virtualCamera.m_Lens.FieldOfView = defaultFieldOfView;
         gunsCamera.fieldOfView = defaultFieldOfView;
+    }
+
+    public void ReproduceTalk(AudioClip audio) {
+        if (!GlobalGameplayManager.Instance.IsGameplayActive) {
+            return;
+        }
+        if (!talksAudioSource.isPlaying
+            || talksAudioSource.isPlaying && talksAudioSource.clip != audio) {
+            talksAudioSource.clip = audio;
+            talksAudioSource.Play();
+        }
     }
 
     public void PlayerControllerWalk(bool isWalking) {
