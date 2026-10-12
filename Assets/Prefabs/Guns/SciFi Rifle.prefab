@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 6600588243576209026}
   - component: {fileID: 7350219031686613978}
   m_Layer: 7
-  m_Name: SciFiWeapon
+  m_Name: SciFi Rifle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

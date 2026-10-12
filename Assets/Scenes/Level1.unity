@@ -40340,12 +40340,21 @@ PrefabInstance:
     - target: {fileID: 5669671803496833467, guid: c3d5add0dbef0ca41992ac600543b074,
         type: 3}
       propertyPath: m_Name
-      value: SciFiWeaponCollect
+      value: SciFiRifleCollect
+      objectReference: {fileID: 0}
+    - target: {fileID: 5669671803496833467, guid: c3d5add0dbef0ca41992ac600543b074,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 508952736245119727, guid: c3d5add0dbef0ca41992ac600543b074,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: c3d5add0dbef0ca41992ac600543b074, type: 3}
 --- !u!1 &5831929011732539165 stripped
 GameObject:
