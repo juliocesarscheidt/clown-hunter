@@ -43,7 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8901430621772172800}
   m_Layer: 5
-  m_Name: SciFiWeaponUI
+  m_Name: SciFiRifleUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

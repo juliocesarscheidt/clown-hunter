@@ -430,7 +430,7 @@ MonoBehaviour:
   distanceToPlayerTrigger: 4
   playSoundOnInteract: 1
   destroyOnInteract: 1
-  gunName: SciFi Weapon
+  gunName: SciFi Rifle
 --- !u!1 &6820708974662391791
 GameObject:
   m_ObjectHideFlags: 0

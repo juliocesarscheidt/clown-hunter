@@ -6938,6 +6938,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4161417212627305102}
     m_Modifications:
+    - target: {fileID: 1500858783700691034, guid: 9655c4ea1bca1954285609ddf5e1d0d4,
+        type: 3}
+      propertyPath: m_Name
+      value: SciFiWeaponBody
+      objectReference: {fileID: 0}
     - target: {fileID: 6600588243576209026, guid: 9655c4ea1bca1954285609ddf5e1d0d4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6991,7 +6996,12 @@ PrefabInstance:
     - target: {fileID: 6763107769928003827, guid: 9655c4ea1bca1954285609ddf5e1d0d4,
         type: 3}
       propertyPath: m_Name
-      value: SciFi Weapon
+      value: SciFi Rifle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7371309973184454099, guid: 9655c4ea1bca1954285609ddf5e1d0d4,
+        type: 3}
+      propertyPath: m_Name
+      value: ShotEffectPosSciFiRifle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

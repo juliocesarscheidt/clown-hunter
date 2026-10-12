@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11e3236c57dedb447989f6113a0d869f, type: 3}
-  m_Name: SciFiWeapon
+  m_Name: SciFi Rifle
   m_EditorClassIdentifier: 
-  gunName: SciFi Weapon
+  gunName: SciFi Rifle
   gunPrefabObject: {fileID: 6763107769928003827, guid: 9655c4ea1bca1954285609ddf5e1d0d4,
     type: 3}
   particleShotEffect: {fileID: 30755818646983244, guid: 3b2dc22d9be149843a33a61467f265d4,
