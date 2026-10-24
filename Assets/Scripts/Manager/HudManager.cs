@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -30,6 +31,7 @@ public class HudManager : MonoBehaviour
     public GameObject OverlayCanvasSlot;
     private GameObject currentOverlayCanvasSlotItem;
     public TextMeshProUGUI overlayCanvasText;
+    private Action onCloseAction;
 
     [Header("Damage UI")]
     public Image bloodImage;
@@ -45,6 +47,8 @@ public class HudManager : MonoBehaviour
     private bool isRunningGame = false;
     [SerializeField]
     private bool wasShowingInventory = false;
+    [SerializeField]
+    private bool wasShowingCutscene = false;
 
     [Header("UI Info")]
     public GameObject uiInfoWraperObject;
@@ -90,10 +94,11 @@ public class HudManager : MonoBehaviour
 
     void Start() {
         isRunningGame = true;
+
         HUDHidePauseGamePanel();
         HUDHideInventoryPanel();
+
         PostProcessingManager.Instance.DisableBlur();
-        // AdjustBulletsCount(); // calling this from playerStats
     }
 
     void Update() {
@@ -110,9 +115,9 @@ public class HudManager : MonoBehaviour
                 }
             }
 
-            if (!isPaused && !isShowingOverlayCanvas) {
+            if (!isPaused && !isShowingOverlayCanvas && !IsShowingCutscene) {
                 if (Input.GetButtonDown("Inventory")) {
-                    if (!InventoryManager.Instance.IsShowingInventory) {
+                    if (!IsShowingInventory) {
                         HUDShowInventoryPanel();
                     } else {
                         HUDHideInventoryPanel();
@@ -124,10 +129,12 @@ public class HudManager : MonoBehaviour
             if (Input.GetButton("Fire2")) {
                 if (isPaused) {
                     HUDHidePauseGamePanel();
-                } else  if (InventoryManager.Instance.IsShowingInventory) {
+                } else  if (IsShowingInventory) {
                     HUDHideInventoryPanel();
                 } else if (isShowingOverlayCanvas) {
                     HUDHideOverlayCanvas();
+                } else if (IsShowingCutscene) {
+                    // do nothing
                 }
             }
 
@@ -216,7 +223,8 @@ public class HudManager : MonoBehaviour
         isShowingOverlayCanvas = false;
 
         PostProcessingManager.Instance.EnableBlur();
-        uiInfoWraperObject.SetActive(false);
+
+        ToggleUIInfoWrapper(false);
         UnlockCursor();
     }
 
@@ -230,10 +238,25 @@ public class HudManager : MonoBehaviour
         EndGameImage.SetActive(true);
     }
 
+    public void ToggleUIInfoWrapper(bool enabled) {
+        uiInfoWraperObject.SetActive(enabled);
+    }
+
+    public void HUDCutsceneEnter() {
+        ToggleUIInfoWrapper(false);
+    }
+
+    public void HUDCutsceneExit() {
+        ToggleUIInfoWrapper(true);
+    }
+
     public void HUDShowPauseGamePanel() {
-        if (InventoryManager.Instance.IsShowingInventory) {
+        if (IsShowingInventory) {
             wasShowingInventory = true;
             HUDHideInventoryPanel();
+        }
+        if (IsShowingCutscene) {
+            wasShowingCutscene = true;
         }
 
         isPaused = true;
@@ -241,7 +264,7 @@ public class HudManager : MonoBehaviour
 
         UnlockCursor();
 
-        uiInfoWraperObject.SetActive(false);
+        ToggleUIInfoWrapper(false);
         HideOptionsPanels();
 
         Time.timeScale = 0;
@@ -254,7 +277,7 @@ public class HudManager : MonoBehaviour
 
         LockCursor();
 
-        uiInfoWraperObject.SetActive(true);
+        ToggleUIInfoWrapper(true);
         HideOptionsPanels();
 
         Time.timeScale = 1;
@@ -265,13 +288,16 @@ public class HudManager : MonoBehaviour
             wasShowingInventory = false;
             HUDShowInventoryPanel();
         }
+        if (wasShowingCutscene) {
+            wasShowingCutscene = false;
+            HUDCutsceneEnter();
+        }
     }
 
     public void HUDShowInventoryPanel() {
         PostProcessingManager.Instance.EnableBlur();
 
-        uiInfoWraperObject.SetActive(false);
-        HideOptionsPanels();
+        ToggleUIInfoWrapper(false);
 
         Time.timeScale = 0;
         InventoryManager.Instance.ShowInventoryPanel();
@@ -280,8 +306,7 @@ public class HudManager : MonoBehaviour
     public void HUDHideInventoryPanel() {
         PostProcessingManager.Instance.DisableBlur();
 
-        uiInfoWraperObject.SetActive(true);
-        HideOptionsPanels();
+        ToggleUIInfoWrapper(true);
 
         Time.timeScale = 1;
         InventoryManager.Instance.HideInventoryPanel();
@@ -299,10 +324,10 @@ public class HudManager : MonoBehaviour
         isShowingOverlayCanvas = true;
         PostProcessingManager.Instance.EnableBlur();
 
-        uiInfoWraperObject.SetActive(false);
-        HideOptionsPanels();
+        ToggleUIInfoWrapper(false);
 
         Time.timeScale = 0;
+
         overlayCanvasText.enabled = false;
         InteractOverlayCanvas.SetActive(true);
     }
@@ -311,20 +336,29 @@ public class HudManager : MonoBehaviour
         isShowingOverlayCanvas = false;
         PostProcessingManager.Instance.DisableBlur();
 
-        uiInfoWraperObject.SetActive(true);
-        HideOptionsPanels();
+        ToggleUIInfoWrapper(true);
 
         Time.timeScale = 1;
+
         overlayCanvasText.enabled = false;
         InteractOverlayCanvas.SetActive(false);
+
+        if (onCloseAction != null) {
+            onCloseAction.Invoke();
+            onCloseAction = null;
+        }
     }
 
-    public void SpawnItemOnOverlayCanvasSlot(GameObject prefab, string text = "") {
+    public void SpawnItemOnOverlayCanvasSlot(GameObject prefab, string text = "", Action onCloseAction = null) {
         var overriding = currentOverlayCanvasSlotItem != null && currentOverlayCanvasSlotItem.name != prefab.name;
         if (overriding) {
             Destroy(currentOverlayCanvasSlotItem);
             currentOverlayCanvasSlotItem = null;
         }
+        if (onCloseAction != null) {
+            this.onCloseAction = onCloseAction;
+        }
+
         if (OverlayCanvasSlot != null && currentOverlayCanvasSlotItem == null) {
             currentOverlayCanvasSlotItem = Instantiate(prefab, OverlayCanvasSlot.transform);
             currentOverlayCanvasSlotItem.name = prefab.name;
@@ -440,7 +474,7 @@ public class HudManager : MonoBehaviour
 
     public void GoToMenu() {
         UnlockCursor();
-        uiInfoWraperObject.SetActive(false);
+        ToggleUIInfoWrapper(false);
 
         Time.timeScale = 1;
         StartCoroutine(LevelLoaderManager.Instance.LoadLevel(0));
@@ -448,7 +482,7 @@ public class HudManager : MonoBehaviour
 
     public void Quit() {
         UnlockCursor();
-        uiInfoWraperObject.SetActive(false);
+        ToggleUIInfoWrapper(false);
 
         Time.timeScale = 1;
         LevelLoaderManager.Instance.Quit();
@@ -511,5 +545,13 @@ public class HudManager : MonoBehaviour
 
     public bool IsShowingOverlayCanvas {
         get { return isShowingOverlayCanvas; }
+    }
+
+    public bool IsShowingInventory {
+        get { return InventoryManager.Instance.IsShowingInventory; }
+    }
+
+    public bool IsShowingCutscene {
+        get { return CutsceneManager.Instance.IsShowingCutscene; }
     }
 }

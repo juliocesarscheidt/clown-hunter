@@ -23,6 +23,7 @@ public class GlobalGameplayManager : MonoBehaviour
                 !HudManager.Instance.IsPaused &&
                 !HudManager.Instance.IsShowingOverlayCanvas &&
                 !playerStats.isDead &&
+                !CutsceneManager.Instance.IsShowingCutscene &&
                 !InventoryManager.Instance.IsShowingInventory;
             // not checking for playerStats.isReloading
         }
@@ -34,6 +35,7 @@ public class GlobalGameplayManager : MonoBehaviour
                 !HudManager.Instance.IsPaused &&
                 !HudManager.Instance.IsShowingOverlayCanvas &&
                 !playerStats.isDead &&
+                !CutsceneManager.Instance.IsShowingCutscene &&
                 !InventoryManager.Instance.IsShowingInventory &&
                 !playerStats.isReloading;
         }
@@ -41,11 +43,23 @@ public class GlobalGameplayManager : MonoBehaviour
 
     public bool IsGameplayActiveForInventory {
         get {
-            return HudManager.Instance.IsRunningGame && 
+            return HudManager.Instance.IsRunningGame &&
                 !HudManager.Instance.IsPaused &&
                 !HudManager.Instance.IsShowingOverlayCanvas &&
-                !playerStats.isDead;
+                !playerStats.isDead &&
+                !CutsceneManager.Instance.IsShowingCutscene;
             // not checking for InventoryManager.Instance.IsShowingInventory
+        }
+    }
+
+    public bool IsGameplayActiveForCutscene {
+        get {
+            return HudManager.Instance.IsRunningGame &&
+                !HudManager.Instance.IsPaused &&
+                !HudManager.Instance.IsShowingOverlayCanvas &&
+                !playerStats.isDead &&
+                !InventoryManager.Instance.IsShowingInventory;
+            // not checking for CutsceneManager.Instance.IsShowingCutscene
         }
     }
 
@@ -54,6 +68,7 @@ public class GlobalGameplayManager : MonoBehaviour
             return HudManager.Instance.IsRunningGame &&
                 !HudManager.Instance.IsPaused &&
                 !playerStats.isDead &&
+                !CutsceneManager.Instance.IsShowingCutscene &&
                 !InventoryManager.Instance.IsShowingInventory;
             // not checking for HudManager.Instance.IsShowingOverlayCanvas
         }
@@ -63,7 +78,8 @@ public class GlobalGameplayManager : MonoBehaviour
         get {
             return HudManager.Instance.IsPaused ||
                 HudManager.Instance.IsShowingOverlayCanvas ||
-                InventoryManager.Instance.IsShowingInventory;
+                InventoryManager.Instance.IsShowingInventory ||
+                CutsceneManager.Instance.IsShowingCutscene;
         }
     }
 }
