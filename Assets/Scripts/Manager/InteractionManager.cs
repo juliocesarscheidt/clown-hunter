@@ -108,7 +108,7 @@ public class InteractionManager : MonoBehaviour
 
     public void SetPressInteractTextToMouseKeyboard() {
         foreach (var interactable in interactables) {
-            interactable.SetInteractText("[E]");
+            interactable.SetInteractText("[F]");
         }
     }
 

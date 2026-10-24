@@ -17,6 +17,8 @@ public class DoorInteractable : Interactable
     public List<Light> doorLights;
     public Color canBeOpenedColor;
 
+    public Transform cutsceneCameraTransform;
+
     new void Start() {
         base.Start();
         doorAudioSource = GetComponent<AudioSource>();

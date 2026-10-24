@@ -223,6 +223,8 @@ MonoBehaviour:
   isBlockedByObstacle: 0
   distanceToPlayer: 0
   distanceToPlayerTrigger: 4
+  playSoundOnInteract: 1
+  destroyOnInteract: 1
   gunName: Shotgun
 --- !u!1 &6784837862430772652
 GameObject:
@@ -1946,7 +1948,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[E]'
+  m_text: '[F]'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}

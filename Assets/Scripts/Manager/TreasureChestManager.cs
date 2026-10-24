@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static CutsceneManager;
 
 public class TreasureChestManager : MonoBehaviour
 {
@@ -57,9 +58,13 @@ public class TreasureChestManager : MonoBehaviour
         InventoryManager.Instance.AddInteractableItem(keyInventory, keyInventoryItemPrefab);
         keyInventory.SetGlobalInventoryItemID(KeyInventoryItemID);
 
+        // when closing the canvas, play a cutscene
+        void onCloseAction() {
+            CutsceneManager.Instance.PlayCutscene(CutsceneType.ShowSelectedDoorCutscene, 3.0f);
+        };
         // show the canvas with the key
         var message = $"{keyInventory.inventoryDisplayName} was added to inventory";
-        HudManager.Instance.SpawnItemOnOverlayCanvasSlot(keyInventoryItemPrefab, message);
+        HudManager.Instance.SpawnItemOnOverlayCanvasSlot(keyInventoryItemPrefab, message, onCloseAction);
 
         // hide the treasure chest gameObject
         ToggleTreasureChest(false);

@@ -126,9 +126,11 @@ public class PlayerStats : MonoBehaviour
             if (GlobalGameplayManager.Instance.IsGameplayPaused) {
                 gunsAudioSource.Pause();
                 stepsAudioSource.Pause();
+                talksAudioSource.Pause();
             } else {
                 gunsAudioSource.UnPause();
                 stepsAudioSource.UnPause();
+                talksAudioSource.UnPause();
             }
         }
 
