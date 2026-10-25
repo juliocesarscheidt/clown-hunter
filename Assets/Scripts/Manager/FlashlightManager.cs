@@ -4,8 +4,6 @@ public class FlashlightManager : MonoBehaviour
 {
     public static FlashlightManager Instance { get; private set; }
 
-    private PlayerStats playerStats;
-
     public AudioSource flashlightAudioSource;
     public Light flashlight;
     public bool flashlightEnabledAtStart = true;
@@ -19,8 +17,6 @@ public class FlashlightManager : MonoBehaviour
         } else {
             Instance = this;
         }
-
-        playerStats = FindObjectOfType<PlayerStats>();
     }
 
     void Start() {
@@ -31,7 +27,17 @@ public class FlashlightManager : MonoBehaviour
         }
     }
 
-    void Update() {
+    private void LateUpdate() {
+        if (HudManager.Instance.IsRunningGame) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
+                flashlightAudioSource.Pause();
+            } else {
+                flashlightAudioSource.UnPause();
+            }
+        }
+    }
+
+    private void Update() {
         if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             return;
         }

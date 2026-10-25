@@ -24,6 +24,18 @@ public class DoorInteractable : Interactable
         doorAudioSource = GetComponent<AudioSource>();
     }
 
+    new void LateUpdate() {
+        base.LateUpdate();
+
+        if (HudManager.Instance.IsRunningGame) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
+                doorAudioSource.Pause();
+            } else {
+                doorAudioSource.UnPause();
+            }
+        }
+    }
+
     public override void OnInteract() {
         if (!isLocked) {
             // show a message in the UI

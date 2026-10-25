@@ -6,7 +6,6 @@ public class InteractionManager : MonoBehaviour
 {
     public static InteractionManager Instance { get; private set; }
 
-    private PlayerStats playerStats;
     private AudioSource interactionAudioSource;
 
     [Header("Interactables")]
@@ -20,7 +19,6 @@ public class InteractionManager : MonoBehaviour
             Instance = this;
         }
 
-        playerStats = FindObjectOfType<PlayerStats>();
         interactionAudioSource = GetComponent<AudioSource>();
     }
 
@@ -48,63 +46,14 @@ public class InteractionManager : MonoBehaviour
     }
 
     private void LateUpdate() {
-        if (!GlobalGameplayManager.Instance.IsGameplayActiveNotReloading) {
-            return;
-        }
-
-        /*
-        Vector3 center = new(0.5F, 0.5F, 0);
-        Ray ray = Camera.main.ViewportPointToRay(center);
-
-        if (Physics.Raycast(ray, out RaycastHit hit)) {
-            float distanceToPlayer = Vector3.Distance(hit.transform.position, playerStats.transform.position);
-            if (distanceToPlayer > 5f) {
-                HudManager.Instance.HidePressInteractObject();
-                DisableAllOutlines();
-
-                return;
-            }
-
-            if (tagsToInteract.Exists(t => hit.collider.CompareTag(t))) {
-                foreach (var tag in tagsToInteract) {
-                    if (hit.collider.CompareTag(tag)) {
-                        // display UI message
-                        HudManager.Instance.ShowPressInteractObject();
-
-                        if (hit.transform.gameObject.TryGetComponent(out Interactable obj)) {
-                            // show object outline
-                            if (!obj.isOutlineEnabled) obj.EnableOutline();
-
-                            if (Input.GetButtonDown("Interact")) {
-                                obj.Collect();
-                                interactionAudioSource.Play();
-
-                                int index = interactables.FindIndex(interactable => interactable == obj);
-                                if (index >= 0) interactables.RemoveAt(index);
-
-                                Destroy(hit.transform.gameObject);
-                            }
-                        }
-                    }
-                }
-            
+        if (HudManager.Instance.IsRunningGame) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
+                interactionAudioSource.Pause();
             } else {
-                HudManager.Instance.HidePressInteractObject();
-                DisableAllOutlines();
-            }
-        }
-        */
-    }
-
-    /*
-    private void DisableAllOutlines() {
-        foreach (var interactable in interactables) {
-            if (interactable.isOutlineEnabled) {
-                interactable.DisableOutline();
+                interactionAudioSource.UnPause();
             }
         }
     }
-    */
 
     public void SetPressInteractTextToMouseKeyboard() {
         foreach (var interactable in interactables) {

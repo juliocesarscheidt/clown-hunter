@@ -45,9 +45,7 @@ public class PaperManager : MonoBehaviour
         }
 
         SpawnPapers();
-
         TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, totalPapersToSpawn);
-        TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, 0);
     }
 
     private List<int> shuffleRandomNumbers() {
@@ -149,6 +147,7 @@ public class PaperManager : MonoBehaviour
         }
 
         MonsterManager.Instance.monstersToSpawn += monstersToAddOnPaperCollected;
+        // start spawning enemies of first paper collected
         MonsterManager.Instance.SpawnEnemies();
 
         // add the UI item to inventory manager

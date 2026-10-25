@@ -66,7 +66,7 @@ public class TaskManager : MonoBehaviour {
         playerStats = FindObjectOfType<PlayerStats>();
 
         tasks = new() {
-            { (int)TaskType.InvestigateThePlace, new Task("Investigate the place\n  collect evidences", 0, (int index) => {
+            { (int) TaskType.InvestigateThePlace, new Task("Investigate the place\n  collect evidences", 0, (int index) => {
                 Debug.Log($"started task {index}");
                 if (playerStats != null) {
                    playerStats.ReproduceTalk(firstTaskTalkAudioClip);
@@ -75,14 +75,14 @@ public class TaskManager : MonoBehaviour {
                     HudManager.Instance.ActivateGeneralInfoText("I'm trapped here with these monsters, I need to find a way out.", 5.0f);
                 }
             })},
-            { (int)TaskType.EliminateTheRemainingEnemies, new Task("Eliminate the remaining enemies", 0, (int index) => {
+            { (int) TaskType.EliminateTheRemainingEnemies, new Task("Eliminate the remaining enemies", 0, (int index) => {
                 Debug.Log($"started task {index}");
                 // stop spawning enemies
                 MonsterManager.Instance.SetCanSpawnEnemies(false);
                 // spawn the special weapon
-                InventoryManager.Instance.EnableSpecialWeapon();
+                InventoryManager.Instance.ActivateSpecialWeapon();
             })},
-            { (int)TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
+            { (int) TaskType.EscapeFromThePlace, new Task("Escape from the place", 0, (int index) => {
                 Debug.Log($"started task {index}");
                 if (playerStats != null) {
                    playerStats.ReproduceTalk(thirdTaskTalkAudioClip);
@@ -95,6 +95,10 @@ public class TaskManager : MonoBehaviour {
                 DoorsManager.Instance.SetupDoors();
             })},
         };
+    }
+
+    private void Start() {
+        StartTask((int) TaskType.InvestigateThePlace);
     }
 
     public void StartTask(int taskIndex) {

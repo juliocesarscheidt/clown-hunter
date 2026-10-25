@@ -98,10 +98,10 @@ public class SettingsManager : MonoBehaviour
         }
 
         // increases the amount of spawned enemies on each collected paper
-        // difficulty 0 = + 2 enemies
-        // difficulty 1 = + 4 enemies
-        // difficulty 2 = + 6 enemies
-        // difficulty 3 = + 8 enemies
+        // difficulty 0 = + 2 enemies       each paper -> 4 enemies + 2 enemies
+        // difficulty 1 = + 4 enemies       each paper -> 4 enemies + 4 enemies
+        // difficulty 2 = + 6 enemies       each paper -> 4 enemies + 6 enemies
+        // difficulty 3 = + 8 enemies       each paper -> 4 enemies + 8 enemies
         if (PaperManager.Instance != null) {
             PaperManager.Instance.monstersToAddOnPaperCollected = (difficulty + 1) * enemiesToAddOnPaperCollectedByDifficulty;
         }
