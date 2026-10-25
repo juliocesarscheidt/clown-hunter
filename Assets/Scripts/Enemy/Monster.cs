@@ -102,6 +102,16 @@ public class Monster : MonoBehaviour
         RaffleRandomPeriodToRaffleAction();
     }
 
+    void LateUpdate() {
+        if (HudManager.Instance.IsRunningGame) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
+                monsterAudioSource.Pause();
+            } else {
+                monsterAudioSource.UnPause();
+            }
+        }
+    }
+
     void FixedUpdate() {
         if (showCurrentState) {
             currentStateText.gameObject.SetActive(true);
