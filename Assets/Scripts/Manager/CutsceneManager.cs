@@ -5,8 +5,10 @@ using UnityEngine;
 public class CutsceneManager : MonoBehaviour
 {
     public static CutsceneManager Instance { get; private set; }
+
     public GameObject cutsceneCameraObject;
     private Animator cutsceneCameraAnimator;
+
     [SerializeField]
     private bool isShowingCutscene = false;
     public float timeToPlayCutscene = 3.0f;

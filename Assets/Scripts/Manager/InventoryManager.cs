@@ -464,7 +464,7 @@ public class InventoryManager : MonoBehaviour {
         activeSpawnedItems.Clear();
     }
 
-    public void EnableSpecialWeapon() {
+    public void ActivateSpecialWeapon() {
         specialWeaponObject.SetActive(true);
     }
 

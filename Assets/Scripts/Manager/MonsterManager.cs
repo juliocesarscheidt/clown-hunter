@@ -47,7 +47,6 @@ public class MonsterManager : MonoBehaviour
 
     void Start() {
         playerStats = FindObjectOfType<PlayerStats>();
-        SpawnEnemies();
     }
 
     public void ChangeRunProbabilityPercentageToAllMonsters(float percentage) {
@@ -130,16 +129,6 @@ public class MonsterManager : MonoBehaviour
         TaskManager.Instance.UpdateTaskProgress(thisTaskIndex, +1);
     }
 
-    public IEnumerator SpawnEnemiesAfterSeconds(float seconds) {
-        // wait
-        yield return new WaitForSeconds(seconds);
-        SpawnEnemies();
-    }
-
-    public void SpawnEnemiesDelayed() {
-        StartCoroutine(SpawnEnemiesAfterSeconds(2f));
-    }
-
     private void UpdateMonstersAliveCounter() {
         monstersAlive = monstersPool.Keys.Count;
         // Debug.Log($"monsters alive {monstersAlive}");
@@ -168,7 +157,7 @@ public class MonsterManager : MonoBehaviour
             TaskManager.Instance.UpdateTaskTotalProgress(thisTaskIndex, monstersAlive);
             return;
         }
-        
+
         // if is the current task, stop spawning more monsters
         if (TaskManager.Instance.IsCurrentTask(thisTaskIndex)) {
             return;

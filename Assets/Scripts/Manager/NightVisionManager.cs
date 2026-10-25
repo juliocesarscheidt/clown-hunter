@@ -26,6 +26,16 @@ public class NightVisionManager : MonoBehaviour
         timer = timeToSwitchOnOff;
     }
 
+    private void LateUpdate() {
+        if (HudManager.Instance.IsRunningGame) {
+            if (GlobalGameplayManager.Instance.IsGameplayPaused) {
+                nightVisionAudioSource.Pause();
+            } else {
+                nightVisionAudioSource.UnPause();
+            }
+        }
+    }
+
     void Update() {
         if (!GlobalGameplayManager.Instance.IsGameplayActive) {
             if (!HudManager.Instance.IsRunningGame || playerStats.isDead) {
